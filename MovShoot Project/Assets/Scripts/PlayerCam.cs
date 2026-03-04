@@ -33,18 +33,6 @@ public class PlayerCam : MonoBehaviour
     private void ChangeCameraMovement(InputAction.CallbackContext ctx)
     {
         LookValue = ctx.ReadValue<Vector2>();
-        // Get mouse input
-        float mouseX = LookValue.x * Time.deltaTime * senX;
-        float mouseY = LookValue.y * Time.deltaTime * senY;
-
-        yRotation += mouseX;
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        //Rotate camera and orientation
-        transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        orientation.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
     private void StopCameraMovement(InputAction.CallbackContext ctx)
@@ -67,7 +55,7 @@ public class PlayerCam : MonoBehaviour
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
     }
-    
+    */  
     private void Update()
     {
         // Get mouse input
@@ -82,5 +70,6 @@ public class PlayerCam : MonoBehaviour
         //Rotate camera and orientation
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
-    }*/
+    }
+
 }
