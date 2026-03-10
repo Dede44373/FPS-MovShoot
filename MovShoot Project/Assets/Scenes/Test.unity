@@ -792,7 +792,7 @@ Rigidbody:
   m_GameObject: {fileID: 1765542838}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 5
+  m_LinearDamping: 10
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -822,8 +822,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6737d1514bfeb8e47a5dbfe30080c1ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 10
-  groundDrag: 8
+  moveSpeed: 12
+  groundDrag: 10
+  jumpForce: 22
+  jumpCooldown: 0.25
+  airMultiplier: 0.01
   playerHeight: 2
   whatIsGround:
     serializedVersion: 2
@@ -986,8 +989,8 @@ GameObject:
   - component: {fileID: 2025088264}
   - component: {fileID: 2025088263}
   - component: {fileID: 2025088262}
-  m_Layer: 0
-  m_Name: rrrrr
+  m_Layer: 17
+  m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1039,7 +1042,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -876546973899608171, guid: 2019d78ad3d1c5c4a8d309a857ca449f, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
