@@ -25,6 +25,10 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask whatIsGround;
     bool grounded;
 
+    [Header("Slope Handling")]
+    public float maxSlopAngle;
+    private RaycastHit slopeHit;
+
     public Transform orientation;
 
     Vector2 moveDirection;
@@ -187,6 +191,12 @@ public class PlayerMovement : MonoBehaviour
     {
         calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
 
+        if (OnSlope())
+        {
+            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+
+        }    
+
         if (grounded)
             rb.AddForce(calculatedMoveDirection * moveSpeed * data.groundControlModifier, ForceMode.Force);
 
@@ -221,6 +231,23 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("reset jump");
 
         readyToJump = true;
+    }
+        
+    private bool OnSlope()
+    {
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f ))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopAngle && angle != 0;
+
+        }
+
+        return false;
+
+    }
+    private Vector3 GetSlopeMoveDirection() 
+    {
+        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
     
 }
