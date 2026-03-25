@@ -225,7 +225,7 @@ Transform:
   m_GameObject: {fileID: 210460048}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.31579, y: -1.41, z: 0.85212}
+  m_LocalPosition: {x: 0.16, y: -1.41, z: 0.85212}
   m_LocalScale: {x: 206.06293, y: 1.9369, z: 206.06293}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1231,6 +1231,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 131072
   maxSlopAngle: 40
+  cam: {fileID: 532993767}
+  sprintFOV: 70
   orientation: {fileID: 1835679822}
   currentState: 0
   oldState: 0

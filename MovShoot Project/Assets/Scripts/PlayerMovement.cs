@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     private float moveSpeed;
-    
+    bool isDashing;
 
     bool readyToJump = true;
     int currentJump = 0;
@@ -29,6 +30,8 @@ public class PlayerMovement : MonoBehaviour
     public float maxSlopAngle;
     private RaycastHit slopeHit;
 
+    public Camera cam;
+    public float sprintFOV = 70;
     public Transform orientation;
 
     Vector2 moveDirection;
@@ -119,8 +122,22 @@ public class PlayerMovement : MonoBehaviour
         if (grounded)
         {
             ChangeState(MovementState.sprinting);
+            
+            //rb.AddForce(calculatedMoveDirection * data.dashSpeed, ForceMode.Impulse);
             moveSpeed = data.sprintSpeed;
+            if (isDashing == false)
+            {
+                isDashing = true;
+               // cam.fieldOfView = sprintFOV;
+                StartCoroutine(DashTimer());
+            }
         }
+    }
+
+    IEnumerator DashTimer()
+    {
+        yield return new WaitForSeconds(data.dashTime);
+        isDashing = false;
     }
 
     private void StopPlayerSprint(InputAction.CallbackContext ctx)
@@ -130,6 +147,7 @@ public class PlayerMovement : MonoBehaviour
         {
             ChangeState(MovementState.walking);
             moveSpeed = data.walkSpeed;
+            //cam.fieldOfView = 60f;
         }
     }
 
@@ -189,24 +207,31 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
-        calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
-
-        if (OnSlope())
+        if (isDashing)
         {
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
-
-        }    
-
-        if (grounded)
-            rb.AddForce(calculatedMoveDirection * moveSpeed * data.groundControlModifier, ForceMode.Force);
-
+            rb.AddForce(calculatedMoveDirection * data.walkSpeed * data.dashSpeed, ForceMode.Force);
+        }
         else
-            rb.AddForce(calculatedMoveDirection * moveSpeed * data.airControlModifier, ForceMode.Force);
+        {
+
+            calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
+
+            if (OnSlope())
+            {
+                rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+            }
+
+            if (grounded)
+                rb.AddForce(calculatedMoveDirection * moveSpeed * data.groundControlModifier, ForceMode.Force);
+
+            else
+                rb.AddForce(calculatedMoveDirection * moveSpeed * data.airControlModifier, ForceMode.Force);
 
 
-        // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-        //  rb.AddForce(calculatedMoveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-        // calculate movement direction
+            // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+            //  rb.AddForce(calculatedMoveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            // calculate movement direction
+        }
     }
     private void SpeedControl() 
     {
