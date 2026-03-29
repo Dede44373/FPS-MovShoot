@@ -18,6 +18,7 @@ MonoBehaviour:
   groundControlModifier: 10
   groundDrag: 10
   airDrag: 4
+  slideDrag: 0
   addGravity: 1.5
   jumpForce: 27
   jumpCooldown: 0.1
