@@ -22,4 +22,6 @@ MonoBehaviour:
   addGravity: 1.5
   jumpForce: 27
   jumpCooldown: 0.1
+  dashSpeed: 250
+  dashTime: 0.1
   baseJumpUses: 2
