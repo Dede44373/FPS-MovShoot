@@ -23,5 +23,6 @@ MonoBehaviour:
   jumpForce: 27
   jumpCooldown: 0.1
   dashSpeed: 250
+  dashExitSpeed: 0.4
   dashTime: 0.1
   baseJumpUses: 2
