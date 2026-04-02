@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.XR.Oculus.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,6 +29,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Slope Handling")]
     public float maxSlopAngle;
+    private bool exitingSlope;
     private RaycastHit slopeHit;
 
     public Camera cam;
@@ -59,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        
         rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
         SpeedControl();
         GroundDetection();
@@ -174,7 +177,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void PlayerJump(InputAction.CallbackContext ctx)
     {
-        
+  
         if(readyToJump && currentJump < data.baseJumpUses)
         {
             readyToJump = false;
@@ -216,16 +219,22 @@ public class PlayerMovement : MonoBehaviour
 
             calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
 
-            if (OnSlope())
+            if (OnSlope() && !exitingSlope)
             {
                 rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+
+                if (rb.linearVelocity.y > 0)
+                    rb.AddForce(Vector3.down * 80f, ForceMode.Force);
             }
 
-            if (grounded)
+            else if (grounded)
                 rb.AddForce(calculatedMoveDirection * moveSpeed * data.groundControlModifier, ForceMode.Force);
 
-            else
+            else if(!grounded)
                 rb.AddForce(calculatedMoveDirection * moveSpeed * data.airControlModifier, ForceMode.Force);
+
+            //turn gravity off while on slope
+            rb.useGravity = !OnSlope();
 
 
             // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
@@ -235,17 +244,31 @@ public class PlayerMovement : MonoBehaviour
     }
     private void SpeedControl() 
     {
-        Vector3 flatVel = new Vector3(rb.linearVelocity.x , 0f, rb.linearVelocity.z);
-
-        //limit velocity when needed
-        if(flatVel.magnitude > moveSpeed)
+        //limiting speed on slope
+        if (OnSlope() && !exitingSlope)  
         {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
-            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+            if (rb.linearVelocity.magnitude > moveSpeed)
+                rb.linearVelocity = rb.linearVelocity.normalized * moveSpeed;
+
         }
+
+        //limiting speed on ground or in air
+        else 
+        {
+            Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+            //limit velocity when needed
+            if(flatVel.magnitude > moveSpeed)
+            {
+                Vector3 limitedVel = flatVel.normalized * moveSpeed;
+                rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+            }
+        }
+
     }
     private void Jump()
     {
+        exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
@@ -254,6 +277,8 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         Debug.Log("reset jump");
+
+        exitingSlope = false;
 
         readyToJump = true;
     }
