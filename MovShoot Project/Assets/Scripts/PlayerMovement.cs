@@ -8,8 +8,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerMovementData data;
 
     [Header("Movement")]
-    private float moveSpeed;
     bool isDashing;
+    private float dashTimer;
+    public float slideSpeed;
+
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
 
     bool readyToJump = true;
     int currentJump = 0;
@@ -20,7 +24,17 @@ public class PlayerMovement : MonoBehaviour
     [Header("Crouching")]
     public float crouchSpeed;
     public float crouchYScale;
+
+    [Header("Sliding")]
+    public float maxSlideTime;
+    public float slideForce;
+    private float slideTimer;
+
+    public float slideYScale;
     private float startYScale;
+
+    public bool sliding = false;
+    public Transform playerObj;
 
     [Header("Ground Check")]
     public float playerHeight;
@@ -47,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
     {
         walking, 
         sprinting,
-        crouching,
+        sliding,
         air
     }
     private void Start()
@@ -55,14 +69,13 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
-        moveSpeed = data.walkSpeed;
+        desiredMoveSpeed = data.walkSpeed;
         startYScale = transform.localScale.y;
     }
 
     private void Update()
     {
-        
-        rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
+       // rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
         SpeedControl();
         GroundDetection();
 
@@ -77,22 +90,22 @@ public class PlayerMovement : MonoBehaviour
     private void OnEnable()
     {
         Controls = UserInputManager.Instance.Controls;
-        Controls.Player.Move.performed += ChangePlayerMovement;
-        Controls.Player.Move.canceled += StopPlayerMovement;
+        Controls.Player.Move.performed += HandleMoveStart;
+        Controls.Player.Move.canceled += HandleMoveStop;
         Controls.Player.Sprint.performed += PlayerSprint;
         Controls.Player.Sprint.canceled += StopPlayerSprint;
-        Controls.Player.Crouch.performed += PlayerCrouch;
-        Controls.Player.Crouch.canceled += StopPlayerCrouch;
+        Controls.Player.Crouch.performed += HandleSlideStart;
+        Controls.Player.Crouch.canceled += HandleSlideStop;
         Controls.Player.Jump.performed += PlayerJump;
     }
     private void OnDisable()
     {
-        Controls.Player.Move.performed -= ChangePlayerMovement;
-        Controls.Player.Move.canceled -= StopPlayerMovement;
+        Controls.Player.Move.performed -= HandleMoveStart;
+        Controls.Player.Move.canceled -= HandleMoveStop;
         Controls.Player.Sprint.performed -= PlayerSprint;
         Controls.Player.Sprint.canceled -= StopPlayerSprint;
-        Controls.Player.Crouch.performed -= PlayerCrouch;
-        Controls.Player.Crouch.canceled -= StopPlayerCrouch;
+        Controls.Player.Crouch.performed -= HandleSlideStart;
+        Controls.Player.Crouch.canceled -= HandleSlideStop;
         Controls.Player.Jump.performed -= PlayerJump;
     }
 
@@ -107,15 +120,15 @@ public class PlayerMovement : MonoBehaviour
 
 
     // Calculating walking direction
-    private void ChangePlayerMovement(InputAction.CallbackContext ctx)
+    private void HandleMoveStart(InputAction.CallbackContext ctx)
     {
         moveDirection = ctx.ReadValue<Vector2>();
         //calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
     }
     // Walking
-    private void StopPlayerMovement(InputAction.CallbackContext ctx)
+    private void HandleMoveStop(InputAction.CallbackContext ctx)
     {
-        calculatedMoveDirection = Vector3.zero;
+        //calculatedMoveDirection = Vector3.zero;
         moveDirection = Vector2.zero;
     }
 
@@ -126,20 +139,34 @@ public class PlayerMovement : MonoBehaviour
         {
             ChangeState(MovementState.sprinting);
             
-            //rb.AddForce(calculatedMoveDirection * data.dashSpeed, ForceMode.Impulse);
-            moveSpeed = data.sprintSpeed;
-            if (isDashing == false)
-            {
-                isDashing = true;
-               // cam.fieldOfView = sprintFOV;
-                StartCoroutine(DashTimer());
-            }
+            desiredMoveSpeed = data.sprintSpeed;
+        }
+        if (isDashing == false)
+        {
+            // cam.fieldOfView = sprintFOV;
+            Dash();
         }
     }
 
-    IEnumerator DashTimer()
+    private void Dash()
     {
-        yield return new WaitForSeconds(data.dashTime);
+        isDashing = true;
+        dashTimer = data.dashTime;
+        StartCoroutine(DashRoutine());
+    }
+
+
+
+    IEnumerator DashRoutine()
+    {
+        while (dashTimer > 0)
+        {
+            rb.AddForce(GetMoveDirection() * data.dashSpeed, ForceMode.Force);
+            dashTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        rb.linearVelocity *= data.dashExitSpeed;
         isDashing = false;
     }
 
@@ -149,25 +176,60 @@ public class PlayerMovement : MonoBehaviour
         if (grounded)
         {
             ChangeState(MovementState.walking);
-            moveSpeed = data.walkSpeed;
+            desiredMoveSpeed = data.walkSpeed;
             //cam.fieldOfView = 60f;
         }
     }
 
     //Sliding
-    private void PlayerCrouch(InputAction.CallbackContext ctx)
+    private void HandleSlideStart(InputAction.CallbackContext ctx)
     {
-        /*moveDirection = ctx.ReadValue<Vector2>();
-        calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;*/
+        if (GetMoveDirection() != Vector3.zero)
+            StartSlide();
+    }
+    private void HandleSlideStop(InputAction.CallbackContext ctx)
+    {
+        StopSlide();
+    }
+
+    private void StartSlide()
+    {
+        sliding = true;
+
         calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
-        ChangeState(MovementState.crouching);
-        transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+        ChangeState(MovementState.sliding);
+        transform.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);    
         rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         rb.linearDamping = data.slideDrag;
-        //moveSpeed = crouchSpeed;
+
+        slideTimer = maxSlideTime;
+
     }
-    private void StopPlayerCrouch(InputAction.CallbackContext ctx)
+
+    private void SlidingMovement()
     {
+        //normal sliding
+        if(!OnSlope() || rb.linearVelocity.y > -0.1f)
+        {
+            rb.AddForce(GetMoveDirection() * slideForce, ForceMode.Force);
+
+            slideTimer -= Time.deltaTime;
+
+        }
+
+        //sliding down a slope
+        else
+        {
+            rb.AddForce(GetSlopeMoveDirection(GetMoveDirection()) * slideForce, ForceMode.Force);
+        }
+
+        if (slideTimer <= 0)
+            StopSlide();
+    }
+
+    private void StopSlide()
+    {
+        sliding = false;
         ChangeState(MovementState.walking);
         transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
         rb.linearDamping = data.groundDrag;
@@ -210,10 +272,24 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
-        if (isDashing)
+        if (isDashing) return;
+
+        calculatedMoveDirection = GetMoveDirection();
+
+        switch (currentState)
         {
-            rb.AddForce(calculatedMoveDirection * data.walkSpeed * data.dashSpeed, ForceMode.Force);
+            case MovementState.walking:
+                break;
         }
+        if (sliding)
+            SlidingMovement();
+
+        if (OnSlope())
+            rb.AddForce(GetSlopeMoveDirection(moveDirection) * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
+
+        if (grounded)
+            rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
+
         else
         {
 
@@ -237,19 +313,20 @@ public class PlayerMovement : MonoBehaviour
             rb.useGravity = !OnSlope();
 
 
-            // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-            //  rb.AddForce(calculatedMoveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-            // calculate movement direction
-        }
+        // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        //  rb.AddForce(calculatedMoveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        // calculate movement direction
+
     }
     private void SpeedControl() 
     {
-        //limiting speed on slope
-        if (OnSlope() && !exitingSlope)  
-        {
-            if (rb.linearVelocity.magnitude > moveSpeed)
-                rb.linearVelocity = rb.linearVelocity.normalized * moveSpeed;
+        Vector3 flatVel = new Vector3(rb.linearVelocity.x , 0f, rb.linearVelocity.z);
 
+        //limit velocity when needed
+        if(flatVel.magnitude > desiredMoveSpeed)
+        {
+            Vector3 limitedVel = flatVel.normalized * desiredMoveSpeed;
+            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
         }
 
         //limiting speed on ground or in air
@@ -283,7 +360,7 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
     }
         
-    private bool OnSlope()
+    public bool OnSlope()
     {
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f ))
         {
@@ -295,10 +372,14 @@ public class PlayerMovement : MonoBehaviour
         return false;
 
     }
-    private Vector3 GetSlopeMoveDirection() 
+    public Vector3 GetSlopeMoveDirection(Vector3 direction) 
     {
-        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
     
+    private Vector3 GetMoveDirection()
+    {
+        return (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
+    }
 }
     

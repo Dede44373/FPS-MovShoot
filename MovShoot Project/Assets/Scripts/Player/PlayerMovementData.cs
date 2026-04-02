@@ -20,6 +20,7 @@ public class PlayerMovementData : ScriptableObject
 
     [Header("Dash Values")]
     public float dashSpeed;
+    public float dashExitSpeed;
     public float dashTime;
 
     [Tooltip("Number of total jumps, eg 0 means you cant jump")]
