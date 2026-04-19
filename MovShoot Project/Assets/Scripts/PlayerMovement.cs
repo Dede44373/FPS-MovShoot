@@ -9,11 +9,16 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     bool isDashing;
+    private float moveSpeed;
     private float dashTimer;
     public float slideSpeed;
+    public float firstJump;
 
-    private float desiredMoveSpeed;
+    public float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
+
+    public float speedIncreaseMultiplier;
+    public float slopeIncreaseMultiplier;
 
     bool readyToJump = true;
     int currentJump = 0;
@@ -54,16 +59,17 @@ public class PlayerMovement : MonoBehaviour
     Vector3 calculatedMoveDirection;
 
     Rigidbody rb;
-    
+
     public MovementState currentState;
     public MovementState oldState;
     public enum MovementState
     {
-        walking, 
+        walking,
         sprinting,
         sliding,
         air
     }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -75,9 +81,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-       // rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
         SpeedControl();
         GroundDetection();
+        stateHandler();
+        gravityControl();
 
     }
     private void FixedUpdate()
@@ -138,12 +145,12 @@ public class PlayerMovement : MonoBehaviour
         if (grounded)
         {
             ChangeState(MovementState.sprinting);
-            
+
             desiredMoveSpeed = data.sprintSpeed;
         }
         if (isDashing == false)
         {
-            // cam.fieldOfView = sprintFOV;
+            cam.fieldOfView += sprintFOV;
             Dash();
         }
     }
@@ -177,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
         {
             ChangeState(MovementState.walking);
             desiredMoveSpeed = data.walkSpeed;
-            //cam.fieldOfView = 60f;
+            cam.fieldOfView -= sprintFOV;
         }
     }
 
@@ -186,6 +193,16 @@ public class PlayerMovement : MonoBehaviour
     {
         if (GetMoveDirection() != Vector3.zero)
             StartSlide();
+        if (sliding)
+        {
+            ChangeState(MovementState.sliding);
+
+            if (OnSlope() && rb.linearVelocity.y < 0.1f)
+                desiredMoveSpeed = slideSpeed;
+            else
+                desiredMoveSpeed = data.sprintSpeed;
+
+        }
     }
     private void HandleSlideStop(InputAction.CallbackContext ctx)
     {
@@ -197,9 +214,8 @@ public class PlayerMovement : MonoBehaviour
         sliding = true;
 
         calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
-        ChangeState(MovementState.sliding);
-        transform.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);    
-        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        transform.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
+        rb.AddForce(Vector3.down * 20f, ForceMode.Impulse);
         rb.linearDamping = data.slideDrag;
 
         slideTimer = maxSlideTime;
@@ -209,9 +225,9 @@ public class PlayerMovement : MonoBehaviour
     private void SlidingMovement()
     {
         //normal sliding
-        if(!OnSlope() || rb.linearVelocity.y > -0.1f)
+        if (!OnSlope() || rb.linearVelocity.y > -0.1f)
         {
-            rb.AddForce(GetMoveDirection() * slideForce, ForceMode.Force);
+            rb.AddForce(GetMoveDirection().normalized * slideForce, ForceMode.Force);
 
             slideTimer -= Time.deltaTime;
 
@@ -237,10 +253,11 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    // Jumping
     private void PlayerJump(InputAction.CallbackContext ctx)
     {
-  
-        if(readyToJump && currentJump < data.baseJumpUses)
+
+        if (readyToJump && currentJump < data.baseJumpUses)
         {
             readyToJump = false;
             currentJump++;
@@ -263,12 +280,62 @@ public class PlayerMovement : MonoBehaviour
             rb.linearDamping = data.groundDrag;
             currentState = MovementState.walking;
         }
-        else if(!grounded && currentState != MovementState.air) // Runs upon leaving the ground 
+        else if (!grounded && currentState != MovementState.air) // Runs upon leaving the ground 
         {
             rb.linearDamping = data.airDrag;
             currentState = MovementState.air;
         }
     }
+
+    void gravityControl()
+    { 
+        if (!OnSlope() && !grounded)
+            rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
+
+
+    }
+    void stateHandler()
+    {
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 8f && moveSpeed != 0)
+        {
+            StopAllCoroutines();
+            StartCoroutine(SmoothlyLerpMoveSpeed());
+        }
+        else
+        {
+            moveSpeed = desiredMoveSpeed;
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+    }
+
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        // smoothly lerp movementSpeed to desired value
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        while (time < difference)
+        {
+            moveSpeed =Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+
+            if (OnSlope())
+            {
+                float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
+                float slopeAngleIncrease = 1 + (slopeAngle / 90f);
+
+                time += Time.deltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * slopeAngleIncrease;
+            }
+            else
+                time += Time.deltaTime * speedIncreaseMultiplier;
+
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
+    }    
+ 
 
     void MovePlayer()
     {
@@ -285,7 +352,7 @@ public class PlayerMovement : MonoBehaviour
             SlidingMovement();
 
         if (OnSlope())
-            rb.AddForce(GetSlopeMoveDirection(moveDirection) * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
+            rb.AddForce(GetSlopeMoveDirection(calculatedMoveDirection) * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
 
         if (grounded)
             rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
@@ -297,59 +364,64 @@ public class PlayerMovement : MonoBehaviour
 
             if (OnSlope() && !exitingSlope)
             {
-                rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+                rb.AddForce(GetSlopeMoveDirection(calculatedMoveDirection) * desiredMoveSpeed * 20f, ForceMode.Force);
 
                 if (rb.linearVelocity.y > 0)
                     rb.AddForce(Vector3.down * 80f, ForceMode.Force);
             }
 
             else if (grounded)
-                rb.AddForce(calculatedMoveDirection * moveSpeed * data.groundControlModifier, ForceMode.Force);
+                rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
 
-            else if(!grounded)
-                rb.AddForce(calculatedMoveDirection * moveSpeed * data.airControlModifier, ForceMode.Force);
+            else if (!grounded)
+                rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.airControlModifier, ForceMode.Force);
 
             //turn gravity off while on slope
             rb.useGravity = !OnSlope();
 
 
-        // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-        //  rb.AddForce(calculatedMoveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-        // calculate movement direction
+            // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+            //  rb.AddForce(calculatedMoveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            // calculate movement direction
 
-    }
+        }
+    } 
     private void SpeedControl() 
     {
-        Vector3 flatVel = new Vector3(rb.linearVelocity.x , 0f, rb.linearVelocity.z);
+        //Limit velotcity on slope
+        if (OnSlope())
+        {
+            if (rb.linearVelocity.magnitude > desiredMoveSpeed)
+                rb.linearVelocity = rb.linearVelocity.normalized * desiredMoveSpeed;
+        }
 
         //limit velocity when needed
-        if(flatVel.magnitude > desiredMoveSpeed)
+        else
         {
-            Vector3 limitedVel = flatVel.normalized * desiredMoveSpeed;
-            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+            Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            
+            if (flatVel.magnitude > desiredMoveSpeed)
+            {
+                Vector3 limitedVel = flatVel.normalized * desiredMoveSpeed;
+                rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+            }
+
         }
 
         //limiting speed on ground or in air
-        else 
-        {
-            Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-
-            //limit velocity when needed
-            if(flatVel.magnitude > moveSpeed)
-            {
-                Vector3 limitedVel = flatVel.normalized * moveSpeed;
-                rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
-            }
-        }
-
     }
     private void Jump()
     {
         exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        
+        // Makes your first jump a bit higher so it feels better 
+        if (currentJump == 1)
+            rb.AddForce(transform.up * data.jumpForce * firstJump, ForceMode.Impulse);
 
-        rb.AddForce(transform.up * data.jumpForce, ForceMode.Impulse);
+        else
+            rb.AddForce(transform.up * data.jumpForce, ForceMode.Impulse);
     }
     private void ResetJump()
     {
