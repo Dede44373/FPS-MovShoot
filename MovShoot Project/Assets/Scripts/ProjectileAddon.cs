@@ -14,6 +14,8 @@ public class ProjectileAddon : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.CompareTag("Player")) return;
+
         //make sure only to stick to the first target you hit
         if (targetHit)
             return;
@@ -28,6 +30,8 @@ public class ProjectileAddon : MonoBehaviour
             enemy.TakeDamage(damage);
 
             Destroy(gameObject);
+
+            transform.SetParent(collision.transform);
         }
 
     
@@ -35,6 +39,8 @@ public class ProjectileAddon : MonoBehaviour
         rb.isKinematic = true;
 
         //makes sure projectile moves with target
-        transform.SetParent(collision.transform);
+        
+
+        //transform.SetParent(collision.transform);
     }
 }

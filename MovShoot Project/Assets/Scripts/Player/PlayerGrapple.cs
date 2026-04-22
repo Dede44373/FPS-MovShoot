@@ -10,10 +10,12 @@ public class PlayerGrapple : MonoBehaviour
     public Transform gunTip;
     public LayerMask grappleable;
     public LineRenderer lr;
+    public PlayerMovement pm;
 
     [Header("Grappling")]
     public float maxGrappleDistance;
     public float grappleDelayTime;
+    public float overshootYAxis;
 
     private Vector3 grapplePoint;
 
@@ -22,11 +24,6 @@ public class PlayerGrapple : MonoBehaviour
     private float grapplingCdTimer;
 
     public bool grappling;
-
-    private void Start()
-    {
-         controls = GetComponent<UserInputs>();
-    }
 
     // Update is called once per frame
     void Update()
@@ -91,7 +88,16 @@ public class PlayerGrapple : MonoBehaviour
 
     private void ExecuteGrapple()
     {
+        Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
 
+        float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
+        float highestPointOnArc = grapplePointRelativeYPos + overshootYAxis;
+
+        if (grapplePointRelativeYPos < 0) highestPointOnArc = overshootYAxis;
+
+        pm.JumpToPosition(grapplePoint, highestPointOnArc);
+
+        Invoke(nameof(StopGrapple), 1f);
     }
 
     private void StopGrapple()
@@ -101,5 +107,10 @@ public class PlayerGrapple : MonoBehaviour
         grapplingCdTimer = grapplingCd;
 
         lr.enabled = false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(cam.position, grapplePoint);
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class PlayerThrow : MonoBehaviour
 {
     [Header("Reference")]
     public Transform cam;

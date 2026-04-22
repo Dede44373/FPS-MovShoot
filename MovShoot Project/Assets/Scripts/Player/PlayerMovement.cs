@@ -86,6 +86,10 @@ public class PlayerMovement : MonoBehaviour
         stateHandler();
         gravityControl();
 
+       if (grounded && !activeGrapple)
+            rb.linearDamping = data.groundDrag;
+        else rb.linearDamping = 0; 
+
     }
     private void FixedUpdate()
     {
@@ -388,6 +392,8 @@ public class PlayerMovement : MonoBehaviour
     } 
     private void SpeedControl() 
     {
+        if (activeGrapple) return;
+
         //Limit velotcity on slope
         if (OnSlope())
         {
@@ -432,6 +438,19 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
     }
         
+    public void JumpToPosition(Vector3 targetPosition,float trajectoryHeight)
+    {
+        activeGrapple = true;
+
+        velocityToSet = CalculateJumpVelocity(transform.position, targetPosition , trajectoryHeight);
+        Invoke(nameof(SetVelocity), 0.1f);
+    }
+
+    private Vector3 velocityToSet;
+    private void SetVelocity()
+    {
+        rb.linearVelocity = velocityToSet;
+    }
     public bool OnSlope()
     {
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f ))
@@ -448,7 +467,20 @@ public class PlayerMovement : MonoBehaviour
     {
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
-    
+
+    public bool activeGrapple;
+    public Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight)
+    {
+        float gravity = Physics.gravity.y;
+        float displacementY = endPoint.y - startPoint.y;
+        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
+
+        Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
+        Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity)
+            + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
+
+        return velocityXZ + velocityY;
+    }
     private Vector3 GetMoveDirection()
     {
         return (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;

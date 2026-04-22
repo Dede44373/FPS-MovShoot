@@ -496,8 +496,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 131072
   lr: {fileID: 124811496}
+  pm: {fileID: 1765542842}
   maxGrappleDistance: 30
-  grappleDelayTime: 0.25
+  grappleDelayTime: 0.1
+  overshootYAxis: 2
   grapplingCd: 1
   grappling: 0
 --- !u!1 &210460048
@@ -6360,7 +6362,7 @@ GameObject:
   - component: {fileID: 1307126542}
   - component: {fileID: 1307126541}
   - component: {fileID: 1307126540}
-  - component: {fileID: 1307126539}
+  - component: {fileID: 1307126543}
   m_Layer: 17
   m_Name: Cylinder
   m_TagString: Untagged
@@ -6368,29 +6370,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &1307126539
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1307126538}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!23 &1307126540
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6463,6 +6442,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 660492102}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1307126543
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307126538}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1487208296
 GameObject:
   m_ObjectHideFlags: 0
@@ -6609,7 +6610,7 @@ Transform:
   m_GameObject: {fileID: 1627843310}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.17, y: -0.31, z: 0.42}
+  m_LocalPosition: {x: -0.745, y: -0.31, z: 0.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6849,6 +6850,7 @@ MonoBehaviour:
   orientation: {fileID: 1835679822}
   currentState: 0
   oldState: 0
+  activeGrapple: 0
 --- !u!114 &1765542843
 MonoBehaviour:
   m_ObjectHideFlags: 0
