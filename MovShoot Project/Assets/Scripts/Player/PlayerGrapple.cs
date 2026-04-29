@@ -58,15 +58,20 @@ public class PlayerGrapple : MonoBehaviour
 
     private void HandleGrappleStop(InputAction.CallbackContext ctx)
     {
+        if(grappling == true)
         StopGrapple();
     }
 
     private void StartGrapple()
     {
-        Debug.Log("Started Grapple");
+
         if (grapplingCdTimer > 0) return;
 
+        Debug.Log("Check Grapple");
+
         grappling = true;
+
+        pm.freeze = true;
 
         RaycastHit hit;
         if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance, grappleable))
@@ -74,12 +79,14 @@ public class PlayerGrapple : MonoBehaviour
             grapplePoint = hit.point;
 
             Invoke(nameof(ExecuteGrapple), grappleDelayTime);
+            Debug.Log("Start Grapple");
         }
         else
         {
             grapplePoint = cam.position + cam.forward * maxGrappleDistance;
 
             Invoke(nameof(StopGrapple), grappleDelayTime);
+            Debug.Log("Grapple Fail");
         }
 
         lr.enabled = true;
@@ -88,6 +95,8 @@ public class PlayerGrapple : MonoBehaviour
 
     private void ExecuteGrapple()
     {
+        pm.freeze = false;
+
         Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
 
         float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
@@ -100,8 +109,11 @@ public class PlayerGrapple : MonoBehaviour
         Invoke(nameof(StopGrapple), 1f);
     }
 
-    private void StopGrapple()
+    public void StopGrapple()
     {
+        Debug.Log("Stop Grapple");
+        pm.freeze = false; 
+
         grappling = false;
 
         grapplingCdTimer = grapplingCd;

@@ -23,6 +23,9 @@ public class PlayerMovement : MonoBehaviour
     bool readyToJump = true;
     int currentJump = 0;
 
+    public bool freeze;
+    private bool enableMovementOnNextTouch;
+
     [Header("Controls")]
     public UserInputs Controls;
 
@@ -59,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 calculatedMoveDirection;
 
     Rigidbody rb;
+    public PlayerGrapple pg;
 
     public MovementState currentState;
     public MovementState oldState;
@@ -67,11 +71,13 @@ public class PlayerMovement : MonoBehaviour
         walking,
         sprinting,
         sliding,
-        air
+        air,
+        freeze
     }
 
     private void Start()
     {
+        //pg = GetComponent<PlayerGrapple>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
@@ -88,7 +94,8 @@ public class PlayerMovement : MonoBehaviour
 
        if (grounded && !activeGrapple)
             rb.linearDamping = data.groundDrag;
-        else rb.linearDamping = 0; 
+        else if (activeGrapple == true)
+            rb.linearDamping = 0;
 
     }
     private void FixedUpdate()
@@ -184,12 +191,9 @@ public class PlayerMovement : MonoBehaviour
     private void StopPlayerSprint(InputAction.CallbackContext ctx)
     {
         //Mode - Walking
-        if (grounded)
-        {
-            ChangeState(MovementState.walking);
-            desiredMoveSpeed = data.walkSpeed;
-            cam.fieldOfView -= sprintFOV;
-        }
+        ChangeState(MovementState.walking);
+        desiredMoveSpeed = data.walkSpeed;
+        cam.fieldOfView -= sprintFOV;
     }
 
     //Sliding
@@ -300,6 +304,15 @@ public class PlayerMovement : MonoBehaviour
     }
     void stateHandler()
     {
+        // Mode - Freeze 
+        if(freeze)
+        {
+            currentState = MovementState.freeze;
+            moveSpeed = 0;
+            rb.linearVelocity = Vector3.zero;
+
+        }
+
         if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 8f && moveSpeed != 0)
         {
             StopAllCoroutines();
@@ -343,6 +356,8 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
+        if (activeGrapple) return;
+
         if (isDashing) return;
 
         calculatedMoveDirection = GetMoveDirection();
@@ -444,13 +459,34 @@ public class PlayerMovement : MonoBehaviour
 
         velocityToSet = CalculateJumpVelocity(transform.position, targetPosition , trajectoryHeight);
         Invoke(nameof(SetVelocity), 0.1f);
+
+        Invoke(nameof(ResetRestrictions), 3f);
     }
 
     private Vector3 velocityToSet;
     private void SetVelocity()
     {
+        enableMovementOnNextTouch = true;
         rb.linearVelocity = velocityToSet;
     }
+
+    public void ResetRestrictions()
+    {
+        activeGrapple = false;
+
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(enableMovementOnNextTouch)
+        {
+            enableMovementOnNextTouch = false;
+            ResetRestrictions();
+
+            pg.StopGrapple();
+        }
+    }
+
     public bool OnSlope()
     {
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f ))

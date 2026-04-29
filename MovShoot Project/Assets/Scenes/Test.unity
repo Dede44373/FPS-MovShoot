@@ -497,9 +497,9 @@ MonoBehaviour:
     m_Bits: 131072
   lr: {fileID: 124811496}
   pm: {fileID: 1765542842}
-  maxGrappleDistance: 30
+  maxGrappleDistance: 50
   grappleDelayTime: 0.1
-  overshootYAxis: 2
+  overshootYAxis: 5
   grapplingCd: 1
   grappling: 0
 --- !u!1 &210460048
@@ -6833,6 +6833,7 @@ MonoBehaviour:
   desiredMoveSpeed: 0
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
+  freeze: 0
   crouchSpeed: 0
   crouchYScale: 0
   maxSlideTime: 0.75
@@ -6848,6 +6849,7 @@ MonoBehaviour:
   cam: {fileID: 532993767}
   sprintFOV: 10
   orientation: {fileID: 1835679822}
+  pg: {fileID: 124811497}
   currentState: 0
   oldState: 0
   activeGrapple: 0
