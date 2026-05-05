@@ -1,4 +1,6 @@
 using System.Collections;
+using DG.Tweening;
+using Unity.VisualScripting;
 using Unity.XR.Oculus.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,11 +10,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private PlayerMovementData data;
 
     [Header("Movement")]
-    bool isDashing;
     private float moveSpeed;
-    private float dashTimer;
     public float slideSpeed;
     public float firstJump;
+   
+
 
     public float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
@@ -28,6 +30,12 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Controls")]
     public UserInputs Controls;
+
+    [Header("Dashing")]
+    public bool isDashing;
+    public float dashSpeed;
+    private float dashTimer;
+
 
     [Header("Crouching")]
     public float crouchSpeed;
@@ -54,8 +62,9 @@ public class PlayerMovement : MonoBehaviour
     private bool exitingSlope;
     private RaycastHit slopeHit;
 
-    public Camera cam;
-    public float sprintFOV = 70;
+    public PlayerCam cam;
+    public float sprintFOV = 70f;
+    public float normalFOV = 60f;
     public Transform orientation;
 
     Vector2 moveDirection;
@@ -71,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
         walking,
         sprinting,
         sliding,
+        dashing,
         air,
         freeze
     }
@@ -94,8 +104,11 @@ public class PlayerMovement : MonoBehaviour
 
        if (grounded && !activeGrapple)
             rb.linearDamping = data.groundDrag;
-        else if (activeGrapple == true)
+        else if (activeGrapple == true || isDashing == true)
             rb.linearDamping = 0;
+
+       if(data.dashCdTimer >= 0)
+            data.dashCdTimer -= Time.deltaTime;
 
     }
     private void FixedUpdate()
@@ -149,51 +162,64 @@ public class PlayerMovement : MonoBehaviour
         //calculatedMoveDirection = Vector3.zero;
         moveDirection = Vector2.zero;
     }
-
     //Sprinting
     private void PlayerSprint(InputAction.CallbackContext ctx)
     {
-        if (grounded)
-        {
-            ChangeState(MovementState.sprinting);
-
-            desiredMoveSpeed = data.sprintSpeed;
-        }
-        if (isDashing == false)
-        {
-            cam.fieldOfView += sprintFOV;
             Dash();
-        }
+      
     }
 
     private void Dash()
     {
+        if (data.dashCdTimer >= 0) return;
+        else data.dashCdTimer = data.dashCd;
+            Debug.Log("Dash started");
+
         isDashing = true;
+        cam.DoFov(sprintFOV);
         dashTimer = data.dashTime;
-        StartCoroutine(DashRoutine());
+
+        Vector3 forceToApply = orientation.forward * data.dashForce + orientation.up * data.dashUpwardForce;
+        rb.AddForce(forceToApply, ForceMode.Impulse);
+        Invoke(nameof(DelayedDashForce), 0.025f);
+        Invoke(nameof(ResetDash), data.dashTime);
+
+       // StartCoroutine(DashRoutine());
     }
 
+    private Vector3 delayedForceToApply;
+    private void DelayedDashForce()
+    { 
+        rb.AddForce(delayedForceToApply, ForceMode.Impulse);
+    }
 
-
-    IEnumerator DashRoutine()
+    private void ResetDash()
     {
-        while (dashTimer > 0)
-        {
-            rb.AddForce(GetMoveDirection() * data.dashSpeed, ForceMode.Force);
-            dashTimer -= Time.deltaTime;
-            yield return null;
-        }
-
-        rb.linearVelocity *= data.dashExitSpeed;
+        Debug.Log("dash endeding");
         isDashing = false;
     }
+
+
+    /* IEnumerator DashRoutine()
+     {
+         while (dashTimer > 0)
+         {
+             rb.AddForce(GetMoveDirection() * data.dashSpeed, ForceMode.Force);
+             dashTimer -= Time.deltaTime;
+             yield return null;
+         }
+
+         rb.linearVelocity *= data.dashExitSpeed;
+         isDashing = false;
+     }*/
 
     private void StopPlayerSprint(InputAction.CallbackContext ctx)
     {
         //Mode - Walking
+        isDashing = false ;
         ChangeState(MovementState.walking);
         desiredMoveSpeed = data.walkSpeed;
-        cam.fieldOfView -= sprintFOV;
+        cam.DoFov(normalFOV);
     }
 
     //Sliding
@@ -304,8 +330,15 @@ public class PlayerMovement : MonoBehaviour
     }
     void stateHandler()
     {
+        if (isDashing)
+        {
+            currentState = MovementState.dashing;
+            desiredMoveSpeed = dashSpeed;
+
+
+        }
         // Mode - Freeze 
-        if(freeze)
+        if (freeze)
         {
             currentState = MovementState.freeze;
             moveSpeed = 0;
@@ -358,7 +391,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (activeGrapple) return;
 
-        if (isDashing) return;
 
         calculatedMoveDirection = GetMoveDirection();
 

@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public class PlayerCam : MonoBehaviour
 {
     public float senX;
     public float senY;
 
+    public Camera cam;
     public Transform orientation;
     private UserInputs Controls;
 
@@ -70,6 +72,12 @@ public class PlayerCam : MonoBehaviour
         //Rotate camera and orientation
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+    }
+
+    public void DoFov(float endValue)
+    {
+        Debug.Log("FOV");
+        cam.DOFieldOfView(endValue, 0.25f);
     }
 
 }

@@ -19,9 +19,13 @@ public class PlayerMovementData : ScriptableObject
     public float jumpCooldown;
 
     [Header("Dash Values")]
-    public float dashSpeed;
+    public float dashForce;
     public float dashExitSpeed;
+    public float dashUpwardForce;
     public float dashTime;
+
+    public float dashCd;
+    public float dashCdTimer;
 
     [Tooltip("Number of total jumps, eg 0 means you cant jump")]
     public int baseJumpUses = 2;
