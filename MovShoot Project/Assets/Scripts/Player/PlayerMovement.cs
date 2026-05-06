@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded;
+    public bool grounded;
 
     [Header("Slope Handling")]
     public float maxSlopAngle;
@@ -63,8 +63,8 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit slopeHit;
 
     public PlayerCam cam;
-    public float sprintFOV = 70f;
-    public float normalFOV = 60f;
+    public float sprintFOV;
+    public float normalFOV;
     public Transform orientation;
 
     Vector2 moveDirection;
@@ -102,8 +102,12 @@ public class PlayerMovement : MonoBehaviour
         stateHandler();
         gravityControl();
 
-       if (grounded && !activeGrapple)
+       if (grounded && !activeGrapple && !isDashing)
+        {
+            print("reset to ground drag");
             rb.linearDamping = data.groundDrag;
+
+        }
         else if (activeGrapple == true || isDashing == true)
             rb.linearDamping = 0;
 
@@ -166,6 +170,7 @@ public class PlayerMovement : MonoBehaviour
     private void PlayerSprint(InputAction.CallbackContext ctx)
     {
             Dash();
+        ChangeState(MovementState.dashing);
       
     }
 
@@ -216,7 +221,7 @@ public class PlayerMovement : MonoBehaviour
     private void StopPlayerSprint(InputAction.CallbackContext ctx)
     {
         //Mode - Walking
-        isDashing = false ;
+        //isDashing = false ;
         ChangeState(MovementState.walking);
         desiredMoveSpeed = data.walkSpeed;
         cam.DoFov(normalFOV);
@@ -311,7 +316,11 @@ public class PlayerMovement : MonoBehaviour
         if (grounded && currentState == MovementState.air) // Runs upon landing from air
         {
             currentJump = 0;
-            rb.linearDamping = data.groundDrag;
+
+            if (!isDashing)
+            {
+                rb.linearDamping = data.groundDrag;
+            }
             currentState = MovementState.walking;
         }
         else if (!grounded && currentState != MovementState.air) // Runs upon leaving the ground 
@@ -417,14 +426,14 @@ public class PlayerMovement : MonoBehaviour
             {
                 rb.AddForce(GetSlopeMoveDirection(calculatedMoveDirection) * desiredMoveSpeed * 20f, ForceMode.Force);
 
-                if (rb.linearVelocity.y > 0)
-                    rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+              //  if (rb.linearVelocity.y > 0)
+                  //  rb.AddForce(Vector3.down * 80f, ForceMode.Force);
             }
 
-            else if (grounded)
+            else if (grounded && !isDashing)
                 rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
 
-            else if (!grounded)
+            else if (!grounded && !isDashing)
                 rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.airControlModifier, ForceMode.Force);
 
             //turn gravity off while on slope
@@ -439,7 +448,7 @@ public class PlayerMovement : MonoBehaviour
     } 
     private void SpeedControl() 
     {
-        if (activeGrapple) return;
+        if (activeGrapple || isDashing) return;
 
         //Limit velotcity on slope
         if (OnSlope())

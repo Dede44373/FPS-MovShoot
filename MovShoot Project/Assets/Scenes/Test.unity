@@ -777,6 +777,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   senX: 50
   senY: 50
+  cam: {fileID: 532993767}
   orientation: {fileID: 1835679822}
 --- !u!114 &532993765
 MonoBehaviour:
@@ -6797,7 +6798,7 @@ Rigidbody:
   m_GameObject: {fileID: 1765542838}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 10
+  m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -6810,7 +6811,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
@@ -6834,6 +6835,8 @@ MonoBehaviour:
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
   freeze: 0
+  isDashing: 0
+  dashSpeed: 20
   crouchSpeed: 0
   crouchYScale: 0
   maxSlideTime: 0.75
@@ -6845,9 +6848,11 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 131072
+  grounded: 0
   maxSlopAngle: 60
-  cam: {fileID: 532993767}
-  sprintFOV: 10
+  cam: {fileID: 532993764}
+  sprintFOV: 70
+  normalFOV: 60
   orientation: {fileID: 1835679822}
   pg: {fileID: 124811497}
   currentState: 0
@@ -6914,7 +6919,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1770843413}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 81f3c3a06e7135b4d94852c136abd014, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

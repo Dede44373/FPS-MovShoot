@@ -22,7 +22,10 @@ MonoBehaviour:
   addGravity: 1.5
   jumpForce: 27
   jumpCooldown: 0.1
-  dashSpeed: 250
+  dashForce: 25
   dashExitSpeed: 0.4
-  dashTime: 0.1
+  dashUpwardForce: 0
+  dashTime: 0.2
+  dashCd: 0
+  dashCdTimer: -0.0020984977
   baseJumpUses: 2
