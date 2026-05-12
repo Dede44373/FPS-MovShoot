@@ -12,12 +12,7 @@ public class Week7 : MonoBehaviour
         bool passedThrough = RaycastCheck();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    
     void SnapObject()
     {
         transform.position = hitPos;

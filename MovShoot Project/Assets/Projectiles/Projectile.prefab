@@ -156,3 +156,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileAddon
   damage: 2
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295

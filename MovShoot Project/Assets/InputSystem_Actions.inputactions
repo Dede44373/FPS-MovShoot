@@ -34,6 +34,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Ranged Attack",
+                    "type": "Button",
+                    "id": "823619fe-7542-4cfd-9068-257c3956815c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "852140f2-7766-474d-8707-702459ba45f3",
@@ -496,8 +505,8 @@
                 },
                 {
                     "name": "",
-                    "id": "6659251d-d949-4d60-b522-7b9eb643e353",
-                    "path": "<Keyboard>/f",
+                    "id": "6c3116f3-c1ed-4054-aa7a-1a904284c9fa",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -507,12 +516,23 @@
                 },
                 {
                     "name": "",
-                    "id": "122a5d2c-d375-4c86-baa4-3a7250d3ee45",
-                    "path": "<Mouse>/rightButton",
+                    "id": "6659251d-d949-4d60-b522-7b9eb643e353",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Grapple",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a65c5672-e837-4584-b178-6e27cda6b920",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Ranged Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

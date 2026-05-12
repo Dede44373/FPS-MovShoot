@@ -29,11 +29,11 @@ public class PlayerThrow : MonoBehaviour
     private void OnEnable()
     {
         Controls = UserInputManager.Instance.Controls;
-        Controls.Player.Attack.performed += HandleAttackStart;
+        Controls.Player.RangedAttack.performed += HandleAttackStart;
     }
     private void OnDisable()
     {
-        Controls.Player.Attack.performed -= HandleAttackStart;
+        Controls.Player.RangedAttack.performed -= HandleAttackStart;
     }
 
     private void HandleAttackStart(InputAction.CallbackContext ctx)

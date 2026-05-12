@@ -36,6 +36,13 @@ public class PlayerMovement : MonoBehaviour
     public float dashSpeed;
     private float dashTimer;
 
+    private bool keepMomentum;
+    public float dashSpeedChangeFactor;
+
+    public bool useCameraForward = true;
+    public bool allowAllDirections = true;
+    public bool disableGravity = false;
+    public bool resetVel = true;
 
     [Header("Crouching")]
     public float crouchSpeed;
@@ -65,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
     public PlayerCam cam;
     public float sprintFOV;
     public float normalFOV;
+    public Transform playerCam;
     public Transform orientation;
 
     Vector2 moveDirection;
@@ -104,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
 
        if (grounded && !activeGrapple && !isDashing)
         {
-            print("reset to ground drag");
+            //print("reset to ground drag");
             rb.linearDamping = data.groundDrag;
 
         }
@@ -171,9 +179,11 @@ public class PlayerMovement : MonoBehaviour
     {
             Dash();
         ChangeState(MovementState.dashing);
+        speedIncreaseMultiplier = dashSpeedChangeFactor;
       
     }
 
+    #region Dash 
     private void Dash()
     {
         if (data.dashCdTimer >= 0) return;
@@ -184,7 +194,11 @@ public class PlayerMovement : MonoBehaviour
         cam.DoFov(sprintFOV);
         dashTimer = data.dashTime;
 
-        Vector3 forceToApply = orientation.forward * data.dashForce + orientation.up * data.dashUpwardForce;
+        Vector3 forceToApply = calculatedMoveDirection * data.dashForce + orientation.up * data.dashUpwardForce;
+
+        if (disableGravity)
+            rb.useGravity = false;
+
         rb.AddForce(forceToApply, ForceMode.Impulse);
         Invoke(nameof(DelayedDashForce), 0.025f);
         Invoke(nameof(ResetDash), data.dashTime);
@@ -194,7 +208,8 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 delayedForceToApply;
     private void DelayedDashForce()
-    { 
+    {
+     
         rb.AddForce(delayedForceToApply, ForceMode.Impulse);
     }
 
@@ -202,6 +217,9 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("dash endeding");
         isDashing = false;
+
+        if (disableGravity)
+            rb.useGravity = true;
     }
 
 
@@ -217,6 +235,8 @@ public class PlayerMovement : MonoBehaviour
          rb.linearVelocity *= data.dashExitSpeed;
          isDashing = false;
      }*/
+
+    #endregion  
 
     private void StopPlayerSprint(InputAction.CallbackContext ctx)
     {
@@ -355,7 +375,7 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 8f && moveSpeed != 0)
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 3f && moveSpeed != 0)
         {
             StopAllCoroutines();
             StartCoroutine(SmoothlyLerpMoveSpeed());
@@ -365,40 +385,64 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = desiredMoveSpeed;
         }
 
+        bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
+        if(oldState == MovementState.dashing) keepMomentum = true;
+
+        if (desiredMoveSpeedHasChanged)
+        {
+            if (keepMomentum)
+            {
+                StopAllCoroutines();
+                StartCoroutine(SmoothlyLerpMoveSpeed());
+            }
+            else
+            {
+                StopAllCoroutines();
+                moveSpeed = desiredMoveSpeed;
+            }
+        }
+
         lastDesiredMoveSpeed = desiredMoveSpeed;
     }
 
     private IEnumerator SmoothlyLerpMoveSpeed()
     {
+        Debug.Log("Momentum activating");
         // smoothly lerp movementSpeed to desired value
         float time = 0;
         float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
         float startValue = moveSpeed;
 
+        float boostFactor = speedIncreaseMultiplier;
+
         while (time < difference)
         {
-            moveSpeed =Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
 
             if (OnSlope())
             {
+                Debug.Log("Slope Speed increasing");
                 float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
                 float slopeAngleIncrease = 1 + (slopeAngle / 90f);
 
-                time += Time.deltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * slopeAngleIncrease;
+                time += Time.deltaTime * boostFactor * slopeIncreaseMultiplier * slopeAngleIncrease;
             }
             else
-                time += Time.deltaTime * speedIncreaseMultiplier;
+                time += Time.deltaTime * boostFactor;
 
             yield return null;
         }
 
         moveSpeed = desiredMoveSpeed;
+        speedIncreaseMultiplier = 1f;
+        keepMomentum = false;
     }    
  
 
     void MovePlayer()
     {
         if (activeGrapple) return;
+        
 
 
         calculatedMoveDirection = GetMoveDirection();
