@@ -17,6 +17,8 @@ public class PlayerGrapple : MonoBehaviour
     public float grappleDelayTime;
     public float overshootYAxis;
 
+    public float grappleCount;
+
     private Vector3 grapplePoint;
 
     [Header("Cooldown")]
@@ -64,56 +66,61 @@ public class PlayerGrapple : MonoBehaviour
 
     private void StartGrapple()
     {
-
+        
         if (grapplingCdTimer > 0) return;
-
-        Debug.Log("Check Grapple");
-
-        grappling = true;
-
-        pm.freeze = true;
-
-        RaycastHit hit;
-        if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance, grappleable))
+        if (grappleCount >= 1)
         {
-            grapplePoint = hit.point;
+            grappleCount--;
+            Debug.Log("Check Grapple");
 
-            Invoke(nameof(ExecuteGrapple), grappleDelayTime);
-            Debug.Log("Start Grapple");
+            grappling = true;
+            pm.freeze = true;
+
+            RaycastHit hit;
+            if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance, grappleable))
+            {
+                grapplePoint = hit.point;
+
+                Invoke(nameof(ExecuteGrapple), grappleDelayTime);
+                Debug.Log("Start Grapple");
+            }
+            else
+            {
+                grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+
+                Invoke(nameof(StopGrapple), grappleDelayTime);
+                Debug.Log("Grapple Fail");
+            }
+
+            lr.enabled = true;
+            lr.SetPosition(1, grapplePoint);
         }
-        else
-        {
-            grapplePoint = cam.position + cam.forward * maxGrappleDistance;
-
-            Invoke(nameof(StopGrapple), grappleDelayTime);
-            Debug.Log("Grapple Fail");
-        }
-
-        lr.enabled = true;
-        lr.SetPosition(1, grapplePoint);
     }
 
     private void ExecuteGrapple()
     {
         pm.freeze = false;
 
-        Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
+        if (pm.isDashing == true) return;
+        else
+        {
+            Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
 
-        float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
-        float highestPointOnArc = grapplePointRelativeYPos + overshootYAxis;
+            float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
+            float highestPointOnArc = grapplePointRelativeYPos + overshootYAxis;
 
-        if (grapplePointRelativeYPos < 0) highestPointOnArc = overshootYAxis;
+            if (grapplePointRelativeYPos < 0) highestPointOnArc = overshootYAxis;
 
-        pm.JumpToPosition(grapplePoint, highestPointOnArc);
+            pm.JumpToPosition(grapplePoint, highestPointOnArc);
 
-        Invoke(nameof(StopGrapple), 1f);
+            Invoke(nameof(StopGrapple), 1f);
+        }
     }
 
     public void StopGrapple()
     {
         Debug.Log("Stop Grapple");
-        pm.freeze = false; 
-
+        pm.freeze = false;
         grappling = false;
 
         grapplingCdTimer = grapplingCd;

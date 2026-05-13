@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     public float speedIncreaseMultiplier;
     public float slopeIncreaseMultiplier;
 
-    bool readyToJump = true;
+    public bool readyToJump = true;
     int currentJump = 0;
 
     public bool freeze;
@@ -58,6 +58,8 @@ public class PlayerMovement : MonoBehaviour
 
     public bool sliding = false;
     public Transform playerObj;
+
+    [Header("Grappling")]
 
     [Header("Ground Check")]
     public float playerHeight;
@@ -190,6 +192,7 @@ public class PlayerMovement : MonoBehaviour
         else data.dashCdTimer = data.dashCd;
             Debug.Log("Dash started");
 
+        new Vector3(0, 0, 0);
         isDashing = true;
         cam.DoFov(sprintFOV);
         dashTimer = data.dashTime;
@@ -315,7 +318,7 @@ public class PlayerMovement : MonoBehaviour
     // Jumping
     private void PlayerJump(InputAction.CallbackContext ctx)
     {
-
+        Debug.Log("spacebar pressed");
         if (readyToJump && currentJump < data.baseJumpUses)
         {
             readyToJump = false;
@@ -348,6 +351,14 @@ public class PlayerMovement : MonoBehaviour
             rb.linearDamping = data.airDrag;
             currentState = MovementState.air;
         }
+
+        //reset Grapple
+        if (grounded == true)
+        {
+            pg.grappleCount = 1;
+        }
+        if (pg.grappling == true)
+            currentJump = 1;
     }
 
     void gravityControl()
@@ -541,7 +552,6 @@ public class PlayerMovement : MonoBehaviour
     public void JumpToPosition(Vector3 targetPosition,float trajectoryHeight)
     {
         activeGrapple = true;
-
         velocityToSet = CalculateJumpVelocity(transform.position, targetPosition , trajectoryHeight);
         Invoke(nameof(SetVelocity), 0.1f);
 
