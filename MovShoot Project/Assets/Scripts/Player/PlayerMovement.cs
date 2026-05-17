@@ -71,6 +71,9 @@ public class PlayerMovement : MonoBehaviour
     private bool exitingSlope;
     private RaycastHit slopeHit;
 
+    [Header("Particles")]
+    public ParticleSystem stepPart;
+
     public PlayerCam cam;
     public float sprintFOV;
     public float normalFOV;
@@ -80,6 +83,9 @@ public class PlayerMovement : MonoBehaviour
     Vector2 moveDirection;
     Vector3 calculatedMoveDirection;
 
+    public PhysicsMaterial slideMat;
+    public PhysicsMaterial groundMat;
+    public Collider col;
     Rigidbody rb;
     public PlayerGrapple pg;
 
@@ -348,6 +354,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (!grounded && currentState != MovementState.air) // Runs upon leaving the ground 
         {
+            col.sharedMaterial = slideMat;
             rb.linearDamping = data.airDrag;
             currentState = MovementState.air;
         }
@@ -356,6 +363,7 @@ public class PlayerMovement : MonoBehaviour
         if (grounded == true)
         {
             pg.grappleCount = 1;
+            col.sharedMaterial = groundMat;
         }
         if (pg.grappling == true)
             currentJump = 1;

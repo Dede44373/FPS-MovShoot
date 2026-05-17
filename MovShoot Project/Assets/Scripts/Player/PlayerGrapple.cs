@@ -43,6 +43,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private void OnEnable()
     {
+        lr.enabled = false;
         controls = UserInputManager.Instance.Controls;
         controls.Player.Grapple.performed += HandleGrappleStart;
         controls.Player.Grapple.canceled += HandleGrappleStop;

@@ -7,6 +7,7 @@ public class ProjectileAddon : MonoBehaviour
     public PlayerCam cam;
     private Rigidbody rb;
     GameObject raycastObj;
+    public Collider col;
 
     [SerializeField] int damage;
     private bool targetHit;
