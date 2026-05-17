@@ -7,6 +7,7 @@ public class BasicEnemy : MonoBehaviour
 
     public void TakeDamage (int damage)
     {
+        Debug.Log("Enemy Damaged" + health);
         health -= damage;
 
         if(health <= 0 )

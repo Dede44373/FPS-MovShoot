@@ -8,7 +8,7 @@ public class ProjectileAddon : MonoBehaviour
     private Rigidbody rb;
     GameObject raycastObj;
 
-    public int damage;
+    [SerializeField] int damage;
     private bool targetHit;
     private bool moving;
 
@@ -86,9 +86,6 @@ public class ProjectileAddon : MonoBehaviour
             BasicEnemy enemy = collision.gameObject.GetComponent<BasicEnemy>();
 
             enemy.TakeDamage(damage);
-
-            Destroy(gameObject);
-
             transform.SetParent(collision.transform);
         }
 

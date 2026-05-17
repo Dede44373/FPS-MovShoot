@@ -104,7 +104,7 @@ public class PlayerGrapple : MonoBehaviour
         if (pm.isDashing == true) return;
         else
         {
-            Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
+            Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y -1, transform.position.z);
 
             float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
             float highestPointOnArc = grapplePointRelativeYPos + overshootYAxis;
