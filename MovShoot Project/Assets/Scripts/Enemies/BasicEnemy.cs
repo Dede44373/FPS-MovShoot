@@ -27,22 +27,30 @@ public class BasicEnemy : MonoBehaviour
 
         if(health <= 0 )
         {
-            FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
-            deathPart.Play();
-            Destroy(gameObject);
+            Die();
         }
 
     }
 
+    private void Die()
+    {
+
+            GetComponent<LootBag>().InstantiateLoot(transform.position); 
+
+            FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
+            deathPart.Play();
+            Destroy(gameObject);
+
+    }
     private IEnumerator Invulnerability()
     {
 
         //invulnerability duration
         for (int i = 0; i < numberOfFlashes; i++)
         {
-            spriteRend.color = new Color(1, 0.8f, 0.8f, 0.9f);
+            //spriteRend.color = new Color(1, 0.8f, 0.8f, 0.9f);
             yield return new WaitForSeconds(0.01f);
-            spriteRend.color = Color.white;
+            //spriteRend.color = Color.white;
             yield return new WaitForSeconds(0.01f);
         }
         StopAllCoroutines();
