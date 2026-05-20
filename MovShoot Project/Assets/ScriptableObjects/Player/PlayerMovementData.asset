@@ -15,17 +15,17 @@ MonoBehaviour:
   walkSpeed: 15
   sprintSpeed: 22
   airControlModifier: 4
-  groundControlModifier: 10
-  groundDrag: 10
+  groundControlModifier: 8
+  groundDrag: 8
   airDrag: 4
   slideDrag: 0
   addGravity: 1.5
   jumpForce: 27
   jumpCooldown: 0.1
-  dashForce: 30
+  dashForce: 20
   dashExitSpeed: 0.4
   dashUpwardForce: 0
   dashTime: 0.2
-  dashCd: 0.3
-  dashCdTimer: -0.0028873961
+  dashCd: 0.5
+  dashCdTimer: -0.0051178792
   baseJumpUses: 2

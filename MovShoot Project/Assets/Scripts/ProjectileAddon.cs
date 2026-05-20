@@ -49,9 +49,9 @@ public class ProjectileAddon : MonoBehaviour
 
     bool RaycastCheck()
     {
-        Debug.DrawRay(transform.position, hitPos);
+        Debug.DrawRay(transform.position, transform.up * 100f);
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(transform.position, transform.up, out hit, Mathf.Infinity, layerMask))
         {
             raycastObj = hit.collider.gameObject;
             hitPos = hit.point;

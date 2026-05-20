@@ -8,6 +8,8 @@ public class PlayerAttack : MonoBehaviour
     private Animator anim;
     public UserInputs Controls;
     [SerializeField] private Collider coll;
+    private WaitForSeconds ad;
+    public float attackDelay = 0.5f;
 
     [SerializeField] int damage;
     private bool targetHit;
@@ -18,6 +20,7 @@ public class PlayerAttack : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        ad = new WaitForSeconds(attackDelay);
     }
 
     // Update is called once per frame
@@ -53,9 +56,8 @@ public class PlayerAttack : MonoBehaviour
     {
         inAttack = true;
         anim.SetTrigger("Attack");
-        yield return new WaitForSeconds(0.5f);
+        yield return ad;
         inAttack = false;
-        StopCoroutine(Attacking());
     }
 
     public void EnableWeaponCollider()

@@ -62,6 +62,7 @@ public class PlayerThrow : MonoBehaviour
 
         // get rigidbody component
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+        projectile.transform.rotation *= Quaternion.Euler(90f, 0, 0);
 
         // calculate direction
         Vector3 forceDirection = cam.transform.forward;

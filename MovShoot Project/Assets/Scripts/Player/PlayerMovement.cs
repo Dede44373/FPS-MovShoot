@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
     public PhysicsMaterial slideMat;
     public PhysicsMaterial groundMat;
     public Collider col;
-    Rigidbody rb;
+    public Rigidbody rb;    
     public PlayerGrapple pg;
 
     public MovementState currentState;
@@ -118,6 +118,8 @@ public class PlayerMovement : MonoBehaviour
         stateHandler();
         gravityControl();
 
+        if(grounded && currentJump > 0)
+            currentJump = 0;
        if (grounded && !activeGrapple && !isDashing)
         {
             //print("reset to ground drag");
@@ -325,6 +327,7 @@ public class PlayerMovement : MonoBehaviour
     private void PlayerJump(InputAction.CallbackContext ctx)
     {
         Debug.Log("spacebar pressed");
+        print($"{readyToJump}, {currentJump}, {data.baseJumpUses},is current jump lower than baseJumpUses:{currentJump < data.baseJumpUses}");
         if (readyToJump && currentJump < data.baseJumpUses)
         {
             readyToJump = false;
@@ -369,11 +372,11 @@ public class PlayerMovement : MonoBehaviour
             currentJump = 1;
     }
 
+    
     void gravityControl()
     { 
-        if (!OnSlope() && !grounded)
+        if (!OnSlope() && !grounded && rb.useGravity)
             rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
-
 
     }
     void stateHandler()
@@ -500,7 +503,7 @@ public class PlayerMovement : MonoBehaviour
                 rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.airControlModifier, ForceMode.Force);
 
             //turn gravity off while on slope
-            rb.useGravity = !OnSlope();
+            //rb.useGravity = !OnSlope();
 
 
             // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
@@ -561,7 +564,7 @@ public class PlayerMovement : MonoBehaviour
     {
         activeGrapple = true;
         velocityToSet = CalculateJumpVelocity(transform.position, targetPosition , trajectoryHeight);
-        Invoke(nameof(SetVelocity), 0.1f);
+        Invoke(nameof(SetVelocity), 0f);
 
         Invoke(nameof(ResetRestrictions), 3f);
     }
@@ -612,7 +615,7 @@ public class PlayerMovement : MonoBehaviour
     {
         float gravity = Physics.gravity.y;
         float displacementY = endPoint.y - startPoint.y;
-        Vector3 displacementXZ = new Vector3(0f, 0f, 0f);
+        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
 
         Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
         Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity)
