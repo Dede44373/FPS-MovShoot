@@ -27,5 +27,5 @@ MonoBehaviour:
   dashUpwardForce: 0
   dashTime: 0.2
   dashCd: 0.5
-  dashCdTimer: -0.0051178792
+  dashCdTimer: -0.002247878
   baseJumpUses: 2

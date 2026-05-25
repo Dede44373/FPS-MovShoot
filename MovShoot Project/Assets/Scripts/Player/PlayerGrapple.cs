@@ -40,8 +40,11 @@ public class PlayerGrapple : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(grappling == true)
+        if (grappling == true)
+        {
             lr.SetPosition(0, gunTip.position);
+            lr.SetPosition(1, grapplePoint);
+        }
     }
 
     private void OnEnable()
@@ -98,6 +101,7 @@ public class PlayerGrapple : MonoBehaviour
             }
 
             lr.enabled = true;
+            lr.positionCount = 2;
             lr.SetPosition(1, grapplePoint);
         }
     }
@@ -141,7 +145,7 @@ public class PlayerGrapple : MonoBehaviour
         {
             Vector3 Direction = (Destination - pm.transform.position).normalized;
             pm.rb.AddForce(Direction * 100f, ForceMode.Force);
-            pm.rb.AddForce(-Physics.gravity/2 * pm.rb.mass, ForceMode.Force);
+            pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
             Distance = Vector3.Distance(pm.transform.position, Destination);
             yield return null;
         }
@@ -160,7 +164,7 @@ public class PlayerGrapple : MonoBehaviour
 
         grapplingCdTimer = grapplingCd;
 
-        lr.enabled = false;
+        lr.positionCount = 0;
     }
 
     private void OnDrawGizmos()

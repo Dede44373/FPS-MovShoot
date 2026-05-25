@@ -13,8 +13,8 @@ public class PlayerMovement : MonoBehaviour
     private float moveSpeed;
     public float slideSpeed;
     public float firstJump;
-   
 
+    public float swingSpeed;
 
     public float desiredMoveSpeed;
     private float lastDesiredMoveSpeed;
@@ -97,10 +97,12 @@ public class PlayerMovement : MonoBehaviour
         sprinting,
         sliding,
         dashing,
+        swinging,
         air,
         freeze
     }
 
+    public bool swinging;
     private void Start()
     {
         //pg = GetComponent<PlayerGrapple>();
@@ -120,13 +122,13 @@ public class PlayerMovement : MonoBehaviour
 
         if(grounded && currentJump > 0)
             currentJump = 0;
-       if (grounded && !activeGrapple && !isDashing)
+       if (grounded && !activeGrapple && !isDashing && !swinging)
         {
             //print("reset to ground drag");
             rb.linearDamping = data.groundDrag;
 
         }
-        else if (activeGrapple == true || isDashing == true)
+        else if (activeGrapple == true || isDashing == true || swinging == true)
             rb.linearDamping = 0;
 
        if(data.dashCdTimer >= 0)
@@ -188,8 +190,6 @@ public class PlayerMovement : MonoBehaviour
     private void PlayerSprint(InputAction.CallbackContext ctx)
     {
             Dash();
-        ChangeState(MovementState.dashing);
-        speedIncreaseMultiplier = dashSpeedChangeFactor;
       
     }
 
@@ -197,13 +197,12 @@ public class PlayerMovement : MonoBehaviour
     private void Dash()
     {
         if (data.dashCdTimer >= 0) return;
-        else data.dashCdTimer = data.dashCd;
-            Debug.Log("Dash started");
+        data.dashCdTimer = data.dashCd;
 
-        new Vector3(0, 0, 0);
         isDashing = true;
+        desiredMoveSpeed = dashSpeed;
+        keepMomentum = false;
         cam.DoFov(sprintFOV);
-        dashTimer = data.dashTime;
 
         Vector3 forceToApply = calculatedMoveDirection * data.dashForce + orientation.up * data.dashUpwardForce;
 
@@ -211,10 +210,7 @@ public class PlayerMovement : MonoBehaviour
             rb.useGravity = false;
 
         rb.AddForce(forceToApply, ForceMode.Impulse);
-        Invoke(nameof(DelayedDashForce), 0.025f);
         Invoke(nameof(ResetDash), data.dashTime);
-
-       // StartCoroutine(DashRoutine());
     }
 
     private Vector3 delayedForceToApply;
@@ -226,8 +222,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void ResetDash()
     {
-        Debug.Log("dash endeding");
         isDashing = false;
+        keepMomentum = true;
+        desiredMoveSpeed = data.walkSpeed;
+        cam.DoFov(normalFOV);
 
         if (disableGravity)
             rb.useGravity = true;
@@ -251,11 +249,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void StopPlayerSprint(InputAction.CallbackContext ctx)
     {
-        //Mode - Walking
-        //isDashing = false ;
-        ChangeState(MovementState.walking);
-        desiredMoveSpeed = data.walkSpeed;
-        cam.DoFov(normalFOV);
+
     }
 
     //Sliding
@@ -385,40 +379,36 @@ public class PlayerMovement : MonoBehaviour
         {
             currentState = MovementState.dashing;
             desiredMoveSpeed = dashSpeed;
-
-
         }
-        // Mode - Freeze 
+
         if (freeze)
         {
             currentState = MovementState.freeze;
             moveSpeed = 0;
             rb.linearVelocity = Vector3.zero;
-
         }
-
-        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 3f && moveSpeed != 0)
+        else if (swinging)
         {
-            StopAllCoroutines();
-            StartCoroutine(SmoothlyLerpMoveSpeed());
-        }
-        else
-        {
-            moveSpeed = desiredMoveSpeed;
+            currentState = MovementState.swinging;
+            moveSpeed = swingSpeed;
         }
 
         bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
-        if(oldState == MovementState.dashing) keepMomentum = true;
+        if (oldState == MovementState.dashing) keepMomentum = true;
+
+        Debug.Log($"desiredMoveSpeed: {desiredMoveSpeed}, lastDesiredMoveSpeed: {lastDesiredMoveSpeed}, keepMomentum: {keepMomentum}, oldState: {oldState}, changed: {desiredMoveSpeedHasChanged}");
 
         if (desiredMoveSpeedHasChanged)
         {
             if (keepMomentum)
             {
+                Debug.Log("Starting smooth lerp");
                 StopAllCoroutines();
                 StartCoroutine(SmoothlyLerpMoveSpeed());
             }
             else
             {
+                Debug.Log("Snapping speed");
                 StopAllCoroutines();
                 moveSpeed = desiredMoveSpeed;
             }
@@ -426,7 +416,6 @@ public class PlayerMovement : MonoBehaviour
 
         lastDesiredMoveSpeed = desiredMoveSpeed;
     }
-
     private IEnumerator SmoothlyLerpMoveSpeed()
     {
         Debug.Log("Momentum activating");
@@ -464,8 +453,9 @@ public class PlayerMovement : MonoBehaviour
     void MovePlayer()
     {
         if (activeGrapple) return;
-        
 
+        if (swinging) return;
+      
 
         calculatedMoveDirection = GetMoveDirection();
 
@@ -514,13 +504,13 @@ public class PlayerMovement : MonoBehaviour
     } 
     private void SpeedControl() 
     {
-        if (activeGrapple || isDashing) return;
+        if (activeGrapple || isDashing || currentState == MovementState.swinging) return;
 
         //Limit velotcity on slope
-        if (OnSlope())
+        if (OnSlope() && !exitingSlope)
         {
-            if (rb.linearVelocity.magnitude > desiredMoveSpeed)
-                rb.linearVelocity = rb.linearVelocity.normalized * desiredMoveSpeed;
+            if (rb.linearVelocity.magnitude > moveSpeed)
+                rb.linearVelocity = rb.linearVelocity.normalized * moveSpeed;
         }
 
         //limit velocity when needed
