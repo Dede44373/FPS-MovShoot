@@ -7377,13 +7377,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 856409216}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 55.42, y: 27.500002, z: -78.2}
+  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 55.8, y: 29.27, z: -84.83}
   m_LocalScale: {x: 14.900678, y: 0.2483839, z: 16.76099}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 660492102}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 90}
 --- !u!1 &882772061
 GameObject:
   m_ObjectHideFlags: 0
@@ -7746,7 +7746,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1048632774}
-  m_Material: {fileID: 13400000, guid: c343e60e1ecefa1429ec60e886f4543b, type: 2}
+  m_Material: {fileID: 13400000, guid: aa696caf391a57040b04b2091794e508, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -9010,7 +9010,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 655360
   grounded: 1
-  maxSlopAngle: 60
+  maxSlopAngle: 50
   stepPart: {fileID: 0}
   cam: {fileID: 532993764}
   sprintFOV: 90

@@ -110,28 +110,17 @@ public class PlayerGrapple : MonoBehaviour
     private void ExecuteGrapple()
     {
         pm.freeze = false;
+        pm.isDashing = false; // force end any ongoing dash
+        CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
 
-        if (pm.isDashing == true) return;
+        if (HasLayerMask(detectedGO, grappleable))
+        {
+            MoveToDestination(grapplePoint);
+            Invoke(nameof(StopGrapple), 1f);
+        }
         else
         {
-            if (HasLayerMask(detectedGO, grappleable))
-            {
-                
-                Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y -1, transform.position.z);
-
-                float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
-                float highestPointOnArc = grapplePointRelativeYPos + overshootYAxis;
-
-                if (grapplePointRelativeYPos < 0) highestPointOnArc = overshootYAxis;
-                //pm.JumpToPosition(grapplePoint, highestPointOnArc);
-                MoveToDestination(grapplePoint);
-
-                Invoke(nameof(StopGrapple), 1f);
-            }
-            else
-            {
-                StopGrapple();
-            }
+            StopGrapple();
         }
     }
 

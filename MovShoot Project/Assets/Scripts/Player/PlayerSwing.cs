@@ -102,6 +102,7 @@ public class PlayerSwing : MonoBehaviour
     // 1. projectiles not sticking and going through enemies
     // 2. moon jumps with grapple on slope
     // 3. cant cancel grapple with dash
+    // 4. After sliding wont return to walking if not holding sprint, just defaults to sprinting
 
     // if(hit.transform.position.x < transform.position.x)
     // {StopSwinging()}

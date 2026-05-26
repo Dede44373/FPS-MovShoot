@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using Unity.VisualScripting;
@@ -24,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool readyToJump = true;
     int currentJump = 0;
+    public bool inAir;
 
     public bool freeze;
     private bool enableMovementOnNextTouch;
@@ -189,6 +191,7 @@ public class PlayerMovement : MonoBehaviour
     //Sprinting
     private void PlayerSprint(InputAction.CallbackContext ctx)
     {
+        if (sliding) return;             
             Dash();
       
     }
@@ -220,13 +223,20 @@ public class PlayerMovement : MonoBehaviour
         rb.AddForce(delayedForceToApply, ForceMode.Impulse);
     }
 
-    private void ResetDash()
+    public void ResetDash()
     {
         isDashing = false;
         keepMomentum = true;
-        desiredMoveSpeed = data.walkSpeed;
         cam.DoFov(normalFOV);
-
+        if(Controls.Player.Sprint.IsPressed())
+        {
+            desiredMoveSpeed = data.sprintSpeed;
+            cam.DoFov(sprintFOV);
+        }
+        else
+        {
+            desiredMoveSpeed = data.walkSpeed;
+        }
         if (disableGravity)
             rb.useGravity = true;
     }
@@ -249,7 +259,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void StopPlayerSprint(InputAction.CallbackContext ctx)
     {
-
+        if (!sliding)
+        {
+            desiredMoveSpeed = data.walkSpeed;
+            ChangeState(MovementState.walking);
+            cam.DoFov(normalFOV);
+        }
     }
 
     //Sliding
@@ -264,7 +279,7 @@ public class PlayerMovement : MonoBehaviour
             if (OnSlope() && rb.linearVelocity.y < 0.1f)
                 desiredMoveSpeed = slideSpeed;
             else
-                desiredMoveSpeed = data.sprintSpeed;
+                desiredMoveSpeed = slideSpeed;
 
         }
     }
@@ -342,6 +357,7 @@ public class PlayerMovement : MonoBehaviour
         if (grounded && currentState == MovementState.air) // Runs upon landing from air
         {
             currentJump = 0;
+            inAir = false;
 
             if (!isDashing)
             {
@@ -351,6 +367,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (!grounded && currentState != MovementState.air) // Runs upon leaving the ground 
         {
+            inAir = true;
             col.sharedMaterial = slideMat;
             rb.linearDamping = data.airDrag;
             currentState = MovementState.air;
@@ -362,7 +379,7 @@ public class PlayerMovement : MonoBehaviour
             pg.grappleCount = 1;
             col.sharedMaterial = groundMat;
         }
-        if (pg.grappling == true)
+        if (pg.grappling == true || swinging == true)
             currentJump = 1;
     }
 
@@ -390,13 +407,13 @@ public class PlayerMovement : MonoBehaviour
         else if (swinging)
         {
             currentState = MovementState.swinging;
-            moveSpeed = swingSpeed;
+            swingSpeed = moveSpeed;
         }
 
         bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
         if (oldState == MovementState.dashing) keepMomentum = true;
 
-        Debug.Log($"desiredMoveSpeed: {desiredMoveSpeed}, lastDesiredMoveSpeed: {lastDesiredMoveSpeed}, keepMomentum: {keepMomentum}, oldState: {oldState}, changed: {desiredMoveSpeedHasChanged}");
+        //Debug.Log($"desiredMoveSpeed: {desiredMoveSpeed}, lastDesiredMoveSpeed: {lastDesiredMoveSpeed}, keepMomentum: {keepMomentum}, oldState: {oldState}, changed: {desiredMoveSpeedHasChanged}");
 
         if (desiredMoveSpeedHasChanged)
         {
@@ -447,61 +464,29 @@ public class PlayerMovement : MonoBehaviour
         moveSpeed = desiredMoveSpeed;
         speedIncreaseMultiplier = 1f;
         keepMomentum = false;
-    }    
- 
+    }
+
 
     void MovePlayer()
     {
         if (activeGrapple) return;
-
         if (swinging) return;
-      
 
         calculatedMoveDirection = GetMoveDirection();
 
-        switch (currentState)
-        {
-            case MovementState.walking:
-                break;
-        }
         if (sliding)
             SlidingMovement();
 
-        if (OnSlope())
+        if (OnSlope() && !exitingSlope)
             rb.AddForce(GetSlopeMoveDirection(calculatedMoveDirection) * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
-
-        if (grounded)
-            rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
-
-        else
+        else if (grounded)
         {
-
-            calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
-
-            if (OnSlope() && !exitingSlope)
-            {
-                rb.AddForce(GetSlopeMoveDirection(calculatedMoveDirection) * desiredMoveSpeed * 20f, ForceMode.Force);
-
-              //  if (rb.linearVelocity.y > 0)
-                  //  rb.AddForce(Vector3.down * 80f, ForceMode.Force);
-            }
-
-            else if (grounded && !isDashing)
-                rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
-
-            else if (!grounded && !isDashing)
-                rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.airControlModifier, ForceMode.Force);
-
-            //turn gravity off while on slope
-            //rb.useGravity = !OnSlope();
-
-
-            // calculatedMoveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-            //  rb.AddForce(calculatedMoveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-            // calculate movement direction
-
+            rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
+            //Debug.Log($"applying force: {calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier}, moveDir: {calculatedMoveDirection}, grounded: {grounded}");
         }
-    } 
+        else if (!isDashing)
+            rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.airControlModifier, ForceMode.Force);
+    }
     private void SpeedControl() 
     {
         if (activeGrapple || isDashing || currentState == MovementState.swinging) return;
@@ -585,15 +570,12 @@ public class PlayerMovement : MonoBehaviour
 
     public bool OnSlope()
     {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f ))
+        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, playerHeight * 0.5f))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             return angle < maxSlopAngle && angle != 0;
-
         }
-
         return false;
-
     }
     public Vector3 GetSlopeMoveDirection(Vector3 direction) 
     {

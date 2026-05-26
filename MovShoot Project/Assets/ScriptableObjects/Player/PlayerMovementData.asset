@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 553461c1d2966274fae489c3c95043bd, type: 3}
   m_Name: PlayerMovementData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementData
-  walkSpeed: 15
-  sprintSpeed: 22
+  walkSpeed: 20
+  sprintSpeed: 28
   airControlModifier: 4
   groundControlModifier: 8
   groundDrag: 8
@@ -26,6 +26,6 @@ MonoBehaviour:
   dashExitSpeed: 0.4
   dashUpwardForce: 0
   dashTime: 0.2
-  dashCd: 0.5
-  dashCdTimer: -0.002247878
+  dashCd: 0.65
+  dashCdTimer: -0.00029911334
   baseJumpUses: 2
