@@ -654,6 +654,7 @@ MonoBehaviour:
   grappleCount: 0
   grapplingCd: 1
   grappling: 0
+  freezePlayer: 0
 --- !u!114 &124811498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9028,6 +9029,7 @@ MonoBehaviour:
   normalFOV: 80
   playerCam: {fileID: 1835679822}
   orientation: {fileID: 1835679822}
+  calculatedMoveDirection: {x: 0, y: 0, z: 0}
   slideMat: {fileID: 13400000, guid: 3275331b3900a3448abcf58b29dd4a86, type: 2}
   groundMat: {fileID: 13400000, guid: 81f3c3a06e7135b4d94852c136abd014, type: 2}
   col: {fileID: 1770843415}
@@ -9922,7 +9924,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}

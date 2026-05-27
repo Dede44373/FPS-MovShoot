@@ -31,6 +31,8 @@ public class PlayerGrapple : MonoBehaviour
 
     public bool grappling;
 
+    public bool freezePlayer;
+
     // Update is called once per frame
     void Update()
     {
@@ -85,6 +87,7 @@ public class PlayerGrapple : MonoBehaviour
 
             grappling = true;
             pm.freeze = true;
+            freezePlayer = true;
 
             RaycastHit hit;
             if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance))
@@ -123,6 +126,7 @@ public class PlayerGrapple : MonoBehaviour
     private void ExecuteGrapple()
     {
         pm.freeze = false;
+        freezePlayer = false;
         pm.isDashing = false; // force end any ongoing dash
         CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
         MoveToDestination(grapplePoint);
@@ -154,6 +158,7 @@ public class PlayerGrapple : MonoBehaviour
     {
         Debug.Log("Stop Grapple");
         pm.freeze = false;
+        freezePlayer = false;
         grappling = false;
 
         grapplingCdTimer = grapplingCd;

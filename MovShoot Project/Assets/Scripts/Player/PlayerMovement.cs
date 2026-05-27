@@ -88,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform orientation;
 
     Vector2 moveDirection;
-    Vector3 calculatedMoveDirection;
+    public Vector3 calculatedMoveDirection;
 
     public PhysicsMaterial slideMat;
     public PhysicsMaterial groundMat;
@@ -142,6 +142,11 @@ public class PlayerMovement : MonoBehaviour
        if(data.dashCdTimer >= 0)
             data.dashCdTimer -= Time.deltaTime;
 
+        //if (moveSpeed == 0)
+        //{
+        //    desiredMoveSpeed = data.walkSpeed;
+        //    moveSpeed = desiredMoveSpeed;
+        //}
     }
     private void FixedUpdate()
     {
@@ -457,6 +462,11 @@ public class PlayerMovement : MonoBehaviour
             swingSpeed = moveSpeed;
         }
 
+        if (!freeze && moveSpeed == 0)
+        {
+            moveSpeed = data.walkSpeed;
+        }
+
         bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
         if (oldState == MovementState.dashing) keepMomentum = true;
 
@@ -536,6 +546,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void SpeedControl() 
     {
+
         if (activeGrapple || isDashing || currentState == MovementState.swinging) return;
 
         //Limit velotcity on slope
@@ -617,7 +628,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool OnSlope()
     {
-        if (SlopeIncoming)
+        if (SlopeIncoming && grounded)
         {
             return true;
         }
