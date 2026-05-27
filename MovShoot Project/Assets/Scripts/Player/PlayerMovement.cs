@@ -1,6 +1,7 @@
+using DG.Tweening;
+using NUnit.Framework.Internal;
 using System;
 using System.Collections;
-using DG.Tweening;
 using Unity.VisualScripting;
 using Unity.XR.Oculus.Input;
 using UnityEngine;
@@ -8,6 +9,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public float slopeyAngle;
+    public bool SlopeIncoming = false;
+    private RaycastHit Test2;
+
     [SerializeField] private PlayerMovementData data;
 
     [Header("Movement")]
@@ -121,6 +126,7 @@ public class PlayerMovement : MonoBehaviour
         GroundDetection();
         stateHandler();
         gravityControl();
+        PredictSlope();
 
         if(grounded && currentJump > 0)
             currentJump = 0;
@@ -142,6 +148,33 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
+    void PredictSlope()
+    {
+        Vector3 ForwardValue = playerCam.transform.forward * moveDirection.y;
+
+        Vector3 RightValue = playerCam.transform.right * moveDirection.x;
+        Vector3 Direction3D = ForwardValue + RightValue;
+
+        if (Physics.Raycast(transform.position + Direction3D, Vector3.down, out Test2, playerHeight * 0.5f + 10f, whatIsGround))
+        {
+            print(Test2.transform.name);
+            float angle = Vector3.Angle(Vector3.up, Test2.normal);
+            slopeyAngle = angle;
+
+            SlopeIncoming = slopeyAngle < 60f;
+        }
+        else
+        {
+            if (SlopeIncoming)
+            {
+                SlopeIncoming = false;
+            }
+        }
+
+        Debug.DrawRay(transform.position + Direction3D, Vector3.down * playerHeight * 0.5f, Color.blue);
+
+
+    }
     #region Input Subscribing
 
     private void OnEnable()
@@ -180,6 +213,8 @@ public class PlayerMovement : MonoBehaviour
     private void HandleMoveStart(InputAction.CallbackContext ctx)
     {
         moveDirection = ctx.ReadValue<Vector2>();
+
+
         //calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
     }
     // Walking
@@ -193,6 +228,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (sliding) return;             
             Dash();
+        
       
     }
 
@@ -230,6 +266,7 @@ public class PlayerMovement : MonoBehaviour
         cam.DoFov(normalFOV);
         if(Controls.Player.Sprint.IsPressed())
         {
+            ChangeState(MovementState.sprinting);
             desiredMoveSpeed = data.sprintSpeed;
             cam.DoFov(sprintFOV);
         }
@@ -270,6 +307,7 @@ public class PlayerMovement : MonoBehaviour
     //Sliding
     private void HandleSlideStart(InputAction.CallbackContext ctx)
     {
+        gravityControl();
         if (GetMoveDirection() != Vector3.zero)
             StartSlide();
         if (sliding)
@@ -286,6 +324,7 @@ public class PlayerMovement : MonoBehaviour
     private void HandleSlideStop(InputAction.CallbackContext ctx)
     {
         StopSlide();
+       
     }
 
     private void StartSlide()
@@ -328,7 +367,14 @@ public class PlayerMovement : MonoBehaviour
         ChangeState(MovementState.walking);
         transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
         rb.linearDamping = data.groundDrag;
-        // moveSpeed = data.walkSpeed;
+        //if (Controls.Player.Sprint.IsPressed())
+        //{
+        //    desiredMoveSpeed = data.sprintSpeed;
+        //}
+        //else
+        //{
+        //    desiredMoveSpeed = data.walkSpeed;
+        //}
 
     }
 
@@ -378,6 +424,7 @@ public class PlayerMovement : MonoBehaviour
         {
             pg.grappleCount = 1;
             col.sharedMaterial = groundMat;
+           
         }
         if (pg.grappling == true || swinging == true)
             currentJump = 1;
@@ -570,15 +617,26 @@ public class PlayerMovement : MonoBehaviour
 
     public bool OnSlope()
     {
-        if (Physics.SphereCast(transform.position, 0.3f, Vector3.down, out slopeHit, playerHeight * 0.5f))
+        if (SlopeIncoming)
+        {
+            return true;
+        }
+
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 10f, whatIsGround))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            //slopeyAngle = angle;
             return angle < maxSlopAngle && angle != 0;
         }
         return false;
     }
     public Vector3 GetSlopeMoveDirection(Vector3 direction) 
     {
+        if (SlopeIncoming)
+        {
+            return Vector3.ProjectOnPlane(direction, Test2.normal).normalized;
+        }
+
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
 

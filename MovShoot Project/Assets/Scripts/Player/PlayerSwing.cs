@@ -16,6 +16,18 @@ public class PlayerSwing : MonoBehaviour
     private Vector3 swingPoint;
     private SpringJoint joint;
 
+    [Header("Swing Movement")]
+    public Transform orientation;
+    public Rigidbody rb;
+    public float horizontalThrustForce;
+    public float forwardThrustForce;
+    public float extendCableSpeed;
+
+    [Header("Prediction")]
+    public RaycastHit predictionHit;
+    public float predictionSphereCastRadius;
+    public Transform predictionPoint;
+
     private void OnEnable()
     {
         controls = UserInputManager.Instance.Controls;
@@ -29,6 +41,11 @@ public class PlayerSwing : MonoBehaviour
         controls.Player.Interact.canceled -= HandleStopSwing;
     }
 
+    private void Update()
+    {
+        CheckForSwingPoints();
+        if (joint != null) SwingMovement();
+    }
     private void LateUpdate()
     {
         DrawRope();
@@ -61,12 +78,18 @@ public class PlayerSwing : MonoBehaviour
 
     void StartSwing()
     {
-        pm.swinging = true; 
+        if (predictionHit.point == Vector3.zero) return;
 
-        RaycastHit hit;
-        if(Physics.Raycast(cam.position, cam.forward, out hit, maxSwingDistance, Grappleable))
+        if (TryGetComponent<PlayerGrapple>(out PlayerGrapple GrappleScript))
         {
-            swingPoint = hit.point;
+            GrappleScript.StopGrapple();
+        }
+
+        pm.ResetRestrictions();
+
+        {
+            pm.swinging = true;
+            swingPoint = predictionHit.point;
             currentGrapplePosition = gunTip.position; 
             joint = player.gameObject.AddComponent<SpringJoint>();
             joint.autoConfigureConnectedAnchor = false;
@@ -89,21 +112,62 @@ public class PlayerSwing : MonoBehaviour
         }
     }
 
-    void StopSwing()
+    public void StopSwing()
     {
         pm.swinging = false;
 
         lr.positionCount = 0;
         Destroy(joint);
     }
+    private void CheckForSwingPoints()
+    {
+        if (joint != null) return;
+        RaycastHit sphereCastHit;
+        Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward, 
+                            out sphereCastHit, maxSwingDistance, Grappleable);
 
+        RaycastHit raycastHit;
+        Physics.Raycast(cam.position, cam.forward,
+                            out raycastHit, maxSwingDistance, Grappleable);
+
+        Vector3 realHitPoint;
+        //Option 1 - Direct Hit
+        if(raycastHit.point != Vector3.zero)
+            realHitPoint = raycastHit.point;
+
+        //Option 2 - Indirect (predicted) Hit
+        else if (sphereCastHit.point != Vector3.zero)
+            realHitPoint = sphereCastHit.point;
+
+        //Option 3 - Miss
+        else realHitPoint = Vector3.zero;
+
+        //realHitPoint found
+        if(realHitPoint != Vector3.zero)
+        {
+            predictionPoint.gameObject.SetActive(true);
+            predictionPoint.position = realHitPoint;
+        }
+        //realHitPoint not found
+        else
+        {
+            predictionPoint.gameObject.SetActive(false);
+        }
+
+        predictionHit = raycastHit.point == Vector3.zero ? sphereCastHit : raycastHit;
+    }
+
+    private void SwingMovement()
+    {
+
+    }
 
 
     // 1. projectiles not sticking and going through enemies
     // 2. moon jumps with grapple on slope
     // 3. cant cancel grapple with dash
     // 4. After sliding wont return to walking if not holding sprint, just defaults to sprinting
-
+    
     // if(hit.transform.position.x < transform.position.x)
     // {StopSwinging()}
     //  + rb.linearVelocity

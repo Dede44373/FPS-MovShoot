@@ -19,6 +19,7 @@ public class PlayerGrapple : MonoBehaviour
     public float grappleDelayTime;
     public float overshootYAxis;
 
+    public float grappleSpeed;
     public float grappleCount;
 
     private Vector3 grapplePoint;
@@ -75,6 +76,8 @@ public class PlayerGrapple : MonoBehaviour
     {
         
         if (grapplingCdTimer > 0) return;
+        GetComponent<PlayerSwing>().StopSwing();
+
         if (grappleCount >= 1)
         {
             grappleCount--;
@@ -89,8 +92,18 @@ public class PlayerGrapple : MonoBehaviour
                 detectedGO = hit.transform.gameObject;
                 grapplePoint = hit.point;
 
-                Invoke(nameof(ExecuteGrapple), grappleDelayTime);
-                Debug.Log("Start Grapple");
+                if (HasLayerMask(detectedGO, grappleable))
+                {
+                    Invoke(nameof(ExecuteGrapple), grappleDelayTime);
+                    Debug.Log("Start Grapple");
+                }
+                else
+                {
+                    grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+
+                    Invoke(nameof(StopGrapple), grappleDelayTime);
+                    Debug.Log("Grapple Fail");
+                }
             }
             else
             {
@@ -112,16 +125,8 @@ public class PlayerGrapple : MonoBehaviour
         pm.freeze = false;
         pm.isDashing = false; // force end any ongoing dash
         CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
-
-        if (HasLayerMask(detectedGO, grappleable))
-        {
-            MoveToDestination(grapplePoint);
-            Invoke(nameof(StopGrapple), 1f);
-        }
-        else
-        {
-            StopGrapple();
-        }
+        MoveToDestination(grapplePoint);
+        Invoke(nameof(StopGrapple), 1f);
     }
 
     private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
@@ -133,7 +138,7 @@ public class PlayerGrapple : MonoBehaviour
         while (Distance > 5f && grappling)
         {
             Vector3 Direction = (Destination - pm.transform.position).normalized;
-            pm.rb.AddForce(Direction * 100f, ForceMode.Force);
+            pm.rb.AddForce(Direction * grappleSpeed, ForceMode.Force);
             pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
             Distance = Vector3.Distance(pm.transform.position, Destination);
             yield return null;
