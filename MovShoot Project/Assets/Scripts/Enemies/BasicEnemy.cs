@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class BasicEnemy : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class BasicEnemy : MonoBehaviour
     [Header("Particles")]
     public ParticleSystem hurtPart;
     public ParticleSystem deathPart;
+
+    [Header("Audio")]
+    [SerializeField] AudioSource hitSFX;
+    float pitchVar = 0.05f;
     public void TakeDamage (int damage)
     {
         FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
@@ -25,20 +30,21 @@ public class BasicEnemy : MonoBehaviour
         Debug.Log("Enemy Damaged" + health);
         health -= damage;
 
+        float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
+        hitSFX.pitch =  randomPitch;   
+        hitSFX.Play();
+
         if(health <= 0 )
         {
-            Die();
+            Die();   
         }
 
     }
 
     private void Die()
     {
-
+            Instantiate(deathPart, transform.position, Quaternion.identity);
             GetComponent<LootBag>().InstantiateLoot(transform.position); 
-
-            FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
-            deathPart.Play();
             Destroy(gameObject);
 
     }

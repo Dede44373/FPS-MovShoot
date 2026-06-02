@@ -39,7 +39,7 @@ public class LootBag : MonoBehaviour
             LootGameObject.GetComponent<MeshRenderer>().material = droppedItem.LootMat;
 
             float dropForce = 20f;
-                Vector3 DropDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+                Vector3 DropDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(0, 1f), Random.Range(-1f, 1f));
             LootGameObject.GetComponent<Rigidbody>().AddForce(DropDirection * dropForce, ForceMode.Impulse);
         }
     }

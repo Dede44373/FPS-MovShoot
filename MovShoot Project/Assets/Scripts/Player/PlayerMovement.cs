@@ -162,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Physics.Raycast(transform.position + Direction3D, Vector3.down, out Test2, playerHeight * 0.5f + 10f, whatIsGround))
         {
-            print(Test2.transform.name);
+            //print(Test2.transform.name);
             float angle = Vector3.Angle(Vector3.up, Test2.normal);
             slopeyAngle = angle;
 
