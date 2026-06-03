@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3283617533041726710}
   - component: {fileID: 7956700569753258678}
   - component: {fileID: 4418328224665739798}
+  - component: {fileID: 5204300511844201210}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -161,3 +162,17 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5204300511844201210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3198005363904983114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501d78bacb0d66048a493323b5b3a585, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectDeath
+  time: 10
+  Duration: 0

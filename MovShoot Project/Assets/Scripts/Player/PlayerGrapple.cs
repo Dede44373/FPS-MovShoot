@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -13,6 +14,7 @@ public class PlayerGrapple : MonoBehaviour
     public LineRenderer lr;
     public PlayerMovement pm;
     private GameObject detectedGO;
+    public PlayerCam fovCam;
 
     [Header("Grappling")]
     public float maxGrappleDistance;
@@ -24,6 +26,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private Vector3 grapplePoint;
 
+    public float grappleFOV;
     
     [Header("Cooldown")]
     public float grapplingCd;
@@ -102,6 +105,7 @@ public class PlayerGrapple : MonoBehaviour
                 }
                 else
                 {
+                    grappleCount = 1;
                     grapplePoint = cam.position + cam.forward * maxGrappleDistance;
 
                     Invoke(nameof(StopGrapple), grappleDelayTime);
@@ -110,6 +114,7 @@ public class PlayerGrapple : MonoBehaviour
             }
             else
             {
+                grappleCount = 1;
                 grapplePoint = cam.position + cam.forward * maxGrappleDistance;
 
                 Invoke(nameof(StopGrapple), grappleDelayTime);
@@ -125,6 +130,7 @@ public class PlayerGrapple : MonoBehaviour
     private bool HasLayerMask(GameObject RequestingObject, LayerMask RequestingMask) => (RequestingMask.value & (1 << RequestingObject.layer)) != 0;
     private void ExecuteGrapple()
     {
+        fovCam.DoFov(grappleFOV);
         pm.freeze = false;
         freezePlayer = false;
         pm.isDashing = false; // force end any ongoing dash
@@ -156,6 +162,7 @@ public class PlayerGrapple : MonoBehaviour
     }
     public void StopGrapple()
     {
+        fovCam.DoFov(pm.normalFOV);
         Debug.Log("Stop Grapple");
         pm.freeze = false;
         freezePlayer = false;
