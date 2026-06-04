@@ -88,6 +88,7 @@ public class ProjectileAddon : MonoBehaviour
 
             enemy.TakeDamage(damage);
             transform.SetParent(collision.transform);
+            //col.isTrigger = true;
         }
 
     

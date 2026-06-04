@@ -161,7 +161,7 @@ MonoBehaviour:
   damage: 2
   layerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1966135
 --- !u!114 &5204300511844201210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,4 +175,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EffectDeath
   time: 10
-  Duration: 0
+  hitstopDuration: 0

@@ -372,14 +372,14 @@ public class PlayerMovement : MonoBehaviour
         ChangeState(MovementState.walking);
         transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
         rb.linearDamping = data.groundDrag;
-        //if (Controls.Player.Sprint.IsPressed())
-        //{
-        //    desiredMoveSpeed = data.sprintSpeed;
-        //}
-        //else
-        //{
-        //    desiredMoveSpeed = data.walkSpeed;
-        //}
+        if (Controls.Player.Sprint.IsPressed())
+        {
+            desiredMoveSpeed = data.sprintSpeed;
+        }
+        else
+        {
+            desiredMoveSpeed = data.walkSpeed;
+        }
 
     }
 
@@ -410,7 +410,7 @@ public class PlayerMovement : MonoBehaviour
             currentJump = 0;
             inAir = false;
 
-            if (!isDashing)
+            if (!isDashing && !activeGrapple)
             {
                 rb.linearDamping = data.groundDrag;
             }
@@ -611,7 +611,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void ResetRestrictions()
     {
-        activeGrapple = false;
+       // activeGrapple = false;
 
     }
 

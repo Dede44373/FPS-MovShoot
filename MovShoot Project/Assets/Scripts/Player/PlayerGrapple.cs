@@ -79,7 +79,6 @@ public class PlayerGrapple : MonoBehaviour
 
     private void StartGrapple()
     {
-        
         if (grapplingCdTimer > 0) return;
         GetComponent<PlayerSwing>().StopSwing();
 
@@ -134,6 +133,7 @@ public class PlayerGrapple : MonoBehaviour
         pm.freeze = false;
         freezePlayer = false;
         pm.isDashing = false; // force end any ongoing dash
+        //.activeGrapple = true;
         CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
         MoveToDestination(grapplePoint);
         Invoke(nameof(StopGrapple), 1f);
@@ -167,6 +167,7 @@ public class PlayerGrapple : MonoBehaviour
         pm.freeze = false;
         freezePlayer = false;
         grappling = false;
+        //pm.activeGrapple = false;
 
         grapplingCdTimer = grapplingCd;
 
