@@ -438,7 +438,7 @@ public class PlayerMovement : MonoBehaviour
     
     void gravityControl()
     { 
-        if (!OnSlope() && !grounded && rb.useGravity)
+        if (!OnSlope() && !grounded && rb.useGravity && !activeGrapple)
             rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
 
     }
@@ -453,8 +453,8 @@ public class PlayerMovement : MonoBehaviour
         if (freeze)
         {
             currentState = MovementState.freeze;
-            moveSpeed = 0;
-            rb.linearVelocity = Vector3.zero;
+            //moveSpeed = 0;
+            //rb.linearVelocity = Vector3.zero;
         }
         else if (swinging)
         {
@@ -528,6 +528,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (activeGrapple) return;
         if (swinging) return;
+        //if (freeze) return;
 
         calculatedMoveDirection = GetMoveDirection();
 
@@ -593,34 +594,34 @@ public class PlayerMovement : MonoBehaviour
         readyToJump = true;
     }
         
-    public void JumpToPosition(Vector3 targetPosition,float trajectoryHeight)
-    {
-        activeGrapple = true;
-        velocityToSet = CalculateJumpVelocity(transform.position, targetPosition , trajectoryHeight);
-        Invoke(nameof(SetVelocity), 0f);
+    ////public void JumpToPosition(Vector3 targetPosition,float trajectoryHeight)
+    ////{
+    ////    activeGrapple = true;
+    ////    velocityToSet = CalculateJumpVelocity(transform.position, targetPosition , trajectoryHeight);
+    ////    Invoke(nameof(SetVelocity), 0f);
 
-        Invoke(nameof(ResetRestrictions), 3f);
-    }
+    ////    Invoke(nameof(ResetRestrictions), 3f);
+    ////}
 
-    private Vector3 velocityToSet;
-    private void SetVelocity()
-    {
-        enableMovementOnNextTouch = true;
-        rb.linearVelocity = velocityToSet;
-    }
+    //private Vector3 velocityToSet;
+    //private void SetVelocity()
+    //{
+    //    enableMovementOnNextTouch = true;
+    //    rb.linearVelocity = velocityToSet;
+    //}
 
-    public void ResetRestrictions()
-    {
-       // activeGrapple = false;
+    //public void ResetRestrictions()
+    //{
+    //   // activeGrapple = false;
 
-    }
+    //}
 
     private void OnCollisionEnter(Collision collision)
     {
         if(enableMovementOnNextTouch)
         {
             enableMovementOnNextTouch = false;
-            ResetRestrictions();
+            //ResetRestrictions();
 
             pg.StopGrapple();
         }
@@ -652,18 +653,18 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public bool activeGrapple;
-    public Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight)
-    {
-        float gravity = Physics.gravity.y;
-        float displacementY = endPoint.y - startPoint.y;
-        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
+    //public Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight)
+    //{
+    //    float gravity = Physics.gravity.y;
+    //    float displacementY = endPoint.y - startPoint.y;
+    //    Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
 
-        Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
-        Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity)
-            + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
+    //    Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
+    //    Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity)
+    //        + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
 
-        return velocityXZ + velocityY;
-    }
+    //    return velocityXZ + velocityY;
+    //}
     private Vector3 GetMoveDirection()
     {
         return (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;

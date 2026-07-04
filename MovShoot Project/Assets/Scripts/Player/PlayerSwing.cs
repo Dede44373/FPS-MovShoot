@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,6 +16,8 @@ public class PlayerSwing : MonoBehaviour
     private Vector3 currentGrapplePosition;
     private Vector3 swingPoint;
     private SpringJoint joint;
+
+    [SerializeField] private float grappleSpeed;
 
     [Header("Swing Movement")]
     public Transform orientation;
@@ -44,7 +47,7 @@ public class PlayerSwing : MonoBehaviour
     private void Update()
     {
         CheckForSwingPoints();
-        if (joint != null) SwingMovement();
+        //if (joint != null) SwingMovement();
     }
     private void LateUpdate()
     {
@@ -67,6 +70,8 @@ public class PlayerSwing : MonoBehaviour
     }
     private void HandleStartSwing(InputAction.CallbackContext ctx)
     {
+
+        //Grappling combining function
         Debug.Log("Swinging");
         StartSwing();
     }
@@ -85,7 +90,8 @@ public class PlayerSwing : MonoBehaviour
             GrappleScript.StopGrapple();
         }
 
-        pm.ResetRestrictions();
+       // pm.ResetRestrictions();
+
 
         {
             pm.swinging = true;
@@ -157,17 +163,17 @@ public class PlayerSwing : MonoBehaviour
         predictionHit = raycastHit.point == Vector3.zero ? sphereCastHit : raycastHit;
     }
 
-    private void SwingMovement()
+
+    private void OnDrawGizmos()
     {
-
+        Gizmos.DrawLine(cam.position, swingPoint);
     }
-
 
     // 1. projectiles not sticking and going through enemies
     // 2. moon jumps with grapple on slope
     // 3. cant cancel grapple with dash
     // 4. After sliding wont return to walking if not holding sprint, just defaults to sprinting
-    
+
     // if(hit.transform.position.x < transform.position.x)
     // {StopSwinging()}
     //  + rb.linearVelocity
