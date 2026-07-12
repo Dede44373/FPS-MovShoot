@@ -1,16 +1,166 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class PlayerWallRun : MonoBehaviour
 {
+    [Header("Wallrunning")]
+    public LayerMask whatIsWall;
+    public LayerMask whatIsGround;
+    public float wallRunForce;
+    public float maxWallRunTime;
+    private float wallRunTimer;
+    public float wallJumpUpForce;
+    public float wallJumpSideForce;
+
+    [Header("References")]
+    public UserInputs Controls;
+    public Transform orientation;
+    private Rigidbody rb;
+    private PlayerMovement pm;
+
+    [Header("Detection")]
+    public float wallCheckDistance;
+    public float minJumpHeight;
+    private RaycastHit leftWallhit;
+    private RaycastHit rightWallhit;
+    private bool wallLeft;
+    private bool wallRight;
+
+    private void OnEnable()
+    {
+        Controls = UserInputManager.Instance.Controls;
+        Controls.Player.Move.performed += HandleMoveStart;
+        Controls.Player.Move.canceled += HandleMoveStop;
+        Controls.Player.Jump.performed += PlayerJump;
+    }
+
+    private void OnDisable()
+    {
+        Controls.Player.Move.performed -= HandleMoveStart;
+        Controls.Player.Move.canceled -= HandleMoveStop;
+        Controls.Player.Jump.performed -= PlayerJump;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();  
+        pm = GetComponent<PlayerMovement>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        CheckForWall();
+    }
+
+    private void FixedUpdate()
+    {
+        if (pm.wallrunning)
+            WallRunningMovement();
+    }
+    private void HandleMoveStart(InputAction.CallbackContext ctx)
+    {
+        //Wallrunning
+        if ((wallLeft || wallRight) && AboveGround())
+        {
+            if (!pm.wallrunning)
+            {
+                StartWallRun();
+            }
+        }
+
+        //not wallrunning
+        else
+        {
+            if (pm.wallrunning)
+            {
+                StopWallRun();
+            }
+        }
+    }
+    private void HandleMoveStop(InputAction.CallbackContext ctx)
+    {
+        StopWallRun();
+    }
+
+    private void PlayerJump(InputAction.CallbackContext ctx)
+    {
+        if ((wallLeft || wallRight) && AboveGround())
+        {
+            WallJump();
+        }
+    }
+    public void CheckForWall()
+    {
+        wallRight = Physics.Raycast(transform.position, orientation.right, out rightWallhit, wallCheckDistance, whatIsWall);
+        wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallhit, wallCheckDistance, whatIsWall);
+    } 
+
+    private bool AboveGround()
+    {
+        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, whatIsGround);
+    }
+
+    private void StateMachine()
+    {
+
+        if ((wallLeft || wallRight) && AboveGround())
+        {
+
+        }
+    }
+
+    private void StartWallRun()
+    {
+        pm.wallrunning = true;
+    }
+    private void WallRunningMovement()
+    {
+        rb.useGravity = false;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        //caluclates if the wall is to the left or right of you (if its not on the right then its on the left)
+        Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
+        // calculates forward by using up and away from the wall
+        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        //switches orientation around so you arent stuck going in one direction despite facing the other
+        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+            wallForward = -wallForward;
+
+        // forward force
+        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        // push to wall force
+    }
+    private void StopWallRun()
+    {
+        pm.wallrunning = false;
+        rb.useGravity = true;
+    }
+
+
+    public void WallJump()
+    {
+
+        /*shortened "if" "else" statement with the "?"
+        if (wallRight)
+        {
+            Vector3 wallNormal = rightWallhit.normal;
+        }
+        else
+        {
+            Vector3 wallNormal = leftWallhit.normal;
+        }
+        */
+        Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
+
+        Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
+
+        //reset y velocity
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        //add force
+        rb.AddForce(forceToApply, ForceMode.Impulse);
     }
 }

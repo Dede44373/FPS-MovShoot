@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     private float moveSpeed;
     public float slideSpeed;
+    public float wallrunSpeed;
     public float firstJump;
 
     public float swingSpeed;
@@ -104,12 +105,14 @@ public class PlayerMovement : MonoBehaviour
         sprinting,
         sliding,
         dashing,
+        wallrunning,
         swinging,
         air,
         freeze
     }
 
     public bool swinging;
+    public bool wallrunning;
     private void Start()
     {
         //pg = GetComponent<PlayerGrapple>();
@@ -269,7 +272,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = false;
         keepMomentum = true;
         cam.DoFov(normalFOV);
-        if(Controls.Player.Sprint.IsPressed())
+        if(Controls.Player.Sprint.IsPressed() && grounded)
         {
             ChangeState(MovementState.sprinting);
             desiredMoveSpeed = data.sprintSpeed;
@@ -438,12 +441,17 @@ public class PlayerMovement : MonoBehaviour
     
     void gravityControl()
     { 
-        if (!OnSlope() && !grounded && rb.useGravity && !activeGrapple)
+        if (!OnSlope() && !grounded && rb.useGravity && !activeGrapple && !wallrunning)
             rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
 
     }
     void stateHandler()
     {
+        if(wallrunning)
+        {
+            currentState = MovementState.wallrunning;
+            desiredMoveSpeed = wallrunSpeed;
+        }
         if (isDashing)
         {
             currentState = MovementState.dashing;
@@ -574,6 +582,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Jump()
     {
+        if (wallrunning) return;
         exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
