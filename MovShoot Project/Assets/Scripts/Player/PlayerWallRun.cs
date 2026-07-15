@@ -13,11 +13,15 @@ public class PlayerWallRun : MonoBehaviour
     public float wallJumpUpForce;
     public float wallJumpSideForce;
 
+    [Header("Camera VFX")]
+    public float wallJumpFOV;
+    public float tiltAmount;
     [Header("References")]
     public UserInputs Controls;
     public Transform orientation;
     private Rigidbody rb;
     private PlayerMovement pm;
+    public PlayerCam cam;
 
     [Header("Detection")]
     public float wallCheckDistance;
@@ -117,22 +121,22 @@ public class PlayerWallRun : MonoBehaviour
     }
     private void WallRunningMovement()
     {
-        rb.useGravity = false;
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        //rb.useGravity = false;
+        //rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        //caluclates if the wall is to the left or right of you (if its not on the right then its on the left)
-        Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
-        // calculates forward by using up and away from the wall
-        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+        ////caluclates if the wall is to the left or right of you (if its not on the right then its on the left)
+        //Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
+        //// calculates forward by using up and away from the wall
+        //Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 
-        //switches orientation around so you arent stuck going in one direction despite facing the other
-        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
-            wallForward = -wallForward;
+        ////switches orientation around so you arent stuck going in one direction despite facing the other
+        //if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+        //    wallForward = -wallForward;
 
-        // forward force
-        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+        //// forward force
+        //rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
 
-        // push to wall force
+        //// push to wall force
     }
     private void StopWallRun()
     {
@@ -141,7 +145,7 @@ public class PlayerWallRun : MonoBehaviour
     }
 
 
-    public void WallJump()
+    public async void WallJump()
     {
 
         /*shortened "if" "else" statement with the "?"
@@ -154,6 +158,8 @@ public class PlayerWallRun : MonoBehaviour
             Vector3 wallNormal = leftWallhit.normal;
         }
         */
+
+    
         Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
 
         Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
@@ -162,5 +168,14 @@ public class PlayerWallRun : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         //add force
         rb.AddForce(forceToApply, ForceMode.Impulse);
+
+        cam.DoFov(wallJumpFOV);
+        if (wallLeft) cam.DoTilt(-tiltAmount);
+        if (wallRight) cam.DoTilt(tiltAmount);
+
+        await Awaitable.WaitForSecondsAsync(0.25f, destroyCancellationToken);
+
+        cam.DoFov(pm.normalFOV);
+        cam.DoTilt(0f);
     }
 }

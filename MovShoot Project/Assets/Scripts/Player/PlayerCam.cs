@@ -9,6 +9,7 @@ public class PlayerCam : MonoBehaviour
 
     public Camera cam;
     public Transform orientation;
+    public Transform camHolder;
     private UserInputs Controls;
 
     float xRotation;
@@ -71,7 +72,7 @@ public class PlayerCam : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         //Rotate camera and orientation
-        transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+        camHolder.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
@@ -80,5 +81,9 @@ public class PlayerCam : MonoBehaviour
         Debug.Log("FOV");
         cam.DOFieldOfView(endValue, 0.25f);
     }
-
+     
+    public void DoTilt (float zTilt)
+    {
+        transform.DOLocalRotate(new Vector3(0, 0, zTilt), 0.25f);
+    }
 }

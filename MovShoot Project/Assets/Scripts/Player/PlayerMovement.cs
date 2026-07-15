@@ -391,7 +391,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("spacebar pressed");
         print($"{readyToJump}, {currentJump}, {data.baseJumpUses},is current jump lower than baseJumpUses:{currentJump < data.baseJumpUses}");
-        if (readyToJump && currentJump < data.baseJumpUses)
+        if (readyToJump && currentJump < data.baseJumpUses && !wallrunning)
         {
             readyToJump = false;
             currentJump++;
@@ -428,7 +428,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //reset Grapple
-        if (grounded == true)
+        if (grounded && !activeGrapple)
         {
             pg.grappleCount = 1;
             col.sharedMaterial = groundMat;
@@ -451,6 +451,11 @@ public class PlayerMovement : MonoBehaviour
         {
             currentState = MovementState.wallrunning;
             desiredMoveSpeed = wallrunSpeed;
+        }
+        else if (grounded && wallrunning)
+        {
+            currentState = MovementState.walking;
+            desiredMoveSpeed = data.walkSpeed;
         }
         if (isDashing)
         {
@@ -583,11 +588,12 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         if (wallrunning) return;
+
         exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         
-        // Makes your first jump a bit higher so it feels better 
+        // Makes your first  jump a bit higher so it feels better 
         if (currentJump == 1)
             rb.AddForce(transform.up * data.jumpForce * firstJump, ForceMode.Impulse);
 

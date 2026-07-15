@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using DG.Tweening;
 using UnityEditor.Experimental;
@@ -51,12 +52,50 @@ public class PlayerGrapple : MonoBehaviour
     private bool isReelingIn;
     [SerializeField] private float reelInAcceleration;
 
+    [Header("Prediction")]
+    public RaycastHit predictionHit;
+    public float predictionSphereCastRadius;
+    public Transform predictionPoint;
+
+
+    private HashSet<string> KeyboardControls = new()
+    {
+        "W",
+        "A",
+        "S",
+        "D"
+    };
+
 
     // Update is called once per frame
     void Update()
     {
-        if (grapplingCdTimer > 0)
-            grapplingCdTimer -= Time.deltaTime;
+        //For Sphere casting
+        CheckForSwingPoints();
+
+        if (grappling)
+        {
+            isApplyingGrappleForce = true;
+
+            isRopeInTension = ropeLength * ropeLength < (grapplePoint - rb.position).sqrMagnitude;
+        }
+        else
+        {
+            isApplyingGrappleForce = false;
+            //pm.enabled = true;
+        }
+
+            if (controls.Player.Move.IsPressed())
+            {
+                if (KeyboardControls.Contains(controls.Player.Move.activeControl.displayName)) // dont use this if u plan to use all 4 keys (WASD)
+                {
+                    //print("Pressed valid input");
+                }
+            }
+
+            if (grapplingCdTimer > 0)
+                grapplingCdTimer -= Time.deltaTime;
+        
 
     }
 
@@ -73,15 +112,12 @@ public class PlayerGrapple : MonoBehaviour
     {
         if (isApplyingGrappleForce)
         {
+
             ApplyGrappleForces();
-
-            // when do you want to apply rope tension or tugging
-            if(Vector3.Dot(rb.linearVelocity, grapplePoint - rb.position) <= 0 && isRopeInTension)
-            {
+            if (Vector3.Dot(rb.linearVelocity, grapplePoint - rb.position) <= 0 && isRopeInTension)
                 TugPlayer();
-            }
 
-            if(ropeLength > minRopeLength && isReelingIn)
+            if (ropeLength > minRopeLength && isReelingIn)
             {
                 reelInSpeed += reelInAcceleration * Time.fixedDeltaTime;
                 ropeLength -= reelInSpeed *Time.fixedDeltaTime;
@@ -120,7 +156,6 @@ public class PlayerGrapple : MonoBehaviour
         {
             grappling = false;
             isApplyingGrappleForce = false;
-
 
         }
 
@@ -167,6 +202,8 @@ public class PlayerGrapple : MonoBehaviour
 
     private void StartGrapple()
     {
+        if (predictionHit.point == Vector3.zero) return;
+        //pm.enabled = false;
         if (grappling) return;
         // makes sure that if you're grappling or swinging it stops it before starting a new grapple/or prevents it
         if (grapplingCdTimer > 0) return;
@@ -177,17 +214,13 @@ public class PlayerGrapple : MonoBehaviour
         if (grappleCount >= 1)
         {
             grappleCount--;
-            grappling = true;
             // freezes all the player's movements and velocities
             // creates a raycast from the camera position, forwards (where you're looking), then stores the value in 'hit', and max distance it can travel.
             RaycastHit hit;
             if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance))
             {
                 detectedGO = hit.transform.gameObject;
-                grapplePoint = hit.point;
-
-                pm.freeze = true;
-                freezePlayer = true;
+                grapplePoint = predictionHit.point;
 
                 ropeLength = (grapplePoint - rb.position).magnitude;
                 isReelingIn = true;
@@ -206,20 +239,19 @@ public class PlayerGrapple : MonoBehaviour
 
                     Invoke(nameof(StopGrapple), grappleDelayTime);
                     Debug.Log("Grapple Fail");
+                    return;
                 }
             }
             else
             { 
-                grappleCount = 1;
-                //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
-
-                Invoke(nameof(StopGrapple), grappleDelayTime);
-                Debug.Log("Grapple Fail");
+                
             }
 
+            grappling = true;
             lr.enabled = true;
             lr.positionCount = 2;
             lr.SetPosition(1, grapplePoint);
+
         }
     }
 
@@ -269,6 +301,57 @@ public class PlayerGrapple : MonoBehaviour
         grapplingCdTimer = grapplingCd;
 
         lr.positionCount = 0;
+    }
+
+    private void CheckForSwingPoints()
+    {
+        if (grappling) return;
+        RaycastHit sphereCastHit;
+        Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward,
+                            out sphereCastHit, maxGrappleDistance, grappleable);
+
+        RaycastHit raycastHit;
+        Physics.Raycast(cam.position, cam.forward,
+                            out raycastHit, maxGrappleDistance, grappleable);
+
+        Vector3 realHitPoint;
+        //Option 1 - Direct Hit
+        if (raycastHit.point != Vector3.zero)
+            realHitPoint = raycastHit.point;
+
+        //Option 2 - Indirect (predicted) Hit
+        else if (sphereCastHit.point != Vector3.zero)
+        {
+            realHitPoint = sphereCastHit.point;
+
+        }
+
+        //Option 3 - Miss
+        else
+        {
+            realHitPoint = Vector3.zero;
+            grappleCount = 1;
+            //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+
+            Invoke(nameof(StopGrapple), grappleDelayTime);
+            Debug.Log("Grapple Fail");
+            return;
+
+        } 
+
+        //realHitPoint found
+        if (realHitPoint != Vector3.zero)
+        {
+            predictionPoint.gameObject.SetActive(true);
+            predictionPoint.position = realHitPoint;
+        }
+        //realHitPoint not found
+        else
+        {
+            predictionPoint.gameObject.SetActive(false);
+        }
+
+        predictionHit = raycastHit.point == Vector3.zero ? sphereCastHit : raycastHit;
     }
 
     private void OnDrawGizmos()

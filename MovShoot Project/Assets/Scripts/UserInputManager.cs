@@ -26,5 +26,6 @@ public class UserInputManager : MonoBehaviour
         if (Controls == null) return;
         Controls.Disable();
         Controls = null;
+        Instance = null;
     }
 }
