@@ -433,7 +433,7 @@ Transform:
   m_GameObject: {fileID: 124811491}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.569, y: -0.216, z: -0.13999999}
+  m_LocalPosition: {x: -0.607, y: -0.216, z: -0.13999999}
   m_LocalScale: {x: 0.29289, y: 0.29289, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1960,7 +1960,7 @@ Transform:
   m_GameObject: {fileID: 532993762}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 4, z: -0.5}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1985,7 +1985,7 @@ MonoBehaviour:
   senY: 35
   cam: {fileID: 532993767}
   orientation: {fileID: 1835679822}
-  camHolder: {fileID: 1765542840}
+  camHolder: {fileID: 1625569835}
 --- !u!114 &532993765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5568,7 +5568,7 @@ Transform:
   m_GameObject: {fileID: 1625569833}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.54657, y: -3.24748, z: 0.45565}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5600,7 +5600,7 @@ Transform:
   m_GameObject: {fileID: 1627843310}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.964, y: -0.31, z: 0.42}
+  m_LocalPosition: {x: -0.623, y: -0.234, z: 0.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6408,7 +6408,8 @@ MonoBehaviour:
   wallJumpUpForce: 30
   wallJumpSideForce: 40
   wallJumpFOV: 85
-  tiltAmount: 5
+  tiltAmount: 4
+  tiltCooldown: 0.18
   orientation: {fileID: 1835679822}
   cam: {fileID: 532993764}
   wallCheckDistance: 0.7

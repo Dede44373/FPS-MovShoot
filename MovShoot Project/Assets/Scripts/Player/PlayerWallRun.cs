@@ -16,6 +16,8 @@ public class PlayerWallRun : MonoBehaviour
     [Header("Camera VFX")]
     public float wallJumpFOV;
     public float tiltAmount;
+    public float tiltCooldown;
+
     [Header("References")]
     public UserInputs Controls;
     public Transform orientation;
@@ -173,7 +175,7 @@ public class PlayerWallRun : MonoBehaviour
         if (wallLeft) cam.DoTilt(-tiltAmount);
         if (wallRight) cam.DoTilt(tiltAmount);
 
-        await Awaitable.WaitForSecondsAsync(0.25f, destroyCancellationToken);
+        await Awaitable.WaitForSecondsAsync(tiltCooldown, destroyCancellationToken);
 
         cam.DoFov(pm.normalFOV);
         cam.DoTilt(0f);
