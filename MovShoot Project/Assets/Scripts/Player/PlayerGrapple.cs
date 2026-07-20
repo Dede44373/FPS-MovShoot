@@ -323,6 +323,7 @@ public class PlayerGrapple : MonoBehaviour
         else if (sphereCastHit.point != Vector3.zero)
         {
             realHitPoint = sphereCastHit.point;
+            Debug.Log("Sphere casted");
 
         }
 

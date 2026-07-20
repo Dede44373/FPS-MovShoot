@@ -640,7 +640,7 @@ MonoBehaviour:
   freezePlayer: 0
   minRopeLength: 1.5
   reelInAcceleration: 3
-  predictionSphereCastRadius: 0
+  predictionSphereCastRadius: 4.5
   predictionPoint: {fileID: 1992864591}
 --- !u!1 &194386535
 GameObject:
