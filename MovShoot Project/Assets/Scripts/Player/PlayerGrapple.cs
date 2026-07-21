@@ -244,6 +244,13 @@ public class PlayerGrapple : MonoBehaviour
             }
             else
             { 
+                grappleCount = 1;
+                //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+
+                Invoke(nameof(StopGrapple), grappleDelayTime);
+                Debug.Log("Grapple Fail");
+                return;
+
                 
             }
 
@@ -331,13 +338,6 @@ public class PlayerGrapple : MonoBehaviour
         else
         {
             realHitPoint = Vector3.zero;
-            grappleCount = 1;
-            //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
-
-            Invoke(nameof(StopGrapple), grappleDelayTime);
-            Debug.Log("Grapple Fail");
-            return;
-
         } 
 
         //realHitPoint found

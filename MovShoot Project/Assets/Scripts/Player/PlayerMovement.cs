@@ -81,7 +81,9 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Particles")]
     public ParticleSystem stepPart;
+    public ParticleSystem speedLines;
 
+    [Header("References")]
     public PlayerCam cam;
     public float sprintFOV;
     public float normalFOV;
@@ -130,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
         stateHandler();
         gravityControl();
         PredictSlope();
+        SpeedParticleControl();
 
         if(grounded && currentJump > 0)
             currentJump = 0;
@@ -156,6 +159,22 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
+    void SpeedParticleControl()
+    {
+        if (rb.linearVelocity != Vector3.zero)
+        {
+            speedLines.Play();
+            //var radius = speedLines.shape.radius;
+            //radius -= moveSpeed * Time.deltaTime;
+        }
+        else
+        {
+            speedLines.Stop();  
+        }
+
+
+
+    }
     void PredictSlope()
     {
         Vector3 ForwardValue = playerCam.transform.forward * moveDirection.y;
@@ -234,8 +253,9 @@ public class PlayerMovement : MonoBehaviour
     //Sprinting
     private void PlayerSprint(InputAction.CallbackContext ctx)
     {
-        if (sliding) return;             
-            Dash();
+        if (sliding) return;
+        speedLines.Play();
+        Dash();
         
       
     }
@@ -306,6 +326,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!sliding)
         {
+            speedLines.Stop();
             desiredMoveSpeed = data.walkSpeed;
             ChangeState(MovementState.walking);
             cam.DoFov(normalFOV);
