@@ -90,32 +90,27 @@ public class PlayerSwing : MonoBehaviour
             GrappleScript.StopGrapple();
         }
 
-       // pm.ResetRestrictions();
+        // pm.ResetRestrictions();
+        pm.swinging = true;
+        swingPoint = predictionHit.point;
+        currentGrapplePosition = gunTip.position;
+        joint = player.gameObject.AddComponent<SpringJoint>();
+        joint.autoConfigureConnectedAnchor = false;
+        joint.connectedAnchor = swingPoint;
 
+        float distanceFromPoint = Vector3.Distance(player.position, swingPoint);
 
-        {
-            pm.swinging = true;
-            swingPoint = predictionHit.point;
-            currentGrapplePosition = gunTip.position; 
-            joint = player.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = swingPoint;
+        // the distance grapple will try to keep from grapple point.
+        joint.maxDistance = distanceFromPoint * 0.8f;
+        joint.minDistance = distanceFromPoint * 0.25f;
 
-            float distanceFromPoint = Vector3.Distance(player.position, swingPoint);
+        //customize these values
 
-            // the distance grapple will try to keep from grapple point.
-            joint.maxDistance = distanceFromPoint * 0.8f;
-            joint.minDistance = distanceFromPoint * 0.25f;
+        joint.spring = 4.5f;
+        joint.damper = 7f;
+        joint.massScale = 4.5f;
 
-            //customize these values
-
-            joint.spring = 4.5f;
-            joint.damper = 7f;
-            joint.massScale = 4.5f;
-
-            lr.positionCount = 2;
-            
-        }
+        lr.positionCount = 2;
     }
 
     public void StopSwing()

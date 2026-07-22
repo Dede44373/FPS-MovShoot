@@ -32,7 +32,7 @@ public class PlayerGrapple : MonoBehaviour
     private Vector3 grapplePoint;
 
     public float grappleFOV;
-    
+
     [Header("Cooldown")]
     public float grapplingCd;
     private float grapplingCdTimer;
@@ -85,17 +85,17 @@ public class PlayerGrapple : MonoBehaviour
             //pm.enabled = true;
         }
 
-            if (controls.Player.Move.IsPressed())
+        if (controls.Player.Move.IsPressed())
+        {
+            if (KeyboardControls.Contains(controls.Player.Move.activeControl.displayName)) // dont use this if u plan to use all 4 keys (WASD)
             {
-                if (KeyboardControls.Contains(controls.Player.Move.activeControl.displayName)) // dont use this if u plan to use all 4 keys (WASD)
-                {
-                    //print("Pressed valid input");
-                }
+                //print("Pressed valid input");
             }
+        }
 
-            if (grapplingCdTimer > 0)
-                grapplingCdTimer -= Time.deltaTime;
-        
+        if (grapplingCdTimer > 0)
+            grapplingCdTimer -= Time.deltaTime;
+
 
     }
 
@@ -120,7 +120,7 @@ public class PlayerGrapple : MonoBehaviour
             if (ropeLength > minRopeLength && isReelingIn)
             {
                 reelInSpeed += reelInAcceleration * Time.fixedDeltaTime;
-                ropeLength -= reelInSpeed *Time.fixedDeltaTime;
+                ropeLength -= reelInSpeed * Time.fixedDeltaTime;
             }
             else
             {
@@ -163,8 +163,8 @@ public class PlayerGrapple : MonoBehaviour
 
     private void HandleGrappleStop(InputAction.CallbackContext ctx)
     {
-        if(grappling == true)
-        StopGrapple();
+        if (grappling == true)
+            StopGrapple();
     }
 
     //maths for calculating swinging velocity
@@ -178,8 +178,8 @@ public class PlayerGrapple : MonoBehaviour
         Vector3 tension = rb.mass * (centripetalAcceleration + Physics.gravity.magnitude * Mathf.Cos(theta)) * direction;
 
         if (isRopeInTension)
-        { 
-            if(isReelingIn)
+        {
+            if (isReelingIn)
             {
                 rb.AddForce(rb.mass * reelInAcceleration * direction);
             }
@@ -216,43 +216,60 @@ public class PlayerGrapple : MonoBehaviour
             grappleCount--;
             // freezes all the player's movements and velocities
             // creates a raycast from the camera position, forwards (where you're looking), then stores the value in 'hit', and max distance it can travel.
-            RaycastHit hit;
-            if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance))
+
+            Vector3 direction = predictionHit.point - cam.transform.position;
+            grapplePoint = predictionHit.point;
+
+            ropeLength = (grapplePoint - rb.position).magnitude;
+            isReelingIn = true;
+            reelInSpeed = 0;
+
+            pm.activeGrapple = true;
+            // Invoke(nameof(ExecuteGrapple), grappleDelayTime);
+            Debug.Log("Start Grapple");
+
+
+            #region OldSwing
+            /*
+            if (Physics.Raycast(cam.position, direction, out hit, maxGrappleDistance))
             {
-                detectedGO = hit.transform.gameObject;
-                grapplePoint = predictionHit.point;
+            detectedGO = hit.transform.gameObject;
+            grapplePoint = predictionHit.point;
 
-                ropeLength = (grapplePoint - rb.position).magnitude;
-                isReelingIn = true;
-                reelInSpeed = 0;
+            ropeLength = (grapplePoint - rb.position).magnitude;
+            isReelingIn = true;
+            reelInSpeed = 0;
 
-                if (HasLayerMask(detectedGO, grappleable))
-                {
-                    pm.activeGrapple = true;
-                   // Invoke(nameof(ExecuteGrapple), grappleDelayTime);
-                    Debug.Log("Start Grapple");
-                }
-                else
-                {
-                    grappleCount = 1;
-                    //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+            if (HasLayerMask(detectedGO, grappleable))
+            {
+            pm.activeGrapple = true;
+            // Invoke(nameof(ExecuteGrapple), grappleDelayTime);
+            Debug.Log("Start Grapple");
+            }
+            else
+            {
+            grappleCount = 1;
+            //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
 
-                    Invoke(nameof(StopGrapple), grappleDelayTime);
-                    Debug.Log("Grapple Fail");
-                    return;
-                }
+            Invoke(nameof(StopGrapple), grappleDelayTime);
+            Debug.Log("Grapple Fail");
+            return;
+            }
             }
             else
             { 
-                grappleCount = 1;
-                //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+            grappleCount = 1;
+            //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
 
-                Invoke(nameof(StopGrapple), grappleDelayTime);
-                Debug.Log("Grapple Fail");
-                return;
+            Invoke(nameof(StopGrapple), grappleDelayTime);
+            Debug.Log("Grapple Fail");
+            return;
 
-                
+
             }
+            */
+            #endregion
+
 
             grappling = true;
             lr.enabled = true;
@@ -278,7 +295,7 @@ public class PlayerGrapple : MonoBehaviour
     //private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
     //{
     //    pm.rb.useGravity = false;
-       
+
     //    float Distance = Vector3.Distance(transform.position, Destination);
 
     //    while (Distance > 5f && grappling)
@@ -298,7 +315,7 @@ public class PlayerGrapple : MonoBehaviour
     //}
     public void StopGrapple()
     {
-       // fovCam.DoFov(pm.normalFOV);
+        // fovCam.DoFov(pm.normalFOV);
         Debug.Log("Stop Grapple");
         pm.freeze = false;
         freezePlayer = false;
@@ -312,14 +329,21 @@ public class PlayerGrapple : MonoBehaviour
 
     private void CheckForSwingPoints()
     {
-        if (grappling) return;
+        if (grappling)
+        {
+            Debug.Log("<color=red>Grappling</color>");
+            return;
+        }
+
+        Debug.Log("<color=green>Check for Swing</color>");
+
         RaycastHit sphereCastHit;
         Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward,
-                            out sphereCastHit, maxGrappleDistance, grappleable);
+            out sphereCastHit, maxGrappleDistance, grappleable);
 
         RaycastHit raycastHit;
         Physics.Raycast(cam.position, cam.forward,
-                            out raycastHit, maxGrappleDistance, grappleable);
+            out raycastHit, maxGrappleDistance, grappleable);
 
         Vector3 realHitPoint;
         //Option 1 - Direct Hit
@@ -338,7 +362,7 @@ public class PlayerGrapple : MonoBehaviour
         else
         {
             realHitPoint = Vector3.zero;
-        } 
+        }
 
         //realHitPoint found
         if (realHitPoint != Vector3.zero)

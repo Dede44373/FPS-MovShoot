@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
@@ -75,7 +76,9 @@ public class EnemyAI : MonoBehaviour
         //Make sure enemy doesn't move
         agent.SetDestination(transform.position);
 
-        transform.LookAt(player);
+        Vector3 pos = player.transform.position;
+        pos.y = transform.position.y;
+        transform.LookAt(pos);
 
         if (!alreadyAttacked)
         {

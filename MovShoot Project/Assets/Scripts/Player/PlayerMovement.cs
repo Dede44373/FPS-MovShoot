@@ -161,18 +161,28 @@ public class PlayerMovement : MonoBehaviour
 
     void SpeedParticleControl()
     {
-        if (rb.linearVelocity != Vector3.zero)
+        if (rb.linearVelocity.sqrMagnitude > 0 && !speedLines.isPlaying)
         {
             speedLines.Play();
+            print("playing particles");
             //var radius = speedLines.shape.radius;
             //radius -= moveSpeed * Time.deltaTime;
         }
-        else
+        else if (rb.linearVelocity.sqrMagnitude <= 0 && speedLines.isPlaying)
         {
             speedLines.Stop();  
         }
 
+        if (speedLines.isPlaying)
+        {
+            var shape = speedLines.shape;
+            float SpeedRadius = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f,25f, 22f);
 
+            var speed = speedLines.main.startSpeed;
+            speed = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f, 10f, 20f);
+
+            shape.radius = SpeedRadius;
+        }
 
     }
     void PredictSlope()

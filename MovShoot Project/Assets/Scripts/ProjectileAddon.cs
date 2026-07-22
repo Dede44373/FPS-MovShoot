@@ -21,7 +21,7 @@ public class ProjectileAddon : MonoBehaviour
     {
         moving = true;
         StartCoroutine(Movement());
-        rb= GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
     }
 
     IEnumerator Movement()
@@ -45,6 +45,7 @@ public class ProjectileAddon : MonoBehaviour
     void SnapObject()
     {
         transform.position = hitPos;
+
     }
 
     bool RaycastCheck()
@@ -55,6 +56,7 @@ public class ProjectileAddon : MonoBehaviour
         {
             raycastObj = hit.collider.gameObject;
             hitPos = hit.point;
+            //GetComponent<CapsuleCollider>().enabled = false;
             return false;
         }
         else
@@ -80,21 +82,25 @@ public class ProjectileAddon : MonoBehaviour
             return;
         else
             targetHit = true;
+        
+        //rb.isKinematic = true;
 
         //checks if you hit an enemy
         if (collision.gameObject.GetComponent<BasicEnemy>() != null)
         {
             BasicEnemy enemy = collision.gameObject.GetComponent<BasicEnemy>();
-
+            
+            //rb.isKinematic = true;
             enemy.TakeDamage(damage);
-            transform.SetParent(collision.transform);
+            transform.SetParent(collision.transform, true);
+            GetComponent<CapsuleCollider>().enabled = false;
             //col.isTrigger = true;
         }
 
     
         
         //make sure projectiles sticks to surface
-        rb.isKinematic = true;
+        //rb.isKinematic = true;
 
         //makes sure projectile moves with target
         
