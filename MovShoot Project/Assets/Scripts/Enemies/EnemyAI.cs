@@ -3,29 +3,33 @@ using UnityEngine;
 using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
-    public NavMeshAgent agent;
-
-    public Transform player;
-
-    public LayerMask whatisGround, Player;
-
-    //Patrolling
+    [Header("Patrolling")]
     public Vector3 walkPoint;
     bool walkPointSet;
     public float walkPointRange;
 
-    //Attacking
+    [Header("Attacking")]
     public float timeBetweenAttacks;
     bool alreadyAttacked;
+    public float dashForce;
 
-    //States
+    [Header("States")]
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
+
+    [Header("References")]
+    public LayerMask whatisGround, Player;
+    public NavMeshAgent agent;
+    public Transform player;
+    private Animator anim;
+    public Collider coll;
+    public Rigidbody rb;
 
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update()
@@ -83,11 +87,24 @@ public class EnemyAI : MonoBehaviour
         if (!alreadyAttacked)
         {
             // Attack code here \/\/\/
-            
+            anim.SetTrigger("Bite");
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
 
+    }
+    public void EnableAttackCollider()
+    {
+        coll.enabled = true;
+    }
+
+    public void DisableAttackCollider()
+    {
+        coll.enabled = false;
+    }
+    public void DashFowards()
+    {
+        rb.AddForce(Vector3.forward * dashForce, ForceMode.Impulse);
     }
 
     private void ResetAttack()
