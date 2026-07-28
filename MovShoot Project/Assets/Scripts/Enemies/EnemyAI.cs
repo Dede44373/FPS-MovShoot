@@ -104,7 +104,7 @@ public class EnemyAI : MonoBehaviour
     }
     public void DashFowards()
     {
-        rb.AddForce(Vector3.forward * dashForce, ForceMode.Impulse);
+        rb.AddForce(transform.forward * dashForce, ForceMode.Impulse);
     }
 
     private void ResetAttack()
