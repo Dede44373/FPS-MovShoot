@@ -17,6 +17,7 @@ public class EnemyAI : MonoBehaviour
     public float attackTurnSpeed;
 
     [Header("Attacking")]
+    public int damage;
     public float timeBetweenAttacks;
     bool alreadyAttacked;
     public float dashForce;
@@ -236,6 +237,17 @@ public class EnemyAI : MonoBehaviour
         //attacking = false;
     }
 
+    private void OnTriggerEnter(Collider collision)
+    {
+        //checks if you hit an enemy
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            BasicEnemy enemy = collision.gameObject.GetComponent<BasicEnemy>();
+
+            enemy.TakeDamage(damage);
+        }
+
+    }
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

@@ -24,7 +24,7 @@ public class PlayerHealth : MonoBehaviour
     {
         FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
         StartCoroutine(Invulnerability());
-        hurtPart.Play();
+        //hurtPart.Play();
 
         Debug.Log("Player Damaged" + health);
         health -= damage;
