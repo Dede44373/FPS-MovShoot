@@ -335,7 +335,7 @@ public class PlayerGrapple : MonoBehaviour
             return;
         }
 
-        Debug.Log("<color=green>Check for Swing</color>");
+        //Debug.Log("<color=green>Check for Swing</color>");
 
         RaycastHit sphereCastHit;
         Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward,
