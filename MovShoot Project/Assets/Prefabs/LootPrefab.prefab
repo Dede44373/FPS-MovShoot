@@ -252,6 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   pickupSFX: {fileID: 1546781317703035729}
   ghost: {fileID: 2270348272897724694, guid: 6d9f4ededc197424c881d067a3aa315c, type: 3}
+  moneyValue: 1
 --- !u!82 &1546781317703035729
 AudioSource:
   m_ObjectHideFlags: 0

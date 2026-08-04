@@ -3,7 +3,7 @@ using DG.Tweening.Core.Easing;
 using System.Collections;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
-using Unity.VisualScripting.ReorderableList;
+//using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
@@ -240,11 +240,11 @@ public class EnemyAI : MonoBehaviour
     private void OnTriggerEnter(Collider collision)
     {
         //checks if you hit an enemy
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            BasicEnemy enemy = collision.gameObject.GetComponent<BasicEnemy>();
+            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
 
-            enemy.TakeDamage(damage);
+            player.TakeDamage(damage);
         }
 
     }
