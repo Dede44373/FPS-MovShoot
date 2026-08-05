@@ -11450,6 +11450,7 @@ GameObject:
   - component: {fileID: 1717715383}
   - component: {fileID: 1717715382}
   - component: {fileID: 1717715381}
+  - component: {fileID: 1717715385}
   m_Layer: 5
   m_Name: UI Canvas
   m_TagString: Untagged
@@ -11543,6 +11544,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1717715385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1717715380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4db7bcd6a2dad944a74b27c58defcdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  moneyText: {fileID: 910556281}
 --- !u!1 &1758374784
 GameObject:
   m_ObjectHideFlags: 0
@@ -11697,6 +11711,7 @@ MonoBehaviour:
   normalFOV: 80
   playerCam: {fileID: 1835679822}
   orientation: {fileID: 1835679822}
+  moveDirection: {x: 0, y: 0}
   calculatedMoveDirection: {x: 0, y: 0, z: 0}
   slideMat: {fileID: 13400000, guid: 3275331b3900a3448abcf58b29dd4a86, type: 2}
   groundMat: {fileID: 13400000, guid: 81f3c3a06e7135b4d94852c136abd014, type: 2}
@@ -11880,7 +11895,7 @@ MonoBehaviour:
     m_Bits: 655360
   wallRunForce: 200
   maxWallRunTime: 1.5
-  wallJumpUpForce: 30
+  wallJumpUpForce: 45
   wallJumpSideForce: 40
   wallJumpFOV: 85
   tiltAmount: 4
@@ -11935,7 +11950,7 @@ GameObject:
   - component: {fileID: 1770843415}
   m_Layer: 6
   m_Name: Character
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11962,7 +11977,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1770843413}
-  m_Material: {fileID: 13400000, guid: 81f3c3a06e7135b4d94852c136abd014, type: 2}
+  m_Material: {fileID: 13400000, guid: c343e60e1ecefa1429ec60e886f4543b, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -13906,7 +13921,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: damage
-      value: 2
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: player
@@ -13929,12 +13944,20 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: enemyState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: lungeSpeed
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: attackRange
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: chaseLungeTime
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: attackTurnSpeed
@@ -13946,7 +13969,63 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: timeBetweenAttacks
-      value: 5
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[1].time
+      value: 0.42485106
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[1].value
+      value: 0.96973455
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[2].value
+      value: 0.0023841858
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[1].inSlope
+      value: 0.29441455
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[2].inSlope
+      value: -5.4077206
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[1].inWeight
+      value: 0.51943946
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[1].outSlope
+      value: 0.29441455
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[2].inWeight
+      value: 0.16941984
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[2].outSlope
+      value: -5.4077206
+      objectReference: {fileID: 0}
+    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: lungeJump.m_Curve.Array.data[1].outWeight
+      value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 3642226123085405845, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: m_LocalPosition.x

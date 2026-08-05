@@ -18,6 +18,7 @@ public class UserInputManager : MonoBehaviour
         }
 
         Controls = new UserInputs();
+        Controls.Disable();
         Controls.Enable();
     }
 
@@ -25,6 +26,9 @@ public class UserInputManager : MonoBehaviour
     {
         if (Controls == null) return;
         Controls.Disable();
+        Controls.UI.Disable();
+        Controls.Player.Disable();
+
         Controls = null;
         Instance = null;
     }

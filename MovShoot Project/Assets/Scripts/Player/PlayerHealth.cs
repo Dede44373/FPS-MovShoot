@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -42,8 +43,12 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        Instantiate(deathPart, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        if(deathPart != null)
+            Instantiate(deathPart, transform.position, Quaternion.identity);
+
+        //RESPAWN
+        SceneManager.LoadScene("Test");
+        //SceneManager.GetActiveScene().ToString()
 
     }
     private IEnumerator Invulnerability()

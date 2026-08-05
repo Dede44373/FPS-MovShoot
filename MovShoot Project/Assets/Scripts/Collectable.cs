@@ -4,14 +4,14 @@ public class Collectable : MonoBehaviour
 {
     [SerializeField] AudioSource pickupSFX;
     public GameObject ghost;
-    public float moneyValue;
+    public int moneyValue = 1;
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             Instantiate(ghost, transform.position, Quaternion.identity);
             Debug.Log("picked up loot");
-            FindFirstObjectByType<MoneyHUD>().totalMoney += moneyValue;
+            MoneyHUD.instance.AddMoney(moneyValue);
             Destroy(gameObject);
 
         }

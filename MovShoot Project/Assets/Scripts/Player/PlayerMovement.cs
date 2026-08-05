@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using Unity.XR.Oculus.Input;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -90,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform playerCam;
     public Transform orientation;
 
-    Vector2 moveDirection;
+    [HideInInspector] public Vector2 moveDirection;
     public Vector3 calculatedMoveDirection;
 
     public PhysicsMaterial slideMat;
@@ -304,8 +305,8 @@ public class PlayerMovement : MonoBehaviour
         cam.DoFov(normalFOV);
         if(Controls.Player.Sprint.IsPressed() && grounded)
         {
-            ChangeState(MovementState.sprinting);
-            desiredMoveSpeed = data.sprintSpeed;
+            //ChangeState(MovementState.sprinting);
+            //desiredMoveSpeed = data.sprintSpeed;
             cam.DoFov(sprintFOV);
         }
         else
@@ -349,16 +350,6 @@ public class PlayerMovement : MonoBehaviour
         gravityControl();
         if (GetMoveDirection() != Vector3.zero)
             StartSlide();
-        if (sliding)
-        {
-            ChangeState(MovementState.sliding);
-
-            if (OnSlope() && rb.linearVelocity.y < 0.1f)
-                desiredMoveSpeed = slideSpeed;
-            else
-                desiredMoveSpeed = slideSpeed;
-
-        }
     }
     private void HandleSlideStop(InputAction.CallbackContext ctx)
     {
@@ -448,21 +439,21 @@ public class PlayerMovement : MonoBehaviour
             {
                 rb.linearDamping = data.groundDrag;
             }
-            currentState = MovementState.walking;
+            ChangeState(MovementState.walking);
         }
         else if (!grounded && currentState != MovementState.air) // Runs upon leaving the ground 
         {
             inAir = true;
             col.sharedMaterial = slideMat;
             rb.linearDamping = data.airDrag;
-            currentState = MovementState.air;
+            ChangeState(MovementState.air);
         }
 
         //reset Grapple
         if (grounded && !activeGrapple)
         {
             pg.grappleCount = 1;
-            col.sharedMaterial = groundMat;
+            //col.sharedMaterial = groundMat;
            
         }
         if (pg.grappling == true || swinging == true)
@@ -480,29 +471,53 @@ public class PlayerMovement : MonoBehaviour
     {
         if(wallrunning)
         {
-            currentState = MovementState.wallrunning;
+            ChangeState(MovementState.wallrunning);
             desiredMoveSpeed = wallrunSpeed;
         }
-        else if (grounded && wallrunning)
+        else if (!wallrunning)
         {
-            currentState = MovementState.walking;
-            desiredMoveSpeed = data.walkSpeed;
+            if (sliding)
+            {
+                ChangeState(MovementState.sliding);
+
+                if (OnSlope() && rb.linearVelocity.y < 0.1f)
+                    desiredMoveSpeed = slideSpeed;
+                else
+                    desiredMoveSpeed = slideSpeed;
+
+            }
+            else
+            {
+
+                if (Controls.Player.Sprint.IsPressed() && grounded)
+                {
+                    ChangeState(MovementState.sprinting);
+                    desiredMoveSpeed = data.sprintSpeed;
+                }
+                else
+                {
+                    ChangeState(MovementState.walking);
+                    desiredMoveSpeed = data.walkSpeed;
+                }
+            }
+
         }
+
         if (isDashing)
         {
-            currentState = MovementState.dashing;
+            ChangeState(MovementState.dashing);
             desiredMoveSpeed = dashSpeed;
         }
 
         if (freeze)
         {
-            currentState = MovementState.freeze;
+            ChangeState(MovementState.freeze);
             //moveSpeed = 0;
             //rb.linearVelocity = Vector3.zero;
         }
         else if (swinging)
         {
-            currentState = MovementState.swinging;
+            ChangeState(MovementState.swinging);
             swingSpeed = moveSpeed;
         }
 

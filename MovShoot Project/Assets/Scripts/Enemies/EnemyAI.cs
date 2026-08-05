@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
+    public EnemyState enemyState;
+
     public float waitTime;
     [Header("Patrolling")]
     public Vector3 walkPoint;
@@ -22,13 +24,18 @@ public class EnemyAI : MonoBehaviour
     bool alreadyAttacked;
     public float dashForce;
     private bool attacking;
+    public float chaseLungeTime;
+    float lungeTimer;
 
+    [Header("Lunge")]
     public float lungeSpeed;
+    public AnimationCurve lungeJump;
 
     [Header("States")]
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
     private bool movingTowardsDestination = false;
+    private bool lunging;
 
     [Header("Raycasts")]
     float distanceToTarget;
@@ -46,8 +53,18 @@ public class EnemyAI : MonoBehaviour
     public Rigidbody rb;
     Vector3 DestinationPoint = Vector3.zero;
 
+    public enum EnemyState
+    {
+        idle,
+        patrol,
+        chase,
+        attack,
+        lunge
+    }
+
     private void Awake()
     {
+        lungeTimer = chaseLungeTime;
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
@@ -59,9 +76,24 @@ public class EnemyAI : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
 
-        if (!playerInSightRange && !playerInAttackRange) Patrolling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        switch (enemyState)
+        {
+            case EnemyState.idle:
+                Idle();
+                break;
+            case EnemyState.patrol:
+                Patrol();
+                break;
+            case EnemyState.chase:
+                Chase();
+                break;
+            case EnemyState.attack:
+                Attack();
+                break;
+            case EnemyState.lunge:
+                Lunge();
+                break;
+        }
 
         if (attacking && !playerInAttackRange)
         {
@@ -69,63 +101,115 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private async void Patrolling()
+    void Idle()
+    {
+        if (!playerInSightRange)
+        {
+            if (waitTime >= 0)
+            {
+                waitTime -= Time.deltaTime;
+                return;
+            }
+            enemyState = EnemyState.patrol;
+        }
+        else
+        {
+            enemyState = EnemyState.chase;
+        }
+    }
+
+    void Patrol()
+    {
+        if (playerInSightRange && !playerInAttackRange)
+        {
+            enemyState = EnemyState.chase;
+        }
+
+        agent.angularSpeed = normalTurnSpeed;
+
+        if (!walkPointSet)
+        {
+            DestinationPoint = GetSearchWalkPoint();
+            agent.SetDestination(DestinationPoint);
+            print("Destination set 1");
+
+            walkPointSet = true;
+        }
+        else
+        {
+            if(agent.remainingDistance <= agent.stoppingDistance)
+            {
+                waitTime = 2.0f;
+                enemyState = EnemyState.idle;
+            }
+        }
+    }
+
+    void Chase()
+    {
+        lungeTimer -= Time.deltaTime;
+        if(lungeTimer <= 0)
+        {
+            lungeTimer = chaseLungeTime;
+            enemyState = EnemyState.lunge;
+        }
+
+
+        if (playerInAttackRange)
+        {
+            enemyState = EnemyState.attack;
+        }
+        else
+        {
+            movingTowardsDestination = true;
+            agent.angularSpeed = attackTurnSpeed;
+            agent.SetDestination(player.position);
+            print("Destination set 2");
+
+            if (!playerInSightRange)
+            {
+                waitTime = 1.0f;
+                enemyState = EnemyState.idle;
+            }
+        }
+    }
+
+    void Attack()
     {
         if (attacking) return;
 
-        //if (!movingTowardsDestination)
-        //{
-        //    movingTowardsDestination = true;
-        //    DestinationPoint = GetSearchWalkPoint();
+        attacking = true;
+        //Make sure enemy doesn't move
+        Vector3 pos = player.transform.position;
+        pos.y = transform.position.y;
+        transform.LookAt(pos);
 
-        //    print(DestinationPoint);
-        //    agent.SetDestination(DestinationPoint);
-        //}
-        //else
-        //{
-        //    Vector3 distanceToWalkPoint = DestinationPoint - transform.position;
-
-        //    if (distanceToWalkPoint.sqrMagnitude <= 1f * 1f)
-        //    {
-        //        await Awaitable.WaitForSecondsAsync(2f, destroyCancellationToken);
-        //        walkPointSet = false;
-        //        movingTowardsDestination = false;
-        //        print("Dun.");
-        //    }
-        //}
-
-        agent.angularSpeed = normalTurnSpeed;
-        if (movingTowardsDestination && !playerInSightRange) return;
-        movingTowardsDestination = true;
-
-        if (agent.isStopped)
+        if (!alreadyAttacked)
         {
-            agent.isStopped = false;
+            // Attack code here \/\/\/
+            agent.SetDestination(player.position);
+            print("Destination set 3");
+
+            agent.isStopped = true;
+            anim.SetTrigger("Bite");
+            alreadyAttacked = true;
+            Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
-
-        DestinationPoint = GetSearchWalkPoint();
-        agent.SetDestination(DestinationPoint);
-        print("Destination set 1");
-
-        while ((transform.position - DestinationPoint).sqrMagnitude > 1f * 1f)
-        {
-            if (playerInSightRange) return;
-            //waiting = false;
-            await Awaitable.NextFrameAsync(destroyCancellationToken);
-        }
-
-       // waiting = true;
-        await Awaitable.WaitForSecondsAsync(waitTime, destroyCancellationToken);
-        movingTowardsDestination = false;
-
-        //walkpoint reached
-
-        //while (distanceToWalkPoint.sqrMagnitude > 1f * 1f)
-        //{
-        //    await Awaitable.NextFrameAsync(destroyCancellationToken);
-        //}
     }
-    private bool waiting;
+
+    void Lunge()
+    {
+        if (lunging)
+            return;
+
+        lunging = true;
+        Vector3 pos = player.transform.position;
+        pos.y = transform.position.y;
+
+        agent.enabled = false;
+
+        StartCoroutine(ApplyForceUntilDestinationReached(pos));
+    }
 
     private Vector3 GetSearchWalkPoint()
     {
@@ -146,73 +230,28 @@ public class EnemyAI : MonoBehaviour
         } 
     }
 
-    private void ChasePlayer()
-    {
-        agent.angularSpeed = attackTurnSpeed;
-        if (attacking) return;
-        //agent.SetDestination(player.position);
-        print("Destination set 2");
-        ExecuteGrapple();
-    }
-
-
-    private void AttackPlayer()
-    {
-        if (waiting) return;
-        attacking = true;
-        //Make sure enemy doesn't move
-        Vector3 pos = player.transform.position;
-        pos.y = transform.position.y;
-        transform.LookAt(pos);
-
-        if (!alreadyAttacked)
-        {
-            // Attack code here \/\/\/
-            agent.SetDestination(player.position);
-            print("Destination set 3");
-
-            agent.isStopped = true;
-            anim.SetTrigger("Bite");
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
-        }
-        else 
-        {
-            ExecuteGrapple();
-        }
-
-    }
-
-    private void ExecuteGrapple()
-    {
-        Vector3 pos = player.transform.position;
-        pos.y = transform.position.y;
-
-        agent.enabled = false;
-        MoveToDestination(pos);
-
-    }
-
     private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
     {
-        float Distance = Vector3.Distance(transform.position, Destination);
 
-        while (Distance > 5f)
+        Vector3 startPos = transform.position;
+        float t = 0;
+
+        while (t < 1)
         {
-            Vector3 Direction = (Destination - player.transform.position).normalized;
-            rb.AddForce(Direction * lungeSpeed, ForceMode.Force);
-            //pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
-            Distance = Vector3.Distance(player.transform.position, Destination);
+            t += Time.deltaTime * 10;
+            if(t > 1)
+            {
+                t = 1;
+            }
+            Vector3 newPos = Vector3.Lerp(startPos, Destination, t);
+            newPos.y += lungeJump.Evaluate(t);
+            transform.position = newPos;
             yield return null;
         }
 
         agent.enabled = true;
-    }
-
-
-    private void MoveToDestination(Vector3 Destination)
-    {
-        StartCoroutine(ApplyForceUntilDestinationReached(Destination));
+        lunging = false;
+        enemyState = EnemyState.chase;
     }
 
     public void EnableAttackCollider()
@@ -227,6 +266,7 @@ public class EnemyAI : MonoBehaviour
     public void DashFowards()
     {
         rb.AddForce(transform.forward * dashForce, ForceMode.Impulse);
+
     }
 
     private void ResetAttack()
@@ -234,6 +274,7 @@ public class EnemyAI : MonoBehaviour
         agent.SetDestination(transform.position);
         agent.isStopped = false;
         alreadyAttacked = false;
+        enemyState = EnemyState.chase;
         //attacking = false;
     }
 
@@ -242,7 +283,8 @@ public class EnemyAI : MonoBehaviour
         //checks if you hit an enemy
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+            PlayerHealth player = collision.gameObject.GetComponentInParent<PlayerHealth>();
+            Debug.Log(player);
 
             player.TakeDamage(damage);
         }

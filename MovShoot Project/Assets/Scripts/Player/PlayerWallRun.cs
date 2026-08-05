@@ -36,15 +36,11 @@ public class PlayerWallRun : MonoBehaviour
     private void OnEnable()
     {
         Controls = UserInputManager.Instance.Controls;
-        Controls.Player.Move.performed += HandleMoveStart;
-        Controls.Player.Move.canceled += HandleMoveStop;
         Controls.Player.Jump.performed += PlayerJump;
     }
 
     private void OnDisable()
     {
-        Controls.Player.Move.performed -= HandleMoveStart;
-        Controls.Player.Move.canceled -= HandleMoveStop;
         Controls.Player.Jump.performed -= PlayerJump;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -64,35 +60,29 @@ public class PlayerWallRun : MonoBehaviour
     {
         if (pm.wallrunning)
             WallRunningMovement();
-    }
-    private void HandleMoveStart(InputAction.CallbackContext ctx)
-    {
-        //Wallrunning
-        if ((wallLeft || wallRight) && AboveGround())
-        {
-            if (!pm.wallrunning)
-            {
-                StartWallRun();
-            }
-        }
 
-        //not wallrunning
-        else
+        if (pm.moveDirection != Vector2.zero)
         {
-            if (pm.wallrunning)
+            if ((wallLeft || wallRight) && !pm.grounded)
             {
-                StopWallRun();
+                if (!pm.wallrunning)
+                {
+                    pm.wallrunning = true;
+                }
+            }
+            else
+            {
+                if (pm.wallrunning)
+                {
+                    StopWallRun();
+                }
             }
         }
-    }
-    private void HandleMoveStop(InputAction.CallbackContext ctx)
-    {
-        StopWallRun();
     }
 
     private void PlayerJump(InputAction.CallbackContext ctx)
     {
-        if ((wallLeft || wallRight) && AboveGround())
+        if (ctx.performed && pm.wallrunning)
         {
             WallJump();
         }
@@ -103,24 +93,10 @@ public class PlayerWallRun : MonoBehaviour
         wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallhit, wallCheckDistance, whatIsWall);
     } 
 
-    private bool AboveGround()
-    {
-        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, whatIsGround);
-    }
-
     private void StateMachine()
     {
-
-        if ((wallLeft || wallRight) && AboveGround())
-        {
-
-        }
     }
 
-    private void StartWallRun()
-    {
-        pm.wallrunning = true;
-    }
     private void WallRunningMovement()
     {
         //rb.useGravity = false;
@@ -144,6 +120,8 @@ public class PlayerWallRun : MonoBehaviour
     {
         pm.wallrunning = false;
         rb.useGravity = true;
+
+        Debug.Log("Stopping wall run");
     }
 
 
