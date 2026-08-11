@@ -3,6 +3,7 @@ using DG.Tweening.Core.Easing;
 using System.Collections;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
+
 //using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.AI;
@@ -25,11 +26,14 @@ public class EnemyAI : MonoBehaviour
     public float dashForce;
     private bool attacking;
     public float chaseLungeTime;
-    float lungeTimer;
 
     [Header("Lunge")]
+    float lungeTimer;
+    float beforeLungeWait;
+    public float lungeWaitTime = 2;
     public float lungeSpeed;
     public AnimationCurve lungeJump;
+    public float lungeAirTime;
 
     [Header("States")]
     public float sightRange, attackRange;
@@ -202,13 +206,25 @@ public class EnemyAI : MonoBehaviour
         if (lunging)
             return;
 
-        lunging = true;
-        Vector3 pos = player.transform.position;
-        pos.y = transform.position.y;
+        beforeLungeWait -= Time.deltaTime;
+        Debug.Log("waiting for lunge"); 
 
-        agent.enabled = false;
+        if(beforeLungeWait >= 0)
+        {
+            rb.linearVelocity = Vector3.zero;
+        }
+        else
+        {
+            Debug.Log("Lunging");
+            lunging = true;
+            Vector3 pos = player.transform.position;
+            pos.y = transform.position.y;
 
-        StartCoroutine(ApplyForceUntilDestinationReached(pos));
+            agent.enabled = false;
+
+            StartCoroutine(ApplyForceUntilDestinationReached(pos));
+        }
+
     }
 
     private Vector3 GetSearchWalkPoint()
@@ -236,9 +252,9 @@ public class EnemyAI : MonoBehaviour
         Vector3 startPos = transform.position;
         float t = 0;
 
-        while (t < 1)
+        while (t <1)
         {
-            t += Time.deltaTime * 10;
+            t += Time.deltaTime * lungeSpeed;
             if(t > 1)
             {
                 t = 1;
@@ -251,6 +267,7 @@ public class EnemyAI : MonoBehaviour
 
         agent.enabled = true;
         lunging = false;
+        beforeLungeWait = lungeWaitTime;
         enemyState = EnemyState.chase;
     }
 

@@ -5208,7 +5208,7 @@ Rigidbody:
   m_GameObject: {fileID: 8206338513116082208}
   serializedVersion: 5
   m_Mass: 5
-  m_LinearDamping: 10
+  m_LinearDamping: 5
   m_AngularDamping: 5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -5393,14 +5393,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d3f122b25950974b97677a0aadcdeca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  enemyState: 0
+  waitTime: 5
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 8
-  timeBetweenAttacks: 3
+  normalTurnSpeed: 200
+  attackTurnSpeed: 400
+  damage: 1
+  timeBetweenAttacks: 1.5
   dashForce: 80
+  chaseLungeTime: 3
+  lungeSpeed: 1.5
+  lungeJump:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.42485106
+      value: 0.96973455
+      inSlope: 0.29441455
+      outSlope: 0.29441455
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.51943946
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.0023841858
+      inSlope: -5.4077206
+      outSlope: -5.4077206
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.16941984
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lungeAirTime: 2
   sightRange: 12
   attackRange: 2
   playerInSightRange: 0
   playerInAttackRange: 0
+  veiwAngle: 50
+  viewDistance: 10
   whatisGround:
     serializedVersion: 2
     m_Bits: 655360

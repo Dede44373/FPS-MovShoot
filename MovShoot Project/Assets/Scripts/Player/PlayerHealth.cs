@@ -21,6 +21,9 @@ public class PlayerHealth : MonoBehaviour
     [Header("Audio")]
     [SerializeField] AudioSource hitSFX;
     float pitchVar = 0.05f;
+
+    [SerializeField] private HealthBarUI healthBar;
+
     public void TakeDamage(int damage)
     {
         FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
@@ -29,10 +32,11 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Player Damaged" + health);
         health -= damage;
+        healthBar.setHealth(health);
 
         //float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
         //hitSFX.pitch = randomPitch;
-        //hitSFX.Play();
+        hitSFX.Play();
 
         if (health <= 0)
         {
