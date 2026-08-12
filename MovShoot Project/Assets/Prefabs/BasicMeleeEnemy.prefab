@@ -5403,7 +5403,8 @@ MonoBehaviour:
   timeBetweenAttacks: 1.5
   dashForce: 80
   chaseLungeTime: 3
-  lungeSpeed: 1.5
+  lungeWaitTime: 2
+  lungeSpeed: 2
   lungeJump:
     serializedVersion: 2
     m_Curve:
@@ -5418,7 +5419,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 0.42485106
-      value: 0.96973455
+      value: 1
       inSlope: 0.29441455
       outSlope: 0.29441455
       tangentMode: 0
@@ -5438,8 +5439,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   lungeAirTime: 2
+  jumpHeight: 3
   sightRange: 12
-  attackRange: 2
+  attackRange: 1.25
   playerInSightRange: 0
   playerInAttackRange: 0
   veiwAngle: 50

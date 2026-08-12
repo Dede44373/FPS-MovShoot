@@ -1,15 +1,12 @@
-using DG.Tweening;
-using NUnit.Framework.Internal;
-using System;
 using System.Collections;
-using Unity.VisualScripting;
-using Unity.XR.Oculus.Input;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    public static PlayerMovement instance;
+
     public float slopeyAngle;
     public bool SlopeIncoming = false;
     private RaycastHit Test2;
@@ -116,6 +113,21 @@ public class PlayerMovement : MonoBehaviour
 
     public bool swinging;
     public bool wallrunning;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+    }
+
     private void Start()
     {
         //pg = GetComponent<PlayerGrapple>();
@@ -131,7 +143,6 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         GroundDetection();
         stateHandler();
-        gravityControl();
         PredictSlope();
         SpeedParticleControl();
 
@@ -158,6 +169,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
+        gravityControl();
     }
 
     void SpeedParticleControl()
@@ -463,7 +475,7 @@ public class PlayerMovement : MonoBehaviour
     
     void gravityControl()
     { 
-        if (!OnSlope() && !grounded && rb.useGravity && !activeGrapple && !wallrunning)
+        if (!OnSlope() && !grounded && rb.useGravity && !wallrunning && !isDashing)
             rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
 
     }

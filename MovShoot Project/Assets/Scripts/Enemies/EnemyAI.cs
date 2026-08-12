@@ -1,9 +1,4 @@
-using DG.Tweening;
-using DG.Tweening.Core.Easing;
 using System.Collections;
-using Unity.AI.Navigation;
-using Unity.VisualScripting;
-
 //using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.AI;
@@ -34,6 +29,7 @@ public class EnemyAI : MonoBehaviour
     public float lungeSpeed;
     public AnimationCurve lungeJump;
     public float lungeAirTime;
+    public float jumpHeight;
 
     [Header("States")]
     public float sightRange, attackRange;
@@ -72,7 +68,10 @@ public class EnemyAI : MonoBehaviour
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+
+        beforeLungeWait = lungeWaitTime;
     }
+
 
     private void Update()
     {
@@ -114,6 +113,7 @@ public class EnemyAI : MonoBehaviour
                 waitTime -= Time.deltaTime;
                 return;
             }
+            walkPointSet = false;
             enemyState = EnemyState.patrol;
         }
         else
@@ -195,7 +195,7 @@ public class EnemyAI : MonoBehaviour
             print("Destination set 3");
 
             agent.isStopped = true;
-            anim.SetTrigger("Bite");
+            anim.Play("Bite");
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
@@ -206,7 +206,11 @@ public class EnemyAI : MonoBehaviour
         if (lunging)
             return;
 
+        Vector3 pos = player.transform.position;
+        pos.y = transform.position.y;
+
         beforeLungeWait -= Time.deltaTime;
+        transform.LookAt(pos);
         Debug.Log("waiting for lunge"); 
 
         if(beforeLungeWait >= 0)
@@ -217,8 +221,9 @@ public class EnemyAI : MonoBehaviour
         {
             Debug.Log("Lunging");
             lunging = true;
-            Vector3 pos = player.transform.position;
-            pos.y = transform.position.y;
+
+         
+            transform.LookAt(pos);
 
             agent.enabled = false;
 
@@ -260,7 +265,7 @@ public class EnemyAI : MonoBehaviour
                 t = 1;
             }
             Vector3 newPos = Vector3.Lerp(startPos, Destination, t);
-            newPos.y += lungeJump.Evaluate(t);
+            newPos.y += lungeJump.Evaluate(t) * jumpHeight;
             transform.position = newPos;
             yield return null;
         }
@@ -288,11 +293,12 @@ public class EnemyAI : MonoBehaviour
 
     private void ResetAttack()
     {
+        Debug.Log("Attack resetting");
         agent.SetDestination(transform.position);
         agent.isStopped = false;
         alreadyAttacked = false;
         enemyState = EnemyState.chase;
-        //attacking = false;
+        attacking = false;
     }
 
     private void OnTriggerEnter(Collider collision)

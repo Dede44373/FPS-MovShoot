@@ -33,6 +33,10 @@ public class PlayerGrapple : MonoBehaviour
 
     public float grappleFOV;
 
+    [Header("Swinging")]
+    float holdTime;
+    public float holdActivateTime;
+
     [Header("Cooldown")]
     public float grapplingCd;
     private float grapplingCdTimer;
@@ -113,7 +117,7 @@ public class PlayerGrapple : MonoBehaviour
         if (isApplyingGrappleForce)
         {
 
-            ApplyGrappleForces();
+            ApplySwingingForces();
             if (Vector3.Dot(rb.linearVelocity, grapplePoint - rb.position) <= 0 && isRopeInTension)
                 TugPlayer();
 
@@ -143,19 +147,30 @@ public class PlayerGrapple : MonoBehaviour
         controls.Player.Grapple.performed -= HandleGrappleStart;
         controls.Player.Grapple.canceled -= HandleGrappleStop;
     }
-    private void HandleGrappleStart(InputAction.CallbackContext ctx)
+    private async void HandleGrappleStart(InputAction.CallbackContext ctx)
     {
         StartGrapple();
         if (grappling)
         {
-            isApplyingGrappleForce = true;
+            holdTime -= Time.deltaTime;
+            if( holdActivateTime <= 0 )
+            {
+                holdTime = holdActivateTime;
+                isApplyingGrappleForce = true;
 
-            isRopeInTension = ropeLength * ropeLength < (grapplePoint - rb.position).sqrMagnitude;
+                isRopeInTension = ropeLength * ropeLength < (grapplePoint - rb.position).sqrMagnitude;
+            
+            }
+        }
+        else if(holdTime >= 0)
+        {
+            ExecuteGrapple();
         }
         else
         {
             grappling = false;
             isApplyingGrappleForce = false;
+
 
         }
 
@@ -168,7 +183,7 @@ public class PlayerGrapple : MonoBehaviour
     }
 
     //maths for calculating swinging velocity
-    private void ApplyGrappleForces()
+    private void ApplySwingingForces()
     {
         //calculating theta
         Vector3 direction = (grapplePoint - rb.position).normalized;
@@ -280,39 +295,39 @@ public class PlayerGrapple : MonoBehaviour
     }
 
     private bool HasLayerMask(GameObject RequestingObject, LayerMask RequestingMask) => (RequestingMask.value & (1 << RequestingObject.layer)) != 0;
-    //private void ExecuteGrapple()
-    //{
-    //    fovCam.DoFov(grappleFOV);
-    //    pm.freeze = false;
-    //    freezePlayer = false;
-    //    pm.isDashing = false; // force end any ongoing dash
-    //    //.activeGrapple = true;
-    //    CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
-    //   // MoveToDestination(grapplePoint);
-    //    //Invoke(nameof(StopGrapple), 1f);
-    //}
+    private void ExecuteGrapple()
+    {
+        fovCam.DoFov(grappleFOV);
+        pm.freeze = false;
+        freezePlayer = false;
+        pm.isDashing = false; // force end any ongoing dash
+        //.activeGrapple = true;
+        CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
+                                            // MoveToDestination(grapplePoint);
+                                            //Invoke(nameof(StopGrapple), 1f);
+    }
 
-    //private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
-    //{
-    //    pm.rb.useGravity = false;
+    private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
+    {
+        pm.rb.useGravity = false;
 
-    //    float Distance = Vector3.Distance(transform.position, Destination);
+        float Distance = Vector3.Distance(transform.position, Destination);
 
-    //    while (Distance > 5f && grappling)
-    //    {
-    //        Vector3 Direction = (Destination - pm.transform.position).normalized;
-    //        pm.rb.AddForce(Direction * grappleSpeed, ForceMode.Force);
-    //        //pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
-    //        Distance = Vector3.Distance(pm.transform.position, Destination);
-    //        yield return null;
-    //    }
-    ////    pm.rb.useGravity = true;
-    ////}
+        while (Distance > 5f && grappling)
+        {
+            Vector3 Direction = (Destination - pm.transform.position).normalized;
+            pm.rb.AddForce(Direction * grappleSpeed, ForceMode.Force);
+            //pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
+            Distance = Vector3.Distance(pm.transform.position, Destination);
+            yield return null;
+        }
+        pm.rb.useGravity = true;
+    }
 
-    //private void MoveToDestination(Vector3 Destination)
-    //{
-    //    StartCoroutine(ApplyForceUntilDestinationReached(Destination));
-    //}
+    private void MoveToDestination(Vector3 Destination)
+    {
+        StartCoroutine(ApplyForceUntilDestinationReached(Destination));
+    }
     public void StopGrapple()
     {
         // fovCam.DoFov(pm.normalFOV);
