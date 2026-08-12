@@ -19,7 +19,7 @@ MonoBehaviour:
   groundDrag: 8
   airDrag: 4
   slideDrag: 0
-  addGravity: 1.5
+  addGravity: 60
   jumpForce: 27
   jumpCooldown: 0.1
   dashForce: 20
@@ -27,5 +27,5 @@ MonoBehaviour:
   dashUpwardForce: 0
   dashTime: 0.2
   dashCd: 0.5
-  dashCdTimer: -0.0010059113
+  dashCdTimer: -0.0015199848
   baseJumpUses: 2
