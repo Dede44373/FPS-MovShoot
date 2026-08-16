@@ -6240,7 +6240,7 @@ Transform:
   m_GameObject: {fileID: 1909289129}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.007, y: -0.001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7248,6 +7248,10 @@ PrefabInstance:
       propertyPath: predictionPoint
       value: 
       objectReference: {fileID: 1992864591}
+    - target: {fileID: 2796059230643265692, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 81f3c3a06e7135b4d94852c136abd014, type: 2}
     - target: {fileID: 3619507486806365288, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -7313,12 +7317,24 @@ PrefabInstance:
       value: -0.337
       objectReference: {fileID: 0}
     - target: {fileID: 8061491074092960227, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: TapThreshold
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8061491074092960227, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: grappleSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8061491074092960227, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: predictionPoint
       value: 
       objectReference: {fileID: 1992864591}
     - target: {fileID: 8063662422666187465, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054507516227194996, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: damage
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -7343,20 +7359,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1765542840}
     - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
-      propertyPath: jumpHeight
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
-      propertyPath: lungeSpeed
+      propertyPath: timeBetweenAttacks
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
-      propertyPath: attackRange
-      value: 1.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 2440405053972539977, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
-      propertyPath: lungeJump.m_Curve.Array.data[1].value
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3642226123085405845, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: m_LocalPosition.x

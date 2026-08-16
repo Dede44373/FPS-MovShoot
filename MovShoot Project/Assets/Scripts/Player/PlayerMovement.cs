@@ -146,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
         PredictSlope();
         SpeedParticleControl();
 
-        if(grounded && currentJump > 0)
+        if(grounded && currentJump >= 0)
             currentJump = 0;
        if (grounded && !activeGrapple && !isDashing && !swinging)
         {
@@ -293,7 +293,9 @@ public class PlayerMovement : MonoBehaviour
         desiredMoveSpeed = dashSpeed;
         keepMomentum = false;
         cam.DoFov(sprintFOV);
+        disableGravity = true;
 
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         Vector3 forceToApply = calculatedMoveDirection * data.dashForce + orientation.up * data.dashUpwardForce;
 
         if (disableGravity)
@@ -446,15 +448,17 @@ public class PlayerMovement : MonoBehaviour
         {
             currentJump = 0;
             inAir = false;
-
+            print("GROUNDED LAD");
             if (!isDashing && !activeGrapple)
             {
+                col.sharedMaterial = groundMat;
                 rb.linearDamping = data.groundDrag;
             }
             ChangeState(MovementState.walking);
         }
         else if (!grounded && currentState != MovementState.air) // Runs upon leaving the ground 
         {
+            print("in Air");
             inAir = true;
             col.sharedMaterial = slideMat;
             rb.linearDamping = data.airDrag;
@@ -468,15 +472,18 @@ public class PlayerMovement : MonoBehaviour
             //col.sharedMaterial = groundMat;
            
         }
-        if (pg.grappling == true || swinging == true)
+        if (pg.swinging == true || swinging == true)
             currentJump = 1;
-    }
+    }   
 
     
     void gravityControl()
-    { 
-        if (!OnSlope() && !grounded && rb.useGravity && !wallrunning && !isDashing)
+    {
+        if (!grounded && rb.useGravity && !wallrunning && !isDashing && !pg.grappling)
+        {
             rb.AddForce(Vector3.down * data.addGravity, ForceMode.Acceleration);
+            rb.useGravity = true;
+        }
 
     }
     void stateHandler()
@@ -484,7 +491,7 @@ public class PlayerMovement : MonoBehaviour
         if(wallrunning)
         {
             ChangeState(MovementState.wallrunning);
-            desiredMoveSpeed = wallrunSpeed;
+            //desiredMoveSpeed = wallrunSpeed;
         }
         else if (!wallrunning)
         {
@@ -506,10 +513,15 @@ public class PlayerMovement : MonoBehaviour
                     ChangeState(MovementState.sprinting);
                     desiredMoveSpeed = data.sprintSpeed;
                 }
-                else
+                else if (grounded)
                 {
                     ChangeState(MovementState.walking);
                     desiredMoveSpeed = data.walkSpeed;
+                }
+                else
+                {
+                    ChangeState(MovementState.air);
+
                 }
             }
 
@@ -645,7 +657,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Jump()
     {
-        if (wallrunning) return;
+        if (wallrunning || isDashing) return;
 
         exitingSlope = true;
         // reset y velocity

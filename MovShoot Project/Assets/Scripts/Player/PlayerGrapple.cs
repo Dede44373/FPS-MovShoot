@@ -32,6 +32,7 @@ public class PlayerGrapple : MonoBehaviour
     private Vector3 grapplePoint;
 
     public float grappleFOV;
+    public bool grappling;
 
     [Header("Swinging")]
     float holdTime;
@@ -43,9 +44,14 @@ public class PlayerGrapple : MonoBehaviour
 
     private bool isApplyingGrappleForce;
 
-    public bool grappling;
+    public bool swinging;
 
     public bool freezePlayer;
+
+    private bool startGrapple;
+    private bool startSwing;
+    public float TapThreshold = 0.5f;
+    public bool grappleActivate;
 
     [Header("Rope")]
     private float ropeLength;
@@ -77,7 +83,7 @@ public class PlayerGrapple : MonoBehaviour
         //For Sphere casting
         CheckForSwingPoints();
 
-        if (grappling)
+        if (swinging)
         {
             isApplyingGrappleForce = true;
 
@@ -105,7 +111,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (grappling == true)
+        if (swinging == true)
         {
             lr.SetPosition(0, gunTip.position);
             lr.SetPosition(1, grapplePoint);
@@ -116,7 +122,6 @@ public class PlayerGrapple : MonoBehaviour
     {
         if (isApplyingGrappleForce)
         {
-
             ApplySwingingForces();
             if (Vector3.Dot(rb.linearVelocity, grapplePoint - rb.position) <= 0 && isRopeInTension)
                 TugPlayer();
@@ -149,36 +154,36 @@ public class PlayerGrapple : MonoBehaviour
     }
     private async void HandleGrappleStart(InputAction.CallbackContext ctx)
     {
-        StartGrapple();
-        if (grappling)
-        {
-            holdTime -= Time.deltaTime;
-            if( holdActivateTime <= 0 )
-            {
-                holdTime = holdActivateTime;
-                isApplyingGrappleForce = true;
 
-                isRopeInTension = ropeLength * ropeLength < (grapplePoint - rb.position).sqrMagnitude;
-            
+        float Elapsed = 0f;
+        var Control = ctx.control;
+
+        while (Control.IsPressed())
+        {
+            await Awaitable.NextFrameAsync(destroyCancellationToken);
+            Elapsed += Time.deltaTime;
+
+            if (Elapsed > TapThreshold)
+            {
+                StartSwing();
+                //print("Holding");
+                //isApplyingGrappleForce = true;
             }
         }
-        else if(holdTime >= 0)
+    
+        print(Elapsed);
+
+        if (Elapsed <= TapThreshold)
         {
-            ExecuteGrapple();
+            grappleActivate = true;
+            //print("Tapped");
+            StartSwing();
         }
-        else
-        {
-            grappling = false;
-            isApplyingGrappleForce = false;
-
-
-        }
-
     }
 
     private void HandleGrappleStop(InputAction.CallbackContext ctx)
     {
-        if (grappling == true)
+        if (swinging || grappling == true)
             StopGrapple();
     }
 
@@ -215,11 +220,11 @@ public class PlayerGrapple : MonoBehaviour
         rb.position = grapplePoint - direction * ropeLength;
     }
 
-    private void StartGrapple()
+    private void StartSwing()
     {
         if (predictionHit.point == Vector3.zero) return;
         //pm.enabled = false;
-        if (grappling) return;
+        if (swinging) return;
         // makes sure that if you're grappling or swinging it stops it before starting a new grapple/or prevents it
         if (grapplingCdTimer > 0) return;
         //GetComponent<PlayerSwing>().StopSwing();
@@ -241,52 +246,62 @@ public class PlayerGrapple : MonoBehaviour
 
             pm.activeGrapple = true;
             // Invoke(nameof(ExecuteGrapple), grappleDelayTime);
-            Debug.Log("Start Grapple");
 
-
-            #region OldSwing
-            /*
-            if (Physics.Raycast(cam.position, direction, out hit, maxGrappleDistance))
+            if (!grappleActivate)
             {
-            detectedGO = hit.transform.gameObject;
-            grapplePoint = predictionHit.point;
-
-            ropeLength = (grapplePoint - rb.position).magnitude;
-            isReelingIn = true;
-            reelInSpeed = 0;
-
-            if (HasLayerMask(detectedGO, grappleable))
-            {
-            pm.activeGrapple = true;
-            // Invoke(nameof(ExecuteGrapple), grappleDelayTime);
-            Debug.Log("Start Grapple");
+                StartSwing();
+                swinging = true;
+                isRopeInTension = ropeLength * ropeLength < (grapplePoint - rb.position).sqrMagnitude;
             }
             else
             {
-            grappleCount = 1;
-            //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
-
-            Invoke(nameof(StopGrapple), grappleDelayTime);
-            Debug.Log("Grapple Fail");
-            return;
+                Debug.Log("Start Grapple");
+                grappling = true;
+                ExecuteGrapple();
             }
-            }
-            else
-            { 
-            grappleCount = 1;
-            //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
 
-            Invoke(nameof(StopGrapple), grappleDelayTime);
-            Debug.Log("Grapple Fail");
-            return;
+                #region OldSwing
+                /*
+                if (Physics.Raycast(cam.position, direction, out hit, maxGrappleDistance))
+                {
+                detectedGO = hit.transform.gameObject;
+                grapplePoint = predictionHit.point;
+
+                ropeLength = (grapplePoint - rb.position).magnitude;
+                isReelingIn = true;
+                reelInSpeed = 0;
+
+                if (HasLayerMask(detectedGO, grappleable))
+                {
+                pm.activeGrapple = true;
+                // Invoke(nameof(ExecuteGrapple), grappleDelayTime);
+                Debug.Log("Start Grapple");
+                }
+                else
+                {
+                grappleCount = 1;
+                //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+
+                Invoke(nameof(StopGrapple), grappleDelayTime);
+                Debug.Log("Grapple Fail");
+                return;
+                }
+                }
+                else
+                { 
+                grappleCount = 1;
+                //grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+
+                Invoke(nameof(StopGrapple), grappleDelayTime);
+                Debug.Log("Grapple Fail");
+                return;
 
 
-            }
-            */
-            #endregion
+                }
+                */
+                #endregion
 
 
-            grappling = true;
             lr.enabled = true;
             lr.positionCount = 2;
             lr.SetPosition(1, grapplePoint);
@@ -298,13 +313,14 @@ public class PlayerGrapple : MonoBehaviour
     private void ExecuteGrapple()
     {
         fovCam.DoFov(grappleFOV);
+        pm.col.sharedMaterial = pm.slideMat;
         pm.freeze = false;
         freezePlayer = false;
         pm.isDashing = false; // force end any ongoing dash
         //.activeGrapple = true;
         CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
-                                            // MoveToDestination(grapplePoint);
-                                            //Invoke(nameof(StopGrapple), 1f);
+        MoveToDestination(grapplePoint);
+        Invoke(nameof(StopGrapple), 1f);
     }
 
     private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
@@ -330,11 +346,16 @@ public class PlayerGrapple : MonoBehaviour
     }
     public void StopGrapple()
     {
-        // fovCam.DoFov(pm.normalFOV);
+        fovCam.DoFov(pm.normalFOV);
         Debug.Log("Stop Grapple");
+        pm.col.sharedMaterial = pm.groundMat;
         pm.freeze = false;
         freezePlayer = false;
+
+        swinging = false;
         grappling = false;
+        grappleActivate = false;
+
         pm.activeGrapple = false;
         isApplyingGrappleForce = false;
         grapplingCdTimer = grapplingCd;
@@ -344,7 +365,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private void CheckForSwingPoints()
     {
-        if (grappling)
+        if (swinging)
         {
             Debug.Log("<color=red>Grappling</color>");
             return;

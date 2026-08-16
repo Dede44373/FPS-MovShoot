@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: PlayerMovementData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementData
   walkSpeed: 20
-  sprintSpeed: 28
+  sprintSpeed: 30
   airControlModifier: 4
   groundControlModifier: 8
   groundDrag: 8
   airDrag: 4
   slideDrag: 0
-  addGravity: 60
+  addGravity: 5
   jumpForce: 27
   jumpCooldown: 0.1
   dashForce: 20
@@ -27,5 +27,5 @@ MonoBehaviour:
   dashUpwardForce: 0
   dashTime: 0.2
   dashCd: 0.5
-  dashCdTimer: -0.0015199848
+  dashCdTimer: -0.00041561946
   baseJumpUses: 2
