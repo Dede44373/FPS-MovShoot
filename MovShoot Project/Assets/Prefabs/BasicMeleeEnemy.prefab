@@ -5443,8 +5443,8 @@ MonoBehaviour:
   normalTurnSpeed: 200
   attackTurnSpeed: 400
   damage: 1
-  timeBetweenAttacks: 1.5
-  dashForce: 80
+  timeBetweenAttacks: 2
+  dashForce: 150
   chaseLungeTime: 3
   lungeWaitTime: 2
   lungeSpeed: 2
@@ -5484,7 +5484,7 @@ MonoBehaviour:
   lungeAirTime: 2
   jumpHeight: 3
   sightRange: 15
-  attackRange: 1.25
+  attackRange: 2
   playerInSightRange: 0
   playerInAttackRange: 0
   veiwAngle: 50

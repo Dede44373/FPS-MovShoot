@@ -518,10 +518,10 @@ public class PlayerMovement : MonoBehaviour
                     ChangeState(MovementState.walking);
                     desiredMoveSpeed = data.walkSpeed;
                 }
-                else
+                else if (!isDashing)
                 {
                     ChangeState(MovementState.air);
-
+                    desiredMoveSpeed = data.walkSpeed;
                 }
             }
 
