@@ -73,6 +73,9 @@ public class BasicEnemy : MonoBehaviour, IKnockable
 
     public void KnockbackEntity(Transform executionSource)
     {
+        if (rb == null)
+            return;
+
         Vector3 dir = (transform.position - executionSource.transform.position).normalized;
         rb.AddForce(dir, ForceMode.Impulse);
     }
