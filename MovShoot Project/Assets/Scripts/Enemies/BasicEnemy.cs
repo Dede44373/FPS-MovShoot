@@ -9,6 +9,7 @@ public class BasicEnemy : MonoBehaviour, IKnockable
     public float hitstopDuration;
     public float hitstopDeathDuration;
     public Rigidbody rb;
+    public float knockForce;
 
     [Header("iFrames")]
     [SerializeField] private float invulDuration;
@@ -77,6 +78,6 @@ public class BasicEnemy : MonoBehaviour, IKnockable
             return;
 
         Vector3 dir = (transform.position - executionSource.transform.position).normalized;
-        rb.AddForce(dir, ForceMode.Impulse);
+        rb.AddForce(dir * knockForce, ForceMode.Impulse);
     }
 }

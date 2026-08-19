@@ -4828,6 +4828,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3779268488281135978, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: rb
+      value: 
+      objectReference: {fileID: 1716324614}
+    - target: {fileID: 3779268488281135978, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: knockForce
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 8206338513116082208, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: m_Name
       value: BasicMeleeEnemy (1)
@@ -8253,6 +8261,7 @@ MonoBehaviour:
   hitstopDuration: 0.1
   hitstopDeathDuration: 0.05
   rb: {fileID: 0}
+  knockForce: 0
   invulDuration: 1
   numberOfFlashes: 0
   hasLoot: 0
@@ -9355,6 +9364,7 @@ MonoBehaviour:
   hitstopDuration: 0
   hitstopDeathDuration: 0
   rb: {fileID: 0}
+  knockForce: 0
   invulDuration: 0
   numberOfFlashes: 0
   hasLoot: 0
@@ -9567,6 +9577,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1709776479}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &1716324614 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 2420442971627849638, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+  m_PrefabInstance: {fileID: 842302277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1744902755
 GameObject:
   m_ObjectHideFlags: 0
@@ -9781,6 +9796,7 @@ MonoBehaviour:
   hitstopDuration: 0
   hitstopDeathDuration: 0
   rb: {fileID: 0}
+  knockForce: 0
   invulDuration: 0
   numberOfFlashes: 0
   hasLoot: 0
@@ -10308,6 +10324,7 @@ MonoBehaviour:
   hitstopDuration: 0
   hitstopDeathDuration: 0
   rb: {fileID: 0}
+  knockForce: 0
   invulDuration: 0
   numberOfFlashes: 0
   hasLoot: 0
@@ -11651,6 +11668,7 @@ MonoBehaviour:
   hitstopDuration: 0.1
   hitstopDeathDuration: 0.05
   rb: {fileID: 0}
+  knockForce: 0
   invulDuration: 1
   numberOfFlashes: 0
   hasLoot: 0

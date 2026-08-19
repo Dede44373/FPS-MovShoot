@@ -78,6 +78,11 @@ public class PlayerAttack : MonoBehaviour
             BasicEnemy enemy = collision.gameObject.GetComponent<BasicEnemy>();
 
             enemy.TakeDamage(damage);
+            IKnockable knockback = GetComponent<IKnockable>();
+            if (knockback != null)
+            {
+                knockback.Knockback(transform);
+            }
         }
         
     }
