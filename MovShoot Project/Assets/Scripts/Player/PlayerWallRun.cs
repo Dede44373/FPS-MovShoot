@@ -10,8 +10,12 @@ public class PlayerWallRun : MonoBehaviour
     public float wallRunForce;
     public float maxWallRunTime;
     private float wallRunTimer;
+
+    [Header("Walljumping")]
     public float wallJumpUpForce;
     public float wallJumpSideForce;
+    public float wallJumpUses;
+    int currentWallJump;
 
     [Header("Camera VFX")]
     public float wallJumpFOV;
@@ -54,6 +58,9 @@ public class PlayerWallRun : MonoBehaviour
     void Update()
     {
         CheckForWall();
+
+        if (pm.grounded && currentWallJump >= 0)
+            currentWallJump = 0;
     }
 
     private void FixedUpdate()
@@ -139,23 +146,27 @@ public class PlayerWallRun : MonoBehaviour
         }
         */
 
-    
-        Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
+        if (currentWallJump < wallJumpUses)
+        {
+            currentWallJump++;
 
-        Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
+            Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
 
-        //reset y velocity
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        //add force
-        rb.AddForce(forceToApply, ForceMode.Impulse);
+            Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
 
-        cam.DoFov(wallJumpFOV);
-        if (wallLeft) cam.DoTilt(-tiltAmount);
-        if (wallRight) cam.DoTilt(tiltAmount);
+            //reset y velocity
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            //add force
+            rb.AddForce(forceToApply, ForceMode.Impulse);
 
-        await Awaitable.WaitForSecondsAsync(tiltCooldown, destroyCancellationToken);
+            cam.DoFov(wallJumpFOV);
+            if (wallLeft) cam.DoTilt(-tiltAmount);
+            if (wallRight) cam.DoTilt(tiltAmount);
 
-        cam.DoFov(pm.normalFOV);
-        cam.DoTilt(0f);
+            await Awaitable.WaitForSecondsAsync(tiltCooldown, destroyCancellationToken);
+
+            cam.DoFov(pm.normalFOV);
+            cam.DoTilt(0f);
+        }
     }
 }

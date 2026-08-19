@@ -2,17 +2,19 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class BasicEnemy : MonoBehaviour
+public class BasicEnemy : MonoBehaviour, IKnockable
 {
     [Header("Stats")]
     public int health;
     public float hitstopDuration;
     public float hitstopDeathDuration;
+    public Rigidbody rb;
 
     [Header("iFrames")]
     [SerializeField] private float invulDuration;
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRend;
+    [SerializeField] bool hasLoot;
 
     [Header("Particles")]
     public ParticleSystem hurtPart;
@@ -44,7 +46,9 @@ public class BasicEnemy : MonoBehaviour
     private void Die()
     {
             Instantiate(deathPart, transform.position, Quaternion.identity);
+        if(hasLoot)
             GetComponent<LootBag>().InstantiateLoot(transform.position); 
+
             Destroy(gameObject);
 
     }
@@ -62,4 +66,14 @@ public class BasicEnemy : MonoBehaviour
         StopAllCoroutines();
     }
 
+    public void Knockback(Transform executionSource)
+    {
+        KnockbackEntity(executionSource);
+    }
+
+    public void KnockbackEntity(Transform executionSource)
+    {
+        Vector3 dir = (transform.position - executionSource.transform.position).normalized;
+        rb.AddForce(dir, ForceMode.Impulse);
+    }
 }

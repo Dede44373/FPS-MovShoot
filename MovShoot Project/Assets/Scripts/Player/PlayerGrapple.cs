@@ -111,7 +111,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (swinging == true)
+        if (swinging || grappling)
         {
             lr.SetPosition(0, gunTip.position);
             lr.SetPosition(1, grapplePoint);
@@ -249,7 +249,7 @@ public class PlayerGrapple : MonoBehaviour
 
             if (!grappleActivate)
             {
-                StartSwing();
+                //StartSwing();
                 swinging = true;
                 isRopeInTension = ropeLength * ropeLength < (grapplePoint - rb.position).sqrMagnitude;
             }
@@ -304,6 +304,7 @@ public class PlayerGrapple : MonoBehaviour
 
             lr.enabled = true;
             lr.positionCount = 2;
+
             lr.SetPosition(1, grapplePoint);
 
         }
@@ -325,6 +326,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
     {
+        lr.SetPosition(0, transform.position);
         pm.rb.useGravity = false;
 
         float Distance = Vector3.Distance(transform.position, Destination);

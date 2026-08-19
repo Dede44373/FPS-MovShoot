@@ -5405,6 +5405,7 @@ MonoBehaviour:
   hitstopDeathDuration: 0.1
   invulDuration: 0.2
   numberOfFlashes: 2
+  hasLoot: 1
   hurtPart: {fileID: 8822891027811187808}
   deathPart: {fileID: 6354316287496609083, guid: d605456c54a1b954585395967dc3ca9e, type: 3}
   hitSFX: {fileID: 5867557959505512940}

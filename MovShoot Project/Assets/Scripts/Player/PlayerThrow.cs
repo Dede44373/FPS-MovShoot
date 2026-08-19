@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -20,6 +21,7 @@ public class PlayerThrow : MonoBehaviour
     public float throwUpwardForce;
 
     bool readyToThrow;
+    public bool active;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,12 +51,12 @@ public class PlayerThrow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
 
     void Throw()
     {
+        if (!active) return;
         readyToThrow = false;
 
         // clone object to throw
