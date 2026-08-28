@@ -5400,11 +5400,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d7225201d7d9c48885ac77fd769c3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicEnemy
-  health: 5
+  health: 3
   hitstopDuration: 0.05
   hitstopDeathDuration: 0.1
   rb: {fileID: 2420442971627849638}
-  knockForce: 20000
+  knockForce: 50
   invulDuration: 0.2
   numberOfFlashes: 2
   hasLoot: 1

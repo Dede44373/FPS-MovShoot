@@ -69,13 +69,16 @@ public class BasicEnemy : MonoBehaviour, IKnockable
 
     public void Knockback(Transform executionSource)
     {
+        print("hey");
         KnockbackEntity(executionSource);
     }
 
     public void KnockbackEntity(Transform executionSource)
     {
+        print("k");
         if (rb == null)
             return;
+        print("has a rigidbody");
 
         Vector3 dir = (transform.position - executionSource.transform.position).normalized;
         rb.AddForce(dir * knockForce, ForceMode.Impulse);

@@ -473,7 +473,7 @@ public class PlayerMovement : MonoBehaviour
            
         }
         if (pg.swinging == true || swinging == true)
-            currentJump = 1;
+            currentJump = 0;
     }   
 
     
