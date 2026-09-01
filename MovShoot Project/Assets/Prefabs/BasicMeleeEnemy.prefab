@@ -5404,7 +5404,7 @@ MonoBehaviour:
   hitstopDuration: 0.05
   hitstopDeathDuration: 0.1
   rb: {fileID: 2420442971627849638}
-  knockForce: 50
+  knockForce: 75
   invulDuration: 0.2
   numberOfFlashes: 2
   hasLoot: 1

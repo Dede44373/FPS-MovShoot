@@ -5503,9 +5503,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 21266893477874908, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: active
-      value: 0
+    - target: {fileID: 1458218938387282721, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.501675
+      objectReference: {fileID: 0}
+    - target: {fileID: 1458218938387282721, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0158
       objectReference: {fileID: 0}
     - target: {fileID: 3619507486806365288, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_AnchorMax.x
@@ -10877,8 +10881,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicEnemy
   health: 1
-  hitstopDuration: 0
-  hitstopDeathDuration: 0
+  hitstopDuration: 0.5
+  hitstopDeathDuration: 0.5
   rb: {fileID: 0}
   knockForce: 0
   invulDuration: 0
@@ -11304,8 +11308,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicEnemy
   health: 1
-  hitstopDuration: 0
-  hitstopDeathDuration: 0
+  hitstopDuration: 0.5
+  hitstopDeathDuration: 0.5
   rb: {fileID: 0}
   knockForce: 0
   invulDuration: 0

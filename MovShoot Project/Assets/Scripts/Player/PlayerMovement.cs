@@ -27,13 +27,16 @@ public class PlayerMovement : MonoBehaviour
     public float speedIncreaseMultiplier;
     public float slopeIncreaseMultiplier;
 
+    public bool freeze;
+    private bool enableMovementOnNextTouch;
+
+    [Header("Jumping")]
     public bool readyToJump = true;
     int currentJump = 0;
     public bool inAir;
 
-    public bool freeze;
-    private bool enableMovementOnNextTouch;
-
+    [SerializeField] float coyoteTime = 0.2f;
+    float coyoteTimeCounter;
     [Header("Controls")]
     public UserInputs Controls;
 
@@ -159,6 +162,16 @@ public class PlayerMovement : MonoBehaviour
 
        if(data.dashCdTimer >= 0)
             data.dashCdTimer -= Time.deltaTime;
+
+       // coyote time setter
+       if (grounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+       else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
 
         //if (moveSpeed == 0)
         //{
@@ -427,7 +440,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("spacebar pressed");
         print($"{readyToJump}, {currentJump}, {data.baseJumpUses},is current jump lower than baseJumpUses:{currentJump < data.baseJumpUses}");
-        if (readyToJump && currentJump < data.baseJumpUses && !wallrunning)
+        if (readyToJump && currentJump < data.baseJumpUses && !wallrunning && coyoteTimeCounter > 0f)
         {
             readyToJump = false;
             currentJump++;

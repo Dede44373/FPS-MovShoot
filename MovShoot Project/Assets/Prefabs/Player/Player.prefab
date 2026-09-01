@@ -204,7 +204,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   coll: {fileID: 2325683827863854627}
   attackDelay: 0.5
-  damage: 10
+  damage: 2
+  player: {fileID: 0}
+  cam: {fileID: 0}
 --- !u!65 &2325683827863854627
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5836,6 +5838,80 @@ MonoBehaviour:
   Health: 5
   MaxHealth: 5
   duration: 0.5
+--- !u!1 &6028824993625642640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9140595643170271614}
+  - component: {fileID: 8974037851689820150}
+  - component: {fileID: 2293320668200762938}
+  m_Layer: 6
+  m_Name: Shadow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9140595643170271614
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6028824993625642640}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7104311548313246453}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &8974037851689820150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6028824993625642640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.DecalProjector
+  m_Material: {fileID: 2100000, guid: 2ce0785f9ea6dea48b50ede51cf72168, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_RenderingLayerMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ScaleMode: 0
+  m_Offset: {x: 0, y: 0, z: 0.75}
+  m_Size: {x: 1.5, y: 1.5, z: 1.5}
+  m_FadeFactor: 1
+  version: 1
+  m_DecalLayerMask: 1
+--- !u!114 &2293320668200762938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6028824993625642640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e974ec111ccbec84d8e24b7432d846e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  castDistance: 20
 --- !u!1 &7309633469952279860
 GameObject:
   m_ObjectHideFlags: 0
@@ -6318,6 +6394,7 @@ Transform:
   - {fileID: 3497479118711990647}
   - {fileID: 6672163251390643934}
   - {fileID: 754242525279400733}
+  - {fileID: 9140595643170271614}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -0.593, y: -0.203, z: -0.337}
 --- !u!54 &5967160698531083456
@@ -6563,6 +6640,7 @@ MonoBehaviour:
   raycastRange: 500
   throwForce: 30
   throwUpwardForce: 1
+  active: 0
 --- !u!114 &4305355014445540128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6656,8 +6734,8 @@ Transform:
   m_GameObject: {fileID: 8585920374960134187}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.607, y: -0.216, z: -0.13999999}
-  m_LocalScale: {x: 0.29289, y: 0.29289, z: 0.75}
+  m_LocalPosition: {x: -0.607, y: -0.216, z: -0.0158}
+  m_LocalScale: {x: 0.29289, y: 0.29289, z: 0.501675}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7037561892032980868}
