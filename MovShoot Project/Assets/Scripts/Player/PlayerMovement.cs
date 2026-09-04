@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,11 +33,26 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jumping")]
     public bool readyToJump = true;
-    int currentJump = 0;
     public bool inAir;
+    int currentJump;
+
+    //int _currentJump;
+    //int currentJumpd
+    //{
+    //    get => _currentJump;
+    //    set
+    //    {
+    //        _currentJump = value;
+    //        print($"changed value to {value}");
+    //    }
+    //}
 
     [SerializeField] float coyoteTime = 0.2f;
     float coyoteTimeCounter;
+
+    public float jumpBufferTime = 0.2f;
+    private float jumpBufferCounter;
+
     [Header("Controls")]
     public UserInputs Controls;
 
@@ -143,14 +159,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        print($"Current Jump: {currentJump}");
         SpeedControl();
         GroundDetection();
         stateHandler();
         PredictSlope();
         SpeedParticleControl();
-
-        if(grounded && currentJump >= 0)
-            currentJump = 0;
+        CoyoteJumpBuffering();
        if (grounded && !activeGrapple && !isDashing && !swinging)
         {
             //print("reset to ground drag");
@@ -162,16 +177,6 @@ public class PlayerMovement : MonoBehaviour
 
        if(data.dashCdTimer >= 0)
             data.dashCdTimer -= Time.deltaTime;
-
-       // coyote time setter
-       if (grounded)
-        {
-            coyoteTimeCounter = coyoteTime;
-        }
-       else
-        {
-            coyoteTimeCounter -= Time.deltaTime;
-        }
 
         //if (moveSpeed == 0)
         //{
@@ -249,7 +254,8 @@ public class PlayerMovement : MonoBehaviour
         Controls.Player.Sprint.canceled += StopPlayerSprint;
         Controls.Player.Crouch.performed += HandleSlideStart;
         Controls.Player.Crouch.canceled += HandleSlideStop;
-        Controls.Player.Jump.performed += PlayerJump;
+        Controls.Player.Jump.started += PlayerJump;
+        Controls.Player.Jump.canceled += EndJump;
     }
     private void OnDisable()
     {
@@ -259,9 +265,12 @@ public class PlayerMovement : MonoBehaviour
         Controls.Player.Sprint.canceled -= StopPlayerSprint;
         Controls.Player.Crouch.performed -= HandleSlideStart;
         Controls.Player.Crouch.canceled -= HandleSlideStop;
-        Controls.Player.Jump.performed -= PlayerJump;
+        Controls.Player.Jump.started -= PlayerJump;
+        Controls.Player.Jump.canceled -= EndJump;
     }
 
+    private bool IsJumping = false;
+    private void EndJump(InputAction.CallbackContext ctx) => IsJumping = false;
     #endregion
 
     private void ChangeState(MovementState newState)
@@ -435,22 +444,109 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    // Jumping
+    #region Jumping
     private void PlayerJump(InputAction.CallbackContext ctx)
-    {
+    { 
+        IsJumping = true;
         Debug.Log("spacebar pressed");
+        jumpBufferCounter = jumpBufferTime;
         print($"{readyToJump}, {currentJump}, {data.baseJumpUses},is current jump lower than baseJumpUses:{currentJump < data.baseJumpUses}");
-        if (readyToJump && currentJump < data.baseJumpUses && !wallrunning && coyoteTimeCounter > 0f)
+        if (currentJump < data.baseJumpUses && !wallrunning)
         {
             readyToJump = false;
-            currentJump++;
 
-            Jump();
-            Debug.Log("jumping");
+                Jump();
+
+                Debug.Log("jumping");
             Invoke(nameof(ResetJump), data.jumpCooldown);
         }
-
     }
+    private void Jump()
+    {
+        if (wallrunning || isDashing) return;
+
+
+        exitingSlope = true;
+        // reset y velocity
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            if (currentJump == 0 && coyoteTimeCounter > 0  && jumpBufferCounter > 0)
+            {
+                // Makes your first  jump a bit higher so it feels better 
+                rb.AddForce(transform.up * data.jumpForce * firstJump, ForceMode.Impulse);
+                currentJump++;
+            }
+            else if (currentJump == 1)
+            {
+                rb.AddForce(transform.up * data.jumpForce, ForceMode.Impulse);
+                currentJump++;
+            }
+
+        
+    }
+    private void ResetJump()
+    {
+        Debug.Log("reset jump");
+
+        exitingSlope = false;
+
+        readyToJump = true;
+    }
+     private void CoyoteJumpBuffering()
+    {
+        // JumpCounter Resetter
+        if (grounded && rb.linearVelocity.y < 0)
+            currentJump = 0;
+
+        // Coyote time setter
+        if (grounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+
+        if (!grounded && coyoteTimeCounter < 0 && currentJump == 0)
+        {
+            currentJump++;
+        }
+
+        // Jump Buffering
+        /*        if (IsJumping || grounded)
+                {
+                    jumpBufferCounter = jumpBufferTime;
+                }
+                else if (currentState == MovementState.air)
+                {
+
+                    jumpBufferCounter = Mathf.Max(jumpBufferCounter - Time.deltaTime, 0);
+
+                }*/
+
+
+        if (jumpBufferCounter < jumpBufferTime && grounded)
+        {
+            if (BufferingJump)
+            {
+                BufferingJump = false;
+                Jump();
+            }
+
+            jumpBufferCounter = jumpBufferTime;
+        }
+        else if (currentJump >= 2 && jumpBufferCounter > 0f)
+        {
+            if (!BufferingJump)
+            {
+                BufferingJump = true;
+            }
+            print("coyote         bool BufferingJump = false;");
+            jumpBufferCounter = Mathf.Max(jumpBufferCounter - Time.deltaTime, 0f);
+        }
+    }
+    bool BufferingJump = false;
+    #endregion
 
     private void GroundDetection()
     {
@@ -459,7 +555,6 @@ public class PlayerMovement : MonoBehaviour
         //handle drag
         if (grounded && currentState == MovementState.air) // Runs upon landing from air
         {
-            currentJump = 0;
             inAir = false;
             print("GROUNDED LAD");
             if (!isDashing && !activeGrapple)
@@ -486,7 +581,7 @@ public class PlayerMovement : MonoBehaviour
            
         }
         if (pg.swinging == true || swinging == true)
-            currentJump = 0;
+            currentJump = 1;
     }   
 
     
@@ -668,30 +763,7 @@ public class PlayerMovement : MonoBehaviour
 
         //limiting speed on ground or in air
     }
-    private void Jump()
-    {
-        if (wallrunning || isDashing) return;
 
-        exitingSlope = true;
-        // reset y velocity
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        
-        // Makes your first  jump a bit higher so it feels better 
-        if (currentJump == 1)
-            rb.AddForce(transform.up * data.jumpForce * firstJump, ForceMode.Impulse);
-
-        else
-            rb.AddForce(transform.up * data.jumpForce, ForceMode.Impulse);
-    }
-    private void ResetJump()
-    {
-        Debug.Log("reset jump");
-
-        exitingSlope = false;
-
-        readyToJump = true;
-    }
-        
     ////public void JumpToPosition(Vector3 targetPosition,float trajectoryHeight)
     ////{
     ////    activeGrapple = true;

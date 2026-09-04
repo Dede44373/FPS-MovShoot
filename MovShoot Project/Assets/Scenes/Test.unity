@@ -7423,14 +7423,14 @@ PrefabInstance:
       propertyPath: active
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2293320668200762938, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: castDistance
+      value: 40
+      objectReference: {fileID: 0}
     - target: {fileID: 2785608546767825169, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: predictionPoint
       value: 
       objectReference: {fileID: 1992864591}
-    - target: {fileID: 2796059230643265692, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 13400000, guid: 81f3c3a06e7135b4d94852c136abd014, type: 2}
     - target: {fileID: 3619507486806365288, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -7439,37 +7439,21 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4305355014445540128, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: wallJumpUses
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5941444001601222501, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: m_Color.b
-      value: 0.3066038
-      objectReference: {fileID: 0}
-    - target: {fileID: 5941444001601222501, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: m_Color.g
-      value: 0.38687557
-      objectReference: {fileID: 0}
-    - target: {fileID: 5941444001601222501, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7044950162221493143, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: dashSpeed
-      value: 15
+      propertyPath: coyoteTime
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7104311548313246453, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.63704145
+      value: 34.54
       objectReference: {fileID: 0}
     - target: {fileID: 7104311548313246453, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.7500354
+      value: 13.9
       objectReference: {fileID: 0}
     - target: {fileID: 7104311548313246453, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.944835
+      value: 7.51
       objectReference: {fileID: 0}
     - target: {fileID: 7104311548313246453, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7500,14 +7484,6 @@ PrefabInstance:
       value: -0.337
       objectReference: {fileID: 0}
     - target: {fileID: 8061491074092960227, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: TapThreshold
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061491074092960227, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: grappleSpeed
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 8061491074092960227, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: predictionPoint
       value: 
       objectReference: {fileID: 1992864591}
@@ -7515,14 +7491,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8974037851689820150, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: m_Size.x
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8974037851689820150, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: m_Size.y
+      value: 1.8
+      objectReference: {fileID: 0}
     - target: {fileID: 9054507516227194996, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: cam
       value: 
       objectReference: {fileID: 699396676}
-    - target: {fileID: 9054507516227194996, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
-      propertyPath: damage
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 9054507516227194996, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: player
       value: 
@@ -7585,8 +7565,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3779268488281135978, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
-      propertyPath: knockForce
-      value: 75
+      propertyPath: hitstopDeathDuration
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8206338513116082208, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: m_Name

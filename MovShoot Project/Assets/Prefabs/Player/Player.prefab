@@ -205,8 +205,8 @@ MonoBehaviour:
   coll: {fileID: 2325683827863854627}
   attackDelay: 0.5
   damage: 2
-  player: {fileID: 0}
-  cam: {fileID: 0}
+  player: {fileID: 7104311548313246453}
+  cam: {fileID: 2266019043911916869}
 --- !u!65 &2325683827863854627
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5895,7 +5895,7 @@ MonoBehaviour:
     m_Bits: 1
   m_ScaleMode: 0
   m_Offset: {x: 0, y: 0, z: 0.75}
-  m_Size: {x: 1.5, y: 1.5, z: 1.5}
+  m_Size: {x: 1.8, y: 1.8, z: 1.5}
   m_FadeFactor: 1
   version: 1
   m_DecalLayerMask: 1
@@ -5911,7 +5911,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e974ec111ccbec84d8e24b7432d846e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  castDistance: 20
+  castDistance: 40
 --- !u!1 &7309633469952279860
 GameObject:
   m_ObjectHideFlags: 0
@@ -6578,9 +6578,11 @@ MonoBehaviour:
   desiredMoveSpeed: 0
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
+  freeze: 0
   readyToJump: 1
   inAir: 0
-  freeze: 0
+  coyoteTime: 0.25
+  jumpBufferTime: 0.2
   isDashing: 0
   dashSpeed: 15
   dashSpeedChangeFactor: 20
@@ -6640,7 +6642,7 @@ MonoBehaviour:
   raycastRange: 500
   throwForce: 30
   throwUpwardForce: 1
-  active: 0
+  active: 1
 --- !u!114 &4305355014445540128
 MonoBehaviour:
   m_ObjectHideFlags: 0
