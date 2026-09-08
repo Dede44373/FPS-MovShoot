@@ -3,7 +3,7 @@ using UnityEngine;
 public class ObjectScripted : MonoBehaviour
 {
     public Animator anim;
-    public ObjectScripted objectScripted;
+    public GameObject objectScripted;
     public Transform pos;
 
     //private void Awake()
@@ -13,7 +13,7 @@ public class ObjectScripted : MonoBehaviour
 
     public void Event1()
     {
-        Instantiate(objectScripted, pos);
+        //Instantiate(objectScripted, pos);
     }
     public void Event2()
     {
@@ -23,11 +23,21 @@ public class ObjectScripted : MonoBehaviour
     {
 
     }
+
+    public void TakeDamage(int damage= 0)
+    {
+        objectScripted.SetActive(true);
+        Instantiate(objectScripted, pos);
+
+
+    }
     private void OnCollisionEnter(Collision collision)
     {
+        
+
         //ObjectScripted ObjectScriptedClone = Instantiate(objectScripted);
         //ObjectScriptedClone.transform.SetPositionAndRotation(transform.position, transform.rotation);
-        anim.Play("Event1");
+        //anim.Play("Event1");
 
     }
 

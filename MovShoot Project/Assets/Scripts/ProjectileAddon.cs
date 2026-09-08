@@ -86,9 +86,9 @@ public class ProjectileAddon : MonoBehaviour
         //rb.isKinematic = true;
 
         //checks if you hit an enemy
-        if (collision.gameObject.GetComponent<BasicEnemy>() != null)
+        if (collision.gameObject.GetComponent<EnemyHealth>() != null)
         {
-            BasicEnemy enemy = collision.gameObject.GetComponent<BasicEnemy>();
+            EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
             
             //rb.isKinematic = true;
             enemy.TakeDamage(damage);

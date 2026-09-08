@@ -82,7 +82,7 @@ public class PlayerAttack : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             print("has an enemy tag");
-            BasicEnemy enemy = collision.gameObject.GetComponent<BasicEnemy>();
+            EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
             enemy.TakeDamage(damage);
             print($"does enemy exist: {enemy != null}, if so it should've taken damage");
 

@@ -20,6 +20,7 @@ public class PlayerGrapple : MonoBehaviour
     public PlayerCam fovCam;
     public Transform playerBottom;
     [SerializeField] private Rigidbody rb;
+    public bool Active;
 
     [Header("Grappling")]
     public float maxGrappleDistance;
@@ -154,7 +155,7 @@ public class PlayerGrapple : MonoBehaviour
     }
     private async void HandleGrappleStart(InputAction.CallbackContext ctx)
     {
-
+        if (!Active) return;
         float Elapsed = 0f;
         var Control = ctx.control;
 
@@ -367,6 +368,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private void CheckForSwingPoints()
     {
+        if (!Active) return;
         if (swinging)
         {
             Debug.Log("<color=red>Grappling</color>");

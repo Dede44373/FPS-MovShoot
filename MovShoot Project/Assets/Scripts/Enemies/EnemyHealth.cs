@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class BasicEnemy : MonoBehaviour, IKnockable
+public class EnemyHealth : MonoBehaviour, IKnockable
 {
     [Header("Stats")]
     public int health;

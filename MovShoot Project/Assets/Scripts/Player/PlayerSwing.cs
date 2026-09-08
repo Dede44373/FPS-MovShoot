@@ -10,6 +10,7 @@ public class PlayerSwing : MonoBehaviour
     public Transform gunTip, cam, player;
     public LayerMask Grappleable;
     public PlayerMovement pm;
+    public bool active;
 
     [Header("Swinging")]
     public float maxSwingDistance =25f;
@@ -72,12 +73,14 @@ public class PlayerSwing : MonoBehaviour
     {
 
         //Grappling combining function
+        if (!active) return;
         Debug.Log("Swinging");
         StartSwing();
     }
 
     private void HandleStopSwing(InputAction.CallbackContext ctx)
     {
+        if (!active) return;
         StopSwing();
     }
 
@@ -122,7 +125,7 @@ public class PlayerSwing : MonoBehaviour
     }
     private void CheckForSwingPoints()
     {
-        if (joint != null) return;
+        if (joint != null || !active) return;
         RaycastHit sphereCastHit;
         Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward, 
                             out sphereCastHit, maxSwingDistance, Grappleable);
