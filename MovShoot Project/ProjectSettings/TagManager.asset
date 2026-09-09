@@ -8,6 +8,7 @@ TagManager:
   - Checkpoint
   - Gun Activator
   - Grapple Activator
+  - Weapon
   layers:
   - Default
   - TransparentFX

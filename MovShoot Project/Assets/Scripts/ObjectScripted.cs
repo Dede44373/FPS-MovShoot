@@ -24,16 +24,20 @@ public class ObjectScripted : MonoBehaviour
 
     }
 
-    public void TakeDamage(int damage= 0)
+    public void TakeDamage()
     {
         objectScripted.SetActive(true);
-        Instantiate(objectScripted, pos);
+        //Instantiate(objectScripted, pos);
+        Destroy(gameObject);
 
 
     }
     private void OnCollisionEnter(Collision collision)
     {
-        
+        if(collision.gameObject.CompareTag("Weapon"))
+        {
+            TakeDamage();
+        }
 
         //ObjectScripted ObjectScriptedClone = Instantiate(objectScripted);
         //ObjectScriptedClone.transform.SetPositionAndRotation(transform.position, transform.rotation);
