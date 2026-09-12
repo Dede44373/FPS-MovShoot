@@ -465,7 +465,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (wallrunning || isDashing) return;
 
-
+        if (pg.swinging || pg.grappling)
+        {
+            pg.StopGrapple();
+        }
         exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -580,7 +583,7 @@ public class PlayerMovement : MonoBehaviour
             //col.sharedMaterial = groundMat;
            
         }
-        if (pg.swinging == true || swinging == true)
+        if (pg.swinging|| swinging|| pg.grappling)
             currentJump = 1;
     }   
 

@@ -84,6 +84,7 @@ public class PlayerGrapple : MonoBehaviour
         //For Sphere casting
         CheckForSwingPoints();
 
+
         if (swinging)
         {
             isApplyingGrappleForce = true;

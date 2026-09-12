@@ -2,19 +2,23 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using CameraShake;
 
 public class PlayerAttack : MonoBehaviour
 {
-    private Animator anim;
-    public UserInputs Controls;
-    [SerializeField] private Collider coll;
+    [SerializeField] PerlinShake.Params shakeParams;
+
+    [Header("Attacking Stats")]
     private WaitForSeconds ad;
     public float attackDelay = 0.5f;
-
     [SerializeField] int damage;
     private bool targetHit;
     private bool inAttack;
 
+    [Header("References")]
+    public UserInputs Controls;
+    [SerializeField] private Collider coll;
+    private Animator anim;
     public Transform player;
     public Camera cam;
     public Mouse mouse { get; private set; }
@@ -85,6 +89,7 @@ public class PlayerAttack : MonoBehaviour
             EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
             enemy.TakeDamage(damage);
             print($"does enemy exist: {enemy != null}, if so it should've taken damage");
+            CameraShaker.Shake(new PerlinShake(shakeParams));
 
             Ray ray = cam.ScreenPointToRay(mouse.position.value);
             RaycastHit hit;
