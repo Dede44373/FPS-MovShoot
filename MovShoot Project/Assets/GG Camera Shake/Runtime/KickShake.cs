@@ -38,6 +38,10 @@ namespace CameraShake
             this.direction = direction.Normalized;
         }
 
+        public KickShake(Params shakeParams, Quaternion rotation)
+        {
+        }
+
         public Displacement CurrentDisplacement { get; private set; }
         public bool IsFinished { get; private set; }
 

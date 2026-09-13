@@ -6,7 +6,7 @@ using CameraShake;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] PerlinShake.Params shakeParams;
+    [SerializeField] BounceShake.Params shakeParams;
 
     [Header("Attacking Stats")]
     private WaitForSeconds ad;
@@ -89,7 +89,9 @@ public class PlayerAttack : MonoBehaviour
             EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
             enemy.TakeDamage(damage);
             print($"does enemy exist: {enemy != null}, if so it should've taken damage");
-            CameraShaker.Shake(new PerlinShake(shakeParams));
+
+            CameraShaker.Presets.ShortShake3D();
+            //CameraShaker.Shake(new BounceShake(shakeParams));
 
             Ray ray = cam.ScreenPointToRay(mouse.position.value);
             RaycastHit hit;

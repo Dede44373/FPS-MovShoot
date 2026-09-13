@@ -29,4 +29,7 @@ public class PlayerMovementData : ScriptableObject
 
     [Tooltip("Number of total jumps, eg 0 means you cant jump")]
     public int baseJumpUses = 2;
+
+    [Header("Camera Values")]
+    public int defaultFov = 80;
 }

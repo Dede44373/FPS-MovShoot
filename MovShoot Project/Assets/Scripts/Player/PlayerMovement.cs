@@ -309,6 +309,9 @@ public class PlayerMovement : MonoBehaviour
     private void Dash()
     {
         if (data.dashCdTimer >= 0) return;
+        if (pg.swinging || pg.grappling)
+            pg.StopGrapple();
+        
         data.dashCdTimer = data.dashCd;
 
         isDashing = true;

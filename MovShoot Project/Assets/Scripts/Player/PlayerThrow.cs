@@ -2,19 +2,27 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-
+using CameraShake;
+using System;
 public class PlayerThrow : MonoBehaviour
 {
+    [SerializeField] KickShake.Params shakeParams;
+    [SerializeField] Displacement displacement;
+
     [Header("Reference")]
-    public Transform cam;
+    public Transform camTransform;
+    public PlayerCam cam;
     public Transform attackPoint;
     public GameObject objectToThrow;
     public UserInputs Controls;
+    public PlayerMovementData data;
 
     [Header("Settings")]
     public int totalThrows;
     public float throwCooldown;
     public float raycastRange;
+    public float throwZoomOut;
+    public float throwZoomCooldown;
 
     [Header("Throwing")]
     public float throwForce;
@@ -59,8 +67,11 @@ public class PlayerThrow : MonoBehaviour
         if (!active) return;
         readyToThrow = false;
 
+        cam.DoFov(data.defaultFov - throwZoomOut);
+        CameraShaker.Shake(new KickShake(shakeParams, displacement));
+
         // clone object to throw
-        GameObject projectile = Instantiate(objectToThrow, attackPoint.position, cam.rotation);
+        GameObject projectile = Instantiate(objectToThrow, attackPoint.position, camTransform.rotation);
 
         // get rigidbody component
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
@@ -71,7 +82,7 @@ public class PlayerThrow : MonoBehaviour
 
         RaycastHit hit;
 
-        if(Physics.Raycast(cam.position, cam.forward, out hit, raycastRange))
+        if(Physics.Raycast(camTransform.position, camTransform.forward, out hit, raycastRange))
         {
             forceDirection = (hit.point - attackPoint.position).normalized;
         }
@@ -84,8 +95,14 @@ public class PlayerThrow : MonoBehaviour
         totalThrows--;
 
         //implement throwCooldown
+        Invoke(nameof(FovCooldown), throwZoomCooldown);
         Invoke(nameof(ResetThrow), throwCooldown);
 
+    }
+
+    void FovCooldown()
+    {
+        cam.DoFov(data.defaultFov + throwZoomOut);
     }
 
     void ResetThrow()
