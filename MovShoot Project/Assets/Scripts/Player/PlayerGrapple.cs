@@ -328,7 +328,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
     {
-        lr.SetPosition(0, transform.position);
+        lr.SetPosition(1, transform.position);
         pm.rb.useGravity = false;
 
         float Distance = Vector3.Distance(transform.position, Destination);

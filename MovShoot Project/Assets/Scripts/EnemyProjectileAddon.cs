@@ -1,8 +1,7 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class ProjectileAddon : MonoBehaviour
+public class EnemyProjectileAddon : MonoBehaviour
 {
     private Rigidbody rb;
     GameObject raycastObj;
@@ -29,17 +28,17 @@ public class ProjectileAddon : MonoBehaviour
         {
 
             bool passedThrough = RaycastCheck();
-            if(passedThrough)
+            if (passedThrough)
             {
-                moving =false;
+                moving = false;
                 SnapObject();
             }
             else
-            { 
-                yield return null; 
+            {
+                yield return null;
             }
         }
-       
+
     }
     void SnapObject()
     {
@@ -74,35 +73,34 @@ public class ProjectileAddon : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player")) return;
-
         //make sure only to stick to the first target you hit
         if (targetHit)
             return;
         else
             targetHit = true;
-        
+
         //rb.isKinematic = true;
 
         //checks if you hit an enemy
-        if (collision.gameObject.GetComponent<EnemyHealth>() != null)
+        if (collision.gameObject.GetComponent<PlayerHealth>() != null)
         {
-            EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
-            
+            print("FBIWEFWIFWEIFJWKFWEIJKFW");
+            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+
             //rb.isKinematic = true;
-            enemy.TakeDamage(damage);
+            player.TakeDamage(damage);
             transform.SetParent(collision.transform, true);
             GetComponent<CapsuleCollider>().enabled = false;
             //col.isTrigger = true;
         }
 
-    
-        
+
+
         //make sure projectiles sticks to surface
         //rb.isKinematic = true;
 
         //makes sure projectile moves with target
-        
+
 
         //transform.SetParent(collision.transform);
     }
