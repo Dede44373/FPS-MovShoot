@@ -117,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
     public PlayerGrapple pg;
 
     public MovementState currentState;
-    public MovementState oldState;
+
     public enum MovementState
     {
         walking,
@@ -275,9 +275,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void ChangeState(MovementState newState)
     {
-        oldState = currentState;
+       // oldState = currentState;
         currentState = newState;
-        print($"State changed from {oldState} to {newState}");
+        //print($"State changed from {oldState} to {newState}");
     }
 
 
@@ -665,7 +665,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
-        if (oldState == MovementState.dashing) keepMomentum = true;
+        //if (oldState == MovementState.dashing) keepMomentum = true;
 
         //Debug.Log($"desiredMoveSpeed: {desiredMoveSpeed}, lastDesiredMoveSpeed: {lastDesiredMoveSpeed}, keepMomentum: {keepMomentum}, oldState: {oldState}, changed: {desiredMoveSpeedHasChanged}");
 
@@ -799,7 +799,7 @@ public class PlayerMovement : MonoBehaviour
             enableMovementOnNextTouch = false;
             //ResetRestrictions();
 
-            pg.StopGrapple();
+           // pg.StopGrapple();
         }
     }
 
@@ -820,6 +820,11 @@ public class PlayerMovement : MonoBehaviour
     }
     public Vector3 GetSlopeMoveDirection(Vector3 direction) 
     {
+        if (inAir)
+        {
+            return direction;
+        }
+
         if (SlopeIncoming)
         {
             return Vector3.ProjectOnPlane(direction, Test2.normal).normalized;

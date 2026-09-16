@@ -30,6 +30,7 @@ public class RangedEnemyAI : MonoBehaviour
     public bool playerInSightRange, playerInAttackRange, playerInRetreatRange;
     private bool movingTowardsDestination = false;
     private bool lunging;
+    private bool retreatGrace;
 
     [Header("Raycasts")]
     float distanceToTarget;
@@ -71,8 +72,10 @@ public class RangedEnemyAI : MonoBehaviour
     {
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
-        playerInRetreatRange = Physics.CheckSphere(transform.position, retreatRange, Player);
+        if (playerInSightRange)
+            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
+        if(playerInSightRange)
+            playerInRetreatRange = Physics.CheckSphere(transform.position, retreatRange, Player);
 
         switch (enemyState)
         {
@@ -93,6 +96,14 @@ public class RangedEnemyAI : MonoBehaviour
                 break;
         }
 
+        if (playerInRetreatRange)
+        {
+            if (attacking)
+                ResetAttack();
+            
+            enemyState = EnemyState.retreat;
+            return;
+        }
         if (attacking && !playerInAttackRange)
         {
             attacking = false;
@@ -101,8 +112,9 @@ public class RangedEnemyAI : MonoBehaviour
 
     void Idle()
     {
-        if (!playerInSightRange)
+        if (!playerInSightRange || retreatGrace)
         {
+            retreatGrace = false;  
             if (waitTime >= 0)
             {
                 waitTime -= Time.deltaTime;
@@ -113,7 +125,7 @@ public class RangedEnemyAI : MonoBehaviour
         }
         else if (playerInRetreatRange)
         {
-            enemyState |= EnemyState.retreat;
+            enemyState = EnemyState.retreat;
         }
         else
         {
@@ -150,18 +162,25 @@ public class RangedEnemyAI : MonoBehaviour
 
     void Retreat()
     {
-
+        print("Running away");
         float squaredDist = (transform.position - player.transform.position).sqrMagnitude;
         float EnemyDistanceRunSqrt = EnemyDistance * EnemyDistance;
 
         if (squaredDist < EnemyDistanceRunSqrt)
         {
-            Vector3 direction = (transform.position - player.position).normalized;
-            //Vector3 dirToPlayer = transform.position - player.transform.position;
+            //Vector3 direction = (transform.position - player.position).normalized;
+            Vector3 dirToPlayer = transform.position - player.transform.position;
 
-            Vector3 newPos = transform.position + direction; // maybe - instead of +
+            Vector3 newPos = transform.position + dirToPlayer; // maybe - instead of +
 
             agent.SetDestination(newPos);
+        }
+        else
+        {
+            retreatGrace = true;    
+            waitTime = 2.0f;
+            enemyState = EnemyState.idle;
+            
         }
 
     }
@@ -194,8 +213,9 @@ public class RangedEnemyAI : MonoBehaviour
         attacking = true;
         //Make sure enemy doesn't move
         Vector3 pos = player.transform.position;
-        pos.y = transform.position.y;
+        //pos.y = transform.position.y;
         transform.LookAt(pos);
+        Quaternion.LookRotation(pos);
 
         if (!alreadyAttacked)
         {
@@ -203,12 +223,15 @@ public class RangedEnemyAI : MonoBehaviour
             agent.SetDestination(player.position);
 
 
-            Rigidbody rb = Instantiate (projectile, attackPoint.position, attackPoint.rotation).GetComponent<Rigidbody>();
+            Rigidbody rb = Instantiate (projectile, attackPoint.position, attackPoint.localRotation).GetComponent<Rigidbody>();
+            rb.transform.LookAt(pos);
+            rb.transform.rotation *= Quaternion.Euler(90, 0, 0);
+            //rb.transform.localEulerAngles = new Vector3(90, 0, 0);
 
             // 
-            rb.AddForce(transform.forward * projectileSpeed, ForceMode.Impulse);
+            rb.AddForce(attackPoint.forward * projectileSpeed, ForceMode.Impulse);
             //This one for dropoff
-            rb.AddForce(transform.up * projectileUpForce, ForceMode.Impulse);
+            rb.AddForce(attackPoint.up * projectileUpForce, ForceMode.Impulse);
 
             agent.isStopped = true;
             alreadyAttacked = true;

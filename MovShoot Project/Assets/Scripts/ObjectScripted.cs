@@ -34,7 +34,8 @@ public class ObjectScripted : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Weapon"))
+        print(collision.transform.name);
+        if (collision.gameObject.CompareTag("Weapon"))
         {
             TakeDamage();
         }
@@ -44,5 +45,12 @@ public class ObjectScripted : MonoBehaviour
         //anim.Play("Event1");
 
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+        print(other.transform.name);
+        if (other.gameObject.CompareTag("Weapon"))
+        {
+            TakeDamage();
+        }
+    }
 }

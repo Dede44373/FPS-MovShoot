@@ -90,18 +90,19 @@ public class EnemyProjectileAddon : MonoBehaviour
             //rb.isKinematic = true;
             player.TakeDamage(damage);
             transform.SetParent(collision.transform, true);
-            GetComponent<CapsuleCollider>().enabled = false;
+            Destroy(gameObject);
+            //GetComponent<CapsuleCollider>().enabled = false;  
             //col.isTrigger = true;
         }
 
 
 
         //make sure projectiles sticks to surface
-        //rb.isKinematic = true;
+        rb.isKinematic = true;
 
         //makes sure projectile moves with target
 
 
-        //transform.SetParent(collision.transform);
+        transform.SetParent(collision.transform);
     }
 }

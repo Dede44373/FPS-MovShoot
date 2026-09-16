@@ -5439,19 +5439,21 @@ MonoBehaviour:
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 0
   normalTurnSpeed: 150
-  attackTurnSpeed: 0
+  attackTurnSpeed: 300
+  EnemyDistance: 20
   damage: 1
   timeBetweenAttacks: 4
   dashForce: 0
   chaseLungeTime: 0
-  projectileSpeed: 7.5
+  projectileSpeed: 12.5
   projectileUpForce: 0
   attackPoint: {fileID: 9044062895517958494}
-  sightRange: 50
-  attackRange: 40
+  sightRange: 60
+  attackRange: 60
   retreatRange: 10
   playerInSightRange: 0
   playerInAttackRange: 0
+  playerInRetreatRange: 0
   veiwAngle: 50
   viewDistance: 10
   whatisGround:
