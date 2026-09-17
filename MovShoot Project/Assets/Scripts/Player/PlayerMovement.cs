@@ -820,10 +820,10 @@ public class PlayerMovement : MonoBehaviour
     }
     public Vector3 GetSlopeMoveDirection(Vector3 direction) 
     {
-        if (inAir)
-        {
-            return direction;
-        }
+        //if (inAir)
+        //{
+        //    return direction;
+        //}
 
         if (SlopeIncoming)
         {

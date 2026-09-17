@@ -159,7 +159,6 @@ public class PlayerGrapple : MonoBehaviour
         if (!Active) return;
         float Elapsed = 0f;
         var Control = ctx.control;
-
         while (Control.IsPressed())
         {
             await Awaitable.NextFrameAsync(destroyCancellationToken);
@@ -235,6 +234,7 @@ public class PlayerGrapple : MonoBehaviour
         //if you have more than 1 grapple count left you can grapple
         if (grappleCount >= 1)
         {
+            SoundManager.PlaySound(SoundType.Grapple_Hit, 0.5f);
             grappleCount--;
             // freezes all the player's movements and velocities
             // creates a raycast from the camera position, forwards (where you're looking), then stores the value in 'hit', and max distance it can travel.

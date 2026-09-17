@@ -9,6 +9,7 @@ public class AbilityPickupItem : MonoBehaviour
         {
             print("<color=green>Ability unlocked yeah</color>");
             Instantiate(ghost, transform.position, Quaternion.identity);
+            SoundManager.PlaySound(SoundType.Ability_Pickup);
             FindFirstObjectByType<ActiveAbilityManager>().ActivateAbility(gameObject);
             Destroy(gameObject);
 

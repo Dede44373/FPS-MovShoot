@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class RangedEnemyAI : MonoBehaviour
 {
     public EnemyState enemyState;
@@ -112,9 +113,8 @@ public class RangedEnemyAI : MonoBehaviour
 
     void Idle()
     {
-        if (!playerInSightRange || retreatGrace)
+        if (!playerInSightRange)
         {
-            retreatGrace = false;  
             if (waitTime >= 0)
             {
                 waitTime -= Time.deltaTime;
@@ -174,15 +174,23 @@ public class RangedEnemyAI : MonoBehaviour
             Vector3 newPos = transform.position + dirToPlayer; // maybe - instead of +
 
             agent.SetDestination(newPos);
+            retreatGrace = true;
         }
         else
         {
-            retreatGrace = true;    
-            waitTime = 2.0f;
-            enemyState = EnemyState.idle;
-            
-        }
+            if (retreatGrace)
+            {
+                waitTime = 5.0f;
+                retreatGrace = false;
+            }
 
+            if (waitTime >= 0 )
+            {
+                waitTime -= Time.deltaTime;
+                return;
+            }
+            enemyState = EnemyState.patrol;
+        }
     }
     void Chase()
     {

@@ -91,7 +91,7 @@ public class EnemyProjectileAddon : MonoBehaviour
             player.TakeDamage(damage);
             transform.SetParent(collision.transform, true);
             Destroy(gameObject);
-            //GetComponent<CapsuleCollider>().enabled = false;  
+            GetComponent<CapsuleCollider>().enabled = false;  
             //col.isTrigger = true;
         }
 
@@ -102,7 +102,7 @@ public class EnemyProjectileAddon : MonoBehaviour
 
         //makes sure projectile moves with target
 
-
+        GetComponent<CapsuleCollider>().enabled = false;
         transform.SetParent(collision.transform);
     }
 }

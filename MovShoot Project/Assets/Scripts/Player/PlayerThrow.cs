@@ -87,6 +87,7 @@ public class PlayerThrow : MonoBehaviour
             forceDirection = (hit.point - attackPoint.position).normalized;
         }
 
+        SoundManager.PlaySound(SoundType.Fire_Projectile);
         // add force
         Vector3 forceToAdd = forceDirection * throwForce + transform.up * throwUpwardForce;
 

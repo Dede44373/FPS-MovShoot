@@ -69,6 +69,12 @@ public class PlayerAttack : MonoBehaviour
         inAttack = false;
     }
 
+    public void MoveForwards()
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.AddForce(transform.forward, ForceMode.Impulse);
+    }
+
     public void EnableWeaponCollider()
     {
         coll.enabled = true;

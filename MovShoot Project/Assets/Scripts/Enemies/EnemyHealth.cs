@@ -33,11 +33,12 @@ public class EnemyHealth : MonoBehaviour, IKnockable
         Debug.Log("Enemy Damaged" + health);
         health -= damage;
 
-        float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
-        hitSFX.pitch =  randomPitch;   
-        hitSFX.Play();
+        //float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
+        //hitSFX.pitch =  randomPitch;   
+        //hitSFX.Play();
+        SoundManager.PlaySound(SoundType.Hurt);
 
-        if(health <= 0 )
+        if (health <= 0 )
         {
             Die();   
         }

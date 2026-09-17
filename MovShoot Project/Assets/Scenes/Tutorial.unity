@@ -2848,7 +2848,7 @@ Transform:
   m_GameObject: {fileID: 209873897}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 273.7, y: 55.3, z: 87.8929}
+  m_LocalPosition: {x: 271.22, y: 55.3, z: 87.8929}
   m_LocalScale: {x: 6.143862, y: 9.63539, z: 5.9893537}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4232,8 +4232,8 @@ Transform:
   m_GameObject: {fileID: 445053956}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 300.6865, y: 43.7873, z: 118.41}
-  m_LocalScale: {x: 2.5596132, y: 22.543547, z: 29.34893}
+  m_LocalPosition: {x: 295.8824, y: 43.7873, z: 118.41}
+  m_LocalScale: {x: 2.5596132, y: 22.543547, z: 35.51514}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1927056799}
@@ -5484,7 +5484,7 @@ Transform:
   m_GameObject: {fileID: 653618082}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 286.12, y: 39.1866, z: 164.1}
+  m_LocalPosition: {x: 278.2335, y: 39.1866, z: 164.1}
   m_LocalScale: {x: 9.265411, y: 1, z: 2.9270074}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8221,7 +8221,6 @@ GameObject:
   - component: {fileID: 931755966}
   - component: {fileID: 931755970}
   - component: {fileID: 931755971}
-  - component: {fileID: 931755972}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -8315,18 +8314,6 @@ MonoBehaviour:
   GrappleActive: 0
   pThrow: {fileID: 916223733}
   pg: {fileID: 2003425294}
---- !u!114 &931755972
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 931755965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dfb5b83dc66917c4e97cf71ff2795f50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!1 &951161183
 GameObject:
   m_ObjectHideFlags: 0
@@ -9020,7 +9007,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3642226123085405845, guid: 9ebc40a5b0ce34346aa8b8491967376f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 66.58
+      value: 70.19
       objectReference: {fileID: 0}
     - target: {fileID: 3642226123085405845, guid: 9ebc40a5b0ce34346aa8b8491967376f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -10304,6 +10291,177 @@ Transform:
   - {fileID: 162259867}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1200453657
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1200453660}
+  - component: {fileID: 1200453659}
+  - component: {fileID: 1200453658}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &1200453658
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1200453657}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1200453659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1200453657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfb5b83dc66917c4e97cf71ff2795f50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
+  soundList:
+  - name: Fist_Melee
+    sounds:
+    - {fileID: 0}
+  - name: Projectiles
+    sounds:
+    - {fileID: 0}
+  - name: Fire_Projectile
+    sounds:
+    - {fileID: 8300000, guid: 1d851960be38f0a4a89765e219dcd13e, type: 3}
+  - name: Land
+    sounds: []
+  - name: Jump
+    sounds:
+    - {fileID: 8300000, guid: f74ad90e2dd05304bb55a1da77aa59f9, type: 3}
+  - name: Hurt
+    sounds:
+    - {fileID: 8300000, guid: f74ad90e2dd05304bb55a1da77aa59f9, type: 3}
+  - name: Footsteps
+    sounds:
+    - {fileID: 8300000, guid: 20d634de619db434bb5ccd47b973ef32, type: 3}
+  - name: Ability_Pickup
+    sounds:
+    - {fileID: 8300000, guid: 20d634de619db434bb5ccd47b973ef32, type: 3}
+  - name: Grapple_Hit
+    sounds:
+    - {fileID: 8300000, guid: fb8f3acbc2dc6f24caf8d4bce8ce9eff, type: 3}
+    - {fileID: 8300000, guid: fd6717f3b29db62448cc29582e1001bc, type: 3}
+  pitchVar: 0.1
+--- !u!4 &1200453660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1200453657}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 280.7614, y: 39.29, z: 44.09431}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1222435423
 GameObject:
   m_ObjectHideFlags: 0
@@ -10557,8 +10715,8 @@ Transform:
   m_GameObject: {fileID: 1239436854}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 274.9832, y: 35.4, z: 133.4}
-  m_LocalScale: {x: 2.3541675, y: 1, z: 3.8072693}
+  m_LocalPosition: {x: 274.9832, y: 35.4, z: 134.868}
+  m_LocalScale: {x: 2.3541675, y: 1, z: 3.513457}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1927056799}
@@ -13898,7 +14056,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3779268488281135978, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: health
-      value: 3
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779268488281135978, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: hitSFX
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3779268488281135978, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: knockForce
@@ -13908,7 +14070,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: BasicMeleeEnemy (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5867557959505512940, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -15228,8 +15391,8 @@ Transform:
   m_GameObject: {fileID: 1738188490}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 300.6865, y: 43.7873, z: 55.1}
-  m_LocalScale: {x: 2.5596132, y: 22.543547, z: 29.34893}
+  m_LocalPosition: {x: 293.7093, y: 43.7873, z: 55.1}
+  m_LocalScale: {x: 2.5596132, y: 22.543547, z: 31.168566}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1927056799}
@@ -15926,11 +16089,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3779268488281135978, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
+      propertyPath: hitSFX
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8206338513116082208, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
       propertyPath: m_Name
       value: BasicMeleeEnemy (2)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5867557959505512940, guid: 5c4bf1a918692634f954e7f280defe6b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -19093,6 +19261,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 931755969}
+  - {fileID: 1200453660}
   - {fileID: 910488604}
   - {fileID: 1998477945}
   - {fileID: 756849009}
