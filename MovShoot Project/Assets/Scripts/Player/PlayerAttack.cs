@@ -15,12 +15,16 @@ public class PlayerAttack : MonoBehaviour
     private bool targetHit;
     private bool inAttack;
 
+    public float stepDistance;
+
     [Header("References")]
     public UserInputs Controls;
     [SerializeField] private Collider coll;
     private Animator anim;
     public Transform player;
+    public PlayerMovement pm;
     public Camera cam;
+    public Rigidbody rb;
     public Mouse mouse { get; private set; }
 
 
@@ -63,16 +67,28 @@ public class PlayerAttack : MonoBehaviour
 
      private IEnumerator Attacking()
     {
+        print("ATTACCCCCCCK");
         inAttack = true;
+        anim.Play("Armature_Punch_Light_1");
         anim.SetTrigger("Attack");
+        SoundManager.PlaySound(SoundType.Fist_Melee);
         yield return ad;
         inAttack = false;
     }
 
     public void MoveForwards()
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        rb.AddForce(transform.forward, ForceMode.Impulse);
+        if (pm.currentState == PlayerMovement.MovementState.air)
+        {
+            return;
+        }
+        else
+        {
+            pm.freeze = true;
+        }
+        
+        rb.AddForce(transform.forward * stepDistance, ForceMode.Impulse);
+        // Rigidbody rb = GetComponent<Rigidbody>();
     }
 
     public void EnableWeaponCollider()
@@ -85,6 +101,10 @@ public class PlayerAttack : MonoBehaviour
         coll.enabled = false;
     }
 
+    public void UnfreezePlayer()
+    {
+        pm.freeze = false;
+    }
     private void OnTriggerEnter(Collider collision)
     {
         print("detected a collision");

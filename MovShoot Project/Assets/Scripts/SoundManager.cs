@@ -12,7 +12,8 @@ public enum SoundType
     Hurt,
     Footsteps,
     Ability_Pickup,
-    Grapple_Hit
+    Grapple_Hit,
+    Rock_Break,
 }
 //makes the script useable in edit mode
 [RequireComponent(typeof(AudioSource)), ExecuteInEditMode]

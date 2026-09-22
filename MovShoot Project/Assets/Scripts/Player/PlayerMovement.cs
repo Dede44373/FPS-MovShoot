@@ -401,7 +401,7 @@ public class PlayerMovement : MonoBehaviour
         sliding = true;
 
         calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
-        transform.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
+        playerObj.transform.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
         rb.AddForce(Vector3.down * 20f, ForceMode.Impulse);
         rb.linearDamping = data.slideDrag;
 
@@ -434,7 +434,7 @@ public class PlayerMovement : MonoBehaviour
     {
         sliding = false;
         ChangeState(MovementState.walking);
-        transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+        playerObj.transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
         rb.linearDamping = data.groundDrag;
         if (Controls.Player.Sprint.IsPressed())
         {
@@ -725,7 +725,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (activeGrapple) return;
         if (swinging) return;
-        //if (freeze) return;
+        if (freeze) return;
 
         calculatedMoveDirection = GetMoveDirection();
 

@@ -135,4 +135,4 @@ MonoBehaviour:
   hasLoot: 0
   hurtPart: {fileID: 6354316287496609083, guid: d605456c54a1b954585395967dc3ca9e, type: 3}
   deathPart: {fileID: 6354316287496609083, guid: d605456c54a1b954585395967dc3ca9e, type: 3}
-  hitSFX: {fileID: -2442975260991644637, guid: 6d9f4ededc197424c881d067a3aa315c, type: 3}
+  hitSFX: {fileID: 0}

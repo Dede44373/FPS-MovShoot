@@ -26,6 +26,7 @@ public class ObjectScripted : MonoBehaviour
 
     public void TakeDamage()
     {
+        SoundManager.PlaySound(SoundType.Rock_Break);
         objectScripted.SetActive(true);
         //Instantiate(objectScripted, pos);
         Destroy(gameObject);

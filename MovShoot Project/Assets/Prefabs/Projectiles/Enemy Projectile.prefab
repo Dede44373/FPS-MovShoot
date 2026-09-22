@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectileAddon
   col: {fileID: 3283617533041726710}
-  damage: 0
+  damage: 1
   layerMask:
     serializedVersion: 2
     m_Bits: 983159

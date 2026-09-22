@@ -333,7 +333,7 @@ public class PlayerGrapple : MonoBehaviour
 
         float Distance = Vector3.Distance(transform.position, Destination);
 
-        while (Distance > 5f && grappling)
+        while (Distance > 10f && grappling)
         {
             Vector3 Direction = (Destination - pm.transform.position).normalized;
             pm.rb.AddForce(Direction * grappleSpeed, ForceMode.Force);

@@ -803,6 +803,13 @@ AnimationClip:
   m_HasGenericRootTransform: 1
   m_HasMotionFloatCurves: 0
   m_Events:
+  - time: 0.11666667
+    functionName: MoveForwards
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
   - time: 0.18333334
     functionName: EnableWeaponCollider
     data: 
@@ -812,6 +819,13 @@ AnimationClip:
     messageOptions: 0
   - time: 0.23333333
     functionName: DisableWeaponCollider
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.51666665
+    functionName: UnfreezePlayer
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
