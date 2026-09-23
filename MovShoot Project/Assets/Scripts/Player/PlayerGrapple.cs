@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using DG.Tweening;
 using UnityEditor.Experimental;
@@ -122,6 +123,33 @@ public class PlayerGrapple : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (grappling)
+        {
+            lr.SetPosition(1, transform.position);
+            pm.rb.useGravity = false;
+
+            float Distance = Vector3.Distance(transform.position, GrappleDestination);
+
+            if (Distance < 10f && !grappling)
+            {
+                grappling = false;
+            }
+
+            Vector3 Direction = (GrappleDestination - pm.transform.position).normalized;
+            pm.rb.AddForce(Direction * grappleSpeed, ForceMode.Force);
+            //pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
+            Distance = Vector3.Distance(pm.transform.position, GrappleDestination);
+        }
+        else
+        {
+            if (InGrapple)
+            {
+                InGrapple = false;
+                GrappleDestination = Vector3.zero;
+                pm.rb.useGravity = true;
+            }
+        }
+
         if (isApplyingGrappleForce)
         {
             ApplySwingingForces();
@@ -313,6 +341,8 @@ public class PlayerGrapple : MonoBehaviour
     }
 
     private bool HasLayerMask(GameObject RequestingObject, LayerMask RequestingMask) => (RequestingMask.value & (1 << RequestingObject.layer)) != 0;
+    private Vector3 GrappleDestination = Vector3.zero;
+    private bool InGrapple = false;
     private void ExecuteGrapple()
     {
         fovCam.DoFov(grappleFOV);
@@ -326,27 +356,10 @@ public class PlayerGrapple : MonoBehaviour
         Invoke(nameof(StopGrapple), 1f);
     }
 
-    private IEnumerator ApplyForceUntilDestinationReached(Vector3 Destination)
-    {
-        lr.SetPosition(1, transform.position);
-        pm.rb.useGravity = false;
-
-        float Distance = Vector3.Distance(transform.position, Destination);
-
-        while (Distance > 10f && grappling)
-        {
-            Vector3 Direction = (Destination - pm.transform.position).normalized;
-            pm.rb.AddForce(Direction * grappleSpeed, ForceMode.Force);
-            //pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
-            Distance = Vector3.Distance(pm.transform.position, Destination);
-            yield return null;
-        }
-        pm.rb.useGravity = true;
-    }
-
     private void MoveToDestination(Vector3 Destination)
     {
-        StartCoroutine(ApplyForceUntilDestinationReached(Destination));
+        GrappleDestination = Destination;
+        InGrapple = true;
     }
     public void StopGrapple()
     {

@@ -57,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
     public UserInputs Controls;
 
     [Header("Dashing")]
+    public bool canDash;
     public bool isDashing;
     public float dashSpeed;
     private float dashTimer;
@@ -308,12 +309,13 @@ public class PlayerMovement : MonoBehaviour
     #region Dash 
     private void Dash()
     {
-        if (data.dashCdTimer >= 0) return;
+        if (data.dashCdTimer >= 0 || !canDash) return;
         if (pg.swinging || pg.grappling)
             pg.StopGrapple();
         
         data.dashCdTimer = data.dashCd;
 
+        canDash = false;
         isDashing = true;
         desiredMoveSpeed = dashSpeed;
         keepMomentum = false;
@@ -583,6 +585,7 @@ public class PlayerMovement : MonoBehaviour
         if (grounded && !activeGrapple)
         {
             pg.grappleCount = 1;
+            canDash = true;
             //col.sharedMaterial = groundMat;
            
         }
