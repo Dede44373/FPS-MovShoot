@@ -20,6 +20,8 @@ public class UserInputManager : MonoBehaviour
         Controls = new UserInputs();
         Controls.Disable();
         Controls.Enable();
+
+        QualitySettings.vSyncCount = 1;
     }
 
     private void OnDisable()

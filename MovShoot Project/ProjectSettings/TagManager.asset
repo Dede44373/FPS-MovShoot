@@ -10,6 +10,7 @@ TagManager:
   - Grapple Activator
   - Weapon
   - Ground Hazard
+  - Enemy Projectile
   layers:
   - Default
   - TransparentFX
