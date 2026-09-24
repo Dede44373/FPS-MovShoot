@@ -37,6 +37,8 @@ public class LootBag : MonoBehaviour
         {
             GameObject LootGameObject = Instantiate(droppedItemPrefab, spawnPosition, Quaternion.identity);
             LootGameObject.GetComponent<MeshRenderer>().material = droppedItem.LootMat;
+            LootGameObject.GetComponent<MeshFilter>().mesh = droppedItem.lootMesh;
+            //LootGameObject.GetComponent<MeshCollider>().sharedMesh = droppedItem.lootMesh;
 
             float dropForce = 20f;
                 Vector3 DropDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(0, 1f), Random.Range(-1f, 1f));

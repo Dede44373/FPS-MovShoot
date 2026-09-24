@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 4583981536812431431}
   - component: {fileID: 372341452310947648}
   - component: {fileID: 6051825684346853405}
-  - component: {fileID: 6673523569118512458}
   - component: {fileID: 2875910393356238052}
   - component: {fileID: 5924289716101787765}
   - component: {fileID: -8005629614855585098}
   - component: {fileID: 1546781317703035729}
+  - component: {fileID: 7840152597240139172}
   m_Layer: 0
   m_Name: LootPrefab
   m_TagString: Untagged
@@ -123,27 +123,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &6673523569118512458
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3311520878327715329}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 1048576
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!108 &2875910393356238052
 Light:
   m_ObjectHideFlags: 0
@@ -250,7 +229,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d34dad1f095cd3e4d8dd336a57ef2899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  originalMesh: {fileID: 4583981536812431431}
+  newMesh: {fileID: 0}
   pickupSFX: {fileID: 1546781317703035729}
+  col: {fileID: 0}
   ghost: {fileID: 2270348272897724694, guid: 6d9f4ededc197424c881d067a3aa315c, type: 3}
   moneyValue: 1
 --- !u!82 &1546781317703035729
@@ -265,7 +247,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 653dd5bede6f4c7418ba9f5c870b7c2a, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -350,3 +332,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!65 &7840152597240139172
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3311520878327715329}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

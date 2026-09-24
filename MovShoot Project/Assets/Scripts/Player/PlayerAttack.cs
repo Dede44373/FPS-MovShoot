@@ -14,6 +14,10 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] int damage;
     private bool targetHit;
     private bool inAttack;
+    public float tapThreshold;
+    public bool heavyAttack;
+    public float slamSpeed;
+    public bool heavyCharged;
 
     public float stepDistance;
 
@@ -26,6 +30,7 @@ public class PlayerAttack : MonoBehaviour
     public Camera cam;
     public Rigidbody rb;
     public Mouse mouse { get; private set; }
+    public LayerMask ground;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -54,19 +59,80 @@ public class PlayerAttack : MonoBehaviour
         Controls.Player.Attack.canceled -= AttackStop;
     }
 
-    private void AttackStart(InputAction.CallbackContext ctx)
+    private async void AttackStart(InputAction.CallbackContext ctx)
     {
-        if (inAttack == false) 
-        StartCoroutine(Attacking());
+        if (inAttack == false)
+        {
+                print("<color=blue>GROundSLAMMIN</color>");
+            RaycastHit hit;
+            if (!pm.grounded && Physics.Raycast(player.transform.position, cam.transform.forward, out hit, ground))
+            {
+                inAttack = true;
+                while (!pm.grounded)
+                {
+                    rb.AddForce(-transform.up * slamSpeed, ForceMode.Force);
+                }
+                inAttack = false;
+            }
+            else
+            {
+                float Elapsed = 0f;
+                var Control = ctx.control;
+                while (Control.IsPressed())
+                {
+                    await Awaitable.NextFrameAsync(destroyCancellationToken);
+                    Elapsed += Time.deltaTime;
+
+                    if (Elapsed > tapThreshold && !heavyAttack)
+                    {
+                        damage = 3;
+                        inAttack = true;
+                        heavyAttack = true;
+                        anim.Play("Armature_Punch_Heavy_Charge_1");
+                    }
+                }
+
+                if (Elapsed <= tapThreshold)
+                {
+                    StartCoroutine(LightAttack());
+
+                }
+
+            }
+
+        }
     }
     // Walking
     private void AttackStop(InputAction.CallbackContext ctx)
     {
-       
+        if (heavyAttack && heavyCharged)
+        {
+            anim.Play("Armature_Punch_Heavy_Attack_1");
+
+            StartCoroutine(HeavyAttack());
+        }
+        //else 
+        //{
+        //    StartCoroutine(LightAttack());
+        //}
     }
 
-     private IEnumerator Attacking()
+    public void HeavyCharged()
     {
+        heavyCharged = true;
+    }
+    private IEnumerator HeavyAttack()
+    {
+
+        SoundManager.PlaySound(SoundType.Fist_Heavy);
+        yield return ad;
+        inAttack = false;
+        heavyAttack = false;
+        heavyCharged = false;
+    }
+     private IEnumerator LightAttack()
+    {
+        damage = 2;
         print("ATTACCCCCCCK");
         inAttack = true;
         anim.Play("Armature_Punch_Light_1");
@@ -125,6 +191,10 @@ public class PlayerAttack : MonoBehaviour
             {
                 print("raycast hit something");
                 IKnockable knockback = enemy.transform.GetComponent<IKnockable>();
+                //if (heavyAttack)
+                //    collision.gameObject.GetComponent<EnemyHealth>().knockForce = 100f;
+                //else
+                //    collision.gameObject.GetComponent<EnemyHealth>().knockForce = 40f;
                 if (knockback != null)
                 {
                     print("has a knockback script");

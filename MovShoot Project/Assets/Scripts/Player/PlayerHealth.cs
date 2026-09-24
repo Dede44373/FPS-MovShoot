@@ -10,9 +10,13 @@ public class PlayerHealth : MonoBehaviour
     public float hitstopDeathDuration;
 
     [Header("iFrames")]
+    public LayerMask invulLayer;
+    public LayerMask playerLayer;
     [SerializeField] private float invulDuration;
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRend;
+    public Rigidbody rb;
+    public float knockForce;
 
     [Header("Particles")]
     public ParticleSystem hurtPart;
@@ -57,7 +61,7 @@ public class PlayerHealth : MonoBehaviour
     }
     private IEnumerator Invulnerability()
     {
-
+        gameObject.layer = invulLayer;
         //invulnerability duration
         for (int i = 0; i < numberOfFlashes; i++)
         {
@@ -66,7 +70,24 @@ public class PlayerHealth : MonoBehaviour
             //spriteRend.color = Color.white;
             yield return new WaitForSeconds(0.01f);
         }
+        gameObject.layer = playerLayer;
         StopAllCoroutines();
     }
 
+    public void Knockback(Transform executionSource)
+    {
+        print("hey");
+        KnockbackEntity(executionSource);
+    }
+
+    public void KnockbackEntity(Transform executionSource)
+    {
+        print("k");
+        if (rb == null)
+            return;
+        print("has a rigidbody");
+
+        Vector3 dir = (transform.position - executionSource.transform.position).normalized;
+        rb.AddForce(dir * knockForce, ForceMode.Impulse);
+    }
 }

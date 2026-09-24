@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25690a7569c60454ebb3d01a7db42ec0, type: 3}
   m_Name: Bit
   m_EditorClassIdentifier: Assembly-CSharp::Loot
-  lootMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  lootMesh: {fileID: 5489603898093986844, guid: 33aeee515c6e76b4da5ecb0f67723b0f, type: 3}
   LootMat: {fileID: 2100000, guid: a7560420e4047274f9e63eeded3d2ef4, type: 2}
   lootName: Flesh Bit
   dropChance: 50

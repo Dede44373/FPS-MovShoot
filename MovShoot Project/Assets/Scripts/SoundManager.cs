@@ -5,6 +5,7 @@ using System.Collections;
 public enum SoundType
 {
     Fist_Melee,
+    Fist_Heavy,
     Projectiles,
     Fire_Projectile,
     Land,

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25690a7569c60454ebb3d01a7db42ec0, type: 3}
   m_Name: Morsel
   m_EditorClassIdentifier: Assembly-CSharp::Loot
-  lootMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  lootMesh: {fileID: 8015186131697610236, guid: 33aeee515c6e76b4da5ecb0f67723b0f, type: 3}
   LootMat: {fileID: 2100000, guid: 050533e4e55f17040a24f939ac2a5707, type: 2}
   lootName: Flesh Morsel
-  dropChance: 75
+  dropChance: 100
