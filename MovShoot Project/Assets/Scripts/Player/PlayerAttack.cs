@@ -44,7 +44,8 @@ public class PlayerAttack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Debug.DrawRay(player.transform.position, cam.transform.forward * 100f, Color.rebeccaPurple);
+
     }
 
     private void OnEnable()
@@ -65,12 +66,15 @@ public class PlayerAttack : MonoBehaviour
         {
                 print("<color=blue>GROundSLAMMIN</color>");
             RaycastHit hit;
-            if (!pm.grounded && Physics.Raycast(player.transform.position, cam.transform.forward, out hit, ground))
+            if (!pm.grounded && Physics.Raycast(player.transform.position, cam.transform.forward, out hit, 100f, ground))
             {
+                print(hit.transform.name);
+                print($"Raycast hit{hit.point}");
                 inAttack = true;
                 while (!pm.grounded)
                 {
-                    rb.AddForce(-transform.up * slamSpeed, ForceMode.Force);
+                    rb.AddForce(-player.transform.up * slamSpeed, ForceMode.Force);
+                    await Awaitable.NextFrameAsync(destroyCancellationToken);
                 }
                 inAttack = false;
             }
