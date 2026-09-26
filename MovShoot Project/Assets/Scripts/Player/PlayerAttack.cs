@@ -66,17 +66,25 @@ public class PlayerAttack : MonoBehaviour
         {
                 print("<color=blue>GROundSLAMMIN</color>");
             RaycastHit hit;
-            if (!pm.grounded && Physics.Raycast(player.transform.position, cam.transform.forward, out hit, 100f, ground))
+            Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 100f, ground);
+
+            float angle = Vector3.Angle(-player.transform.up, cam.transform.forward);
+            print($"<color=purple>Angle: {angle}</color>");
+            if (!pm.grounded && angle < 35f)
             {
                 print(hit.transform.name);
                 print($"Raycast hit{hit.point}");
                 inAttack = true;
+                StartCoroutine(LightAttack());
                 while (!pm.grounded)
                 {
                     rb.AddForce(-player.transform.up * slamSpeed, ForceMode.Force);
                     await Awaitable.NextFrameAsync(destroyCancellationToken);
                 }
-                inAttack = false;
+                //if (pm.grounded == true)
+                //{
+                //    new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+                //}
             }
             else
             {
