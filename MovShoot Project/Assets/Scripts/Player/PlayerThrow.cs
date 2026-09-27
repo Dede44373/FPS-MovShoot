@@ -16,6 +16,7 @@ public class PlayerThrow : MonoBehaviour
     public GameObject objectToThrow;
     public UserInputs Controls;
     public PlayerMovementData data;
+    public Rigidbody rb;
 
     [Header("Settings")]
     public int totalThrows;
@@ -23,6 +24,7 @@ public class PlayerThrow : MonoBehaviour
     public float raycastRange;
     public float throwZoomOut;
     public float throwZoomCooldown;
+    public float recoilForce;
 
     [Header("Throwing")]
     public float throwForce;
@@ -67,6 +69,8 @@ public class PlayerThrow : MonoBehaviour
         if (!active) return;
         readyToThrow = false;
 
+        rb.AddForce(-camTransform.forward * recoilForce, ForceMode.Impulse);
+        
         cam.DoFov(data.defaultFov - throwZoomOut);
         CameraShaker.Shake(new KickShake(shakeParams, displacement));
 

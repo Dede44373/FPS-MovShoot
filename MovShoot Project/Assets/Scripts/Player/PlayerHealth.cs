@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using CameraShake;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -32,11 +33,13 @@ public class PlayerHealth : MonoBehaviour
     {
         FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
         StartCoroutine(Invulnerability());
+
         //hurtPart.Play();
 
         Debug.Log("Player Damaged" + health);
         health -= damage;
         healthBar.setHealth(health);
+        CameraShaker.Presets.Explosion3D();
 
         //float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
         //hitSFX.pitch = randomPitch;

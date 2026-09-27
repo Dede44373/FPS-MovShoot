@@ -8,7 +8,7 @@ public class Hitstop : MonoBehaviour
     {
         if (waiting)
             return;
-        Time.timeScale = 0.0f;
+        Time.timeScale = 0f;
         StartCoroutine(Wait(duration));
 
     }

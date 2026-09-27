@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
+using CameraShake;
 
 public class EnemyHealth : MonoBehaviour, IKnockable
 {
@@ -29,6 +30,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
         FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
         StartCoroutine(Invulnerability());
         hurtPart.Play();
+        CameraShaker.Presets.Explosion3D();
 
         Debug.Log("Enemy Damaged" + health);
         health -= damage;

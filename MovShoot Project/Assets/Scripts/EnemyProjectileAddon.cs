@@ -6,6 +6,7 @@ public class EnemyProjectileAddon : MonoBehaviour
     private Rigidbody rb;
     GameObject raycastObj;
     public Collider col;
+    public Transform tm;
 
     [SerializeField] int damage;
     private bool targetHit;
@@ -90,6 +91,19 @@ public class EnemyProjectileAddon : MonoBehaviour
             //rb.isKinematic = true;
             player.TakeDamage(damage);
             transform.SetParent(collision.transform, true);
+
+                print("raycast hit something");
+                IKnockable knockback = player.transform.GetComponent<IKnockable>();
+                //if (heavyAttack)
+                //    collision.gameObject.GetComponent<EnemyHealth>().knockForce = 100f;
+                //else
+                //    collision.gameObject.GetComponent<EnemyHealth>().knockForce = 40f;
+                if (knockback != null)
+                {
+                    print("has a knockback script");
+                    knockback.Knockback(tm);
+                }
+
             Destroy(gameObject);
             GetComponent<CapsuleCollider>().enabled = false;  
             //col.isTrigger = true;

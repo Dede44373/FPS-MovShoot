@@ -19,7 +19,13 @@ public class PlayerAttack : MonoBehaviour
     public float slamSpeed;
     public bool heavyCharged;
 
+    [Header("Juice")]
     public float stepDistance;
+    public float upForce;
+
+    public float tiltDegree;
+    public float tiltOriginal;
+    public bool tilt;
 
     [Header("References")]
     public UserInputs Controls;
@@ -28,6 +34,7 @@ public class PlayerAttack : MonoBehaviour
     public Transform player;
     public PlayerMovement pm;
     public Camera cam;
+    public PlayerCam pc;
     public Rigidbody rb;
     public Mouse mouse { get; private set; }
     public LayerMask ground;
@@ -81,6 +88,7 @@ public class PlayerAttack : MonoBehaviour
                     rb.AddForce(-player.transform.up * slamSpeed, ForceMode.Force);
                     await Awaitable.NextFrameAsync(destroyCancellationToken);
                 }
+                SoundManager.PlaySound(SoundType.Ground_Slam);
                 //if (pm.grounded == true)
                 //{
                 //    new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -154,6 +162,7 @@ public class PlayerAttack : MonoBehaviour
         inAttack = false;
     }
 
+    //movement/stepping
     public void MoveForwards()
     {
         if (pm.currentState == PlayerMovement.MovementState.air)
@@ -168,6 +177,21 @@ public class PlayerAttack : MonoBehaviour
         rb.AddForce(transform.forward * stepDistance, ForceMode.Impulse);
         // Rigidbody rb = GetComponent<Rigidbody>();
     }
+    public void MoveUpwards()
+    {
+        rb.AddForce(transform.up * upForce, ForceMode.Impulse);
+    }
+
+    // Juice
+    public void TiltPlayer()
+    {
+       pc.DoTilt(tiltDegree);
+    }
+    public void UntiltPlayer()
+    {
+        pc.DoTilt(tiltOriginal);
+    }
+
 
     public void EnableWeaponCollider()
     {
