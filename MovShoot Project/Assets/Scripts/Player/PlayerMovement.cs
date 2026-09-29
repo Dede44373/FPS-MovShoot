@@ -57,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
     public UserInputs Controls;
 
     [Header("Dashing")]
+    public float dashInvulTime;
     public bool canDash;
     public bool isDashing;
     public float dashSpeed;
@@ -116,6 +117,7 @@ public class PlayerMovement : MonoBehaviour
     public Collider col;
     public Rigidbody rb;    
     public PlayerGrapple pg;
+    public PlayerHealth ph;
 
     public MovementState currentState;
 
@@ -321,6 +323,7 @@ public class PlayerMovement : MonoBehaviour
         keepMomentum = false;
         cam.DoFov(sprintFOV);
         disableGravity = true;
+        StartCoroutine(DashInvincibility());
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         Vector3 forceToApply = calculatedMoveDirection * data.dashForce + orientation.up * data.dashUpwardForce;
@@ -339,8 +342,17 @@ public class PlayerMovement : MonoBehaviour
         rb.AddForce(delayedForceToApply, ForceMode.Impulse);
     }
 
+    private IEnumerator DashInvincibility()
+    {
+        ph.isInvul = true;
+        yield return new WaitForSeconds(dashInvulTime);
+        ph.isInvul = false;
+
+    }
+
     public void ResetDash()
     {
+        ph.isInvul = false;
         isDashing = false;
         keepMomentum = true;
         cam.DoFov(normalFOV);

@@ -11,13 +11,21 @@ public class PlayerAttack : MonoBehaviour
     [Header("Attacking Stats")]
     private WaitForSeconds ad;
     public float attackDelay = 0.5f;
-    [SerializeField] int damage;
     private bool targetHit;
     private bool inAttack;
     public float tapThreshold;
     public bool heavyAttack;
     public float slamSpeed;
     public bool heavyCharged;
+
+    public float slamRange;
+
+    [Header("Damage")]
+    private int damage;
+    [SerializeField] int lightDamage;
+    [SerializeField] int heavyDamage;
+    [SerializeField] int slamDamage;
+
 
     [Header("Juice")]
     public float stepDistance;
@@ -36,8 +44,9 @@ public class PlayerAttack : MonoBehaviour
     public Camera cam;
     public PlayerCam pc;
     public Rigidbody rb;
+    public ParticleSystem slamParticles;
     public Mouse mouse { get; private set; }
-    public LayerMask ground;
+    public LayerMask ground, enemyLayer;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -51,8 +60,14 @@ public class PlayerAttack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         Debug.DrawRay(player.transform.position, cam.transform.forward * 100f, Color.rebeccaPurple);
 
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(player.transform.position, slamRange);
     }
 
     private void OnEnable()
@@ -82,12 +97,13 @@ public class PlayerAttack : MonoBehaviour
                 print(hit.transform.name);
                 print($"Raycast hit{hit.point}");
                 inAttack = true;
-                StartCoroutine(LightAttack());
-                while (!pm.grounded)
+                //StartCoroutine(LightAttack());
+                while (!pm.grounded)    
                 {
                     rb.AddForce(-player.transform.up * slamSpeed, ForceMode.Force);
                     await Awaitable.NextFrameAsync(destroyCancellationToken);
                 }
+                StartCoroutine(Slam());
                 SoundManager.PlaySound(SoundType.Ground_Slam);
                 //if (pm.grounded == true)
                 //{
@@ -105,7 +121,7 @@ public class PlayerAttack : MonoBehaviour
 
                     if (Elapsed > tapThreshold && !heavyAttack)
                     {
-                        damage = 3;
+                        damage = heavyDamage;
                         inAttack = true;
                         heavyAttack = true;
                         anim.Play("Armature_Punch_Heavy_Charge_1");
@@ -152,7 +168,7 @@ public class PlayerAttack : MonoBehaviour
     }
      private IEnumerator LightAttack()
     {
-        damage = 2;
+        damage = lightDamage;
         print("ATTACCCCCCCK");
         inAttack = true;
         anim.Play("Armature_Punch_Light_1");
@@ -160,6 +176,19 @@ public class PlayerAttack : MonoBehaviour
         SoundManager.PlaySound(SoundType.Fist_Melee);
         yield return ad;
         inAttack = false;
+    }
+    private IEnumerator Slam()
+    {
+        damage = slamDamage;
+        Instantiate(slamParticles, player.transform.position, Quaternion.identity);
+        Collider[] hitEnemies = Physics.OverlapSphere(player.transform.position, slamRange, enemyLayer);
+        foreach (Collider Enemy in hitEnemies)
+        {
+            Enemy.GetComponent<EnemyHealth>().TakeDamage(damage);
+
+        }
+        yield return ad;
+        inAttack =false;
     }
 
     //movement/stepping

@@ -13,6 +13,7 @@ public class PlayerHealth : MonoBehaviour
     [Header("iFrames")]
     public LayerMask invulLayer;
     public LayerMask playerLayer;
+    public bool isInvul;
     [SerializeField] private float invulDuration;
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRend;
@@ -22,6 +23,7 @@ public class PlayerHealth : MonoBehaviour
     [Header("Particles")]
     public ParticleSystem hurtPart;
     public ParticleSystem deathPart;
+    public GameObject coll;
 
     [Header("Audio")]
     [SerializeField] AudioSource hitSFX;
@@ -31,6 +33,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+         if (isInvul) return;
         FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
         StartCoroutine(Invulnerability());
 
@@ -58,22 +61,23 @@ public class PlayerHealth : MonoBehaviour
             Instantiate(deathPart, transform.position, Quaternion.identity);
 
         //RESPAWN
-        SceneManager.LoadScene("Test");
+        //SceneManager.LoadScene("Test");
         //SceneManager.GetActiveScene().ToString()
 
     }
     private IEnumerator Invulnerability()
     {
-        gameObject.layer = invulLayer;
+        isInvul = true;
+        //coll.layer = 8;
+        //Physics.IgnoreLayerCollision(6, 8, true);
         //invulnerability duration
-        for (int i = 0; i < numberOfFlashes; i++)
-        {
-            //spriteRend.color = new Color(1, 0.8f, 0.8f, 0.9f);
-            yield return new WaitForSeconds(0.01f);
-            //spriteRend.color = Color.white;
-            yield return new WaitForSeconds(0.01f);
-        }
-        gameObject.layer = playerLayer;
+
+        yield return new WaitForSeconds(invulDuration);
+
+        //Physics.IgnoreLayerCollision(7, 20, false);
+        //coll.layer = 6;
+        isInvul = false;
+
         StopAllCoroutines();
     }
 
