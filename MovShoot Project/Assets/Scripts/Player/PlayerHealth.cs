@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using CameraShake;
+using UnityEngine.Rendering;
+using DG.Tweening;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -30,7 +32,7 @@ public class PlayerHealth : MonoBehaviour
     float pitchVar = 0.05f;
 
     [SerializeField] private HealthBarUI healthBar;
-
+    public Volume hurtVFX;
     public void TakeDamage(int damage)
     {
          if (isInvul) return;
@@ -68,6 +70,8 @@ public class PlayerHealth : MonoBehaviour
     private IEnumerator Invulnerability()
     {
         isInvul = true;
+        hurtVFX.weight = 1;
+        //DOTween.To(() => hurtVFX.weight, x => hurtVFX.weight = x, 1f, 1f);
         //coll.layer = 8;
         //Physics.IgnoreLayerCollision(6, 8, true);
         //invulnerability duration
@@ -76,7 +80,11 @@ public class PlayerHealth : MonoBehaviour
 
         //Physics.IgnoreLayerCollision(7, 20, false);
         //coll.layer = 6;
+
+        DOTween.To(() => hurtVFX.weight, x => hurtVFX.weight = x, 0f, 1f);
+
         isInvul = false;
+
 
         StopAllCoroutines();
     }

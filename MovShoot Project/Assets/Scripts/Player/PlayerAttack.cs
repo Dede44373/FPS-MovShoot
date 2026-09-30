@@ -9,7 +9,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] BounceShake.Params shakeParams;
 
     [Header("Attacking Stats")]
-    private WaitForSeconds ad;
+    private WaitForSeconds attackDelayWait;
     public float attackDelay = 0.5f;
     private bool targetHit;
     private bool inAttack;
@@ -54,7 +54,7 @@ public class PlayerAttack : MonoBehaviour
     {
         mouse = Mouse.current;
         anim = GetComponent<Animator>();
-        ad = new WaitForSeconds(attackDelay);
+        attackDelayWait = new WaitForSeconds(attackDelay);
     }
 
     // Update is called once per frame
@@ -74,96 +74,74 @@ public class PlayerAttack : MonoBehaviour
     {
         Controls = UserInputManager.Instance.Controls;
         Controls.Player.Attack.performed += AttackStart;
-        Controls.Player.Attack.canceled += AttackStop;
     }
     private void OnDisable()
     {
         Controls.Player.Attack.performed -= AttackStart;
-        Controls.Player.Attack.canceled -= AttackStop;
     }
 
     private async void AttackStart(InputAction.CallbackContext ctx)
     {
-        if (inAttack == false)
-        {
-                print("<color=blue>GROundSLAMMIN</color>");
-            RaycastHit hit;
-            Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 100f, ground);
+        if (inAttack) return;
 
-            float angle = Vector3.Angle(-player.transform.up, cam.transform.forward);
-            print($"<color=purple>Angle: {angle}</color>");
-            if (!pm.grounded && angle < 35f)
+        print("<color=blue>GROundSLAMMIN</color>");
+        
+        float angle = Vector3.Angle(-player.transform.up, cam.transform.forward);
+        print($"<color=purple>Angle: {angle}</color>");
+
+        // Ground Slam
+        if (!pm.grounded && angle < 35f)
+        {
+            Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, 100f, ground);
+            print(hit.transform.name);
+            print($"Raycast hit{hit.point}");
+            
+            StartCoroutine(Slam(cam.transform.forward));
+            //if (pm.grounded == true)
+            //{
+            //    new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            //}
+        }
+
+        // Heavy Attack
+        else
+        {
+            float Elapsed = 0f;
+            var Control = ctx.control;
+            while (Control.IsPressed())
             {
-                print(hit.transform.name);
-                print($"Raycast hit{hit.point}");
-                inAttack = true;
-                //StartCoroutine(LightAttack());
-                while (!pm.grounded)    
+                await Awaitable.NextFrameAsync(destroyCancellationToken);
+                Elapsed += Time.deltaTime;
+
+                if (Elapsed > tapThreshold && !inAttack)
                 {
-                    rb.AddForce(-player.transform.up * slamSpeed, ForceMode.Force);
-                    await Awaitable.NextFrameAsync(destroyCancellationToken);
+                    inAttack = true;
+                    anim.Play("Armature_Punch_Heavy_Charge_1");
                 }
-                StartCoroutine(Slam());
-                SoundManager.PlaySound(SoundType.Ground_Slam);
-                //if (pm.grounded == true)
-                //{
-                //    new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-                //}
             }
+
+            if (Elapsed > tapThreshold && heavyCharged)
+            {
+                StartCoroutine(HeavyAttack());
+            }
+
+            // Light Attack
             else
             {
-                float Elapsed = 0f;
-                var Control = ctx.control;
-                while (Control.IsPressed())
-                {
-                    await Awaitable.NextFrameAsync(destroyCancellationToken);
-                    Elapsed += Time.deltaTime;
-
-                    if (Elapsed > tapThreshold && !heavyAttack)
-                    {
-                        damage = heavyDamage;
-                        inAttack = true;
-                        heavyAttack = true;
-                        anim.Play("Armature_Punch_Heavy_Charge_1");
-                    }
-                }
-
-                if (Elapsed <= tapThreshold)
-                {
-                    StartCoroutine(LightAttack());
-
-                }
-
+                StartCoroutine(LightAttack());
             }
 
         }
     }
-    // Walking
-    private void AttackStop(InputAction.CallbackContext ctx)
-    {
-        if (heavyAttack && heavyCharged)
-        {
-            anim.Play("Armature_Punch_Heavy_Attack_1");
 
-            StartCoroutine(HeavyAttack());
-        }
-        //else 
-        //{
-        //    StartCoroutine(LightAttack());
-        //}
-    }
-
-    public void HeavyCharged()
-    {
-        heavyCharged = true;
-    }
     private IEnumerator HeavyAttack()
     {
+        damage = heavyDamage;
+        anim.Play("Armature_Punch_Heavy_Attack_1");
 
         SoundManager.PlaySound(SoundType.Fist_Heavy);
-        yield return ad;
+        yield return attackDelayWait;
         inAttack = false;
-        heavyAttack = false;
         heavyCharged = false;
     }
      private IEnumerator LightAttack()
@@ -174,21 +152,46 @@ public class PlayerAttack : MonoBehaviour
         anim.Play("Armature_Punch_Light_1");
         anim.SetTrigger("Attack");
         SoundManager.PlaySound(SoundType.Fist_Melee);
-        yield return ad;
+        yield return attackDelayWait;
         inAttack = false;
     }
-    private IEnumerator Slam()
+    private IEnumerator Slam(Vector3 slamDirection)
     {
-        damage = slamDamage;
-        Instantiate(slamParticles, player.transform.position, Quaternion.identity);
+        inAttack = true;
+
+        while (!pm.grounded)
+        {
+            rb.AddForce(slamDirection * slamSpeed, ForceMode.Force);
+            yield return null;
+        }
+
+        SoundManager.PlaySound(SoundType.Ground_Slam);
+        CameraShaker.Presets.Explosion3D();
+
+        if (Physics.Raycast(player.transform.position, -player.transform.up, out RaycastHit hit, 2f))
+        {
+            Vector3 Normal = hit.normal;
+            Vector3 Position = hit.point + Normal * 0.01f;
+
+            Instantiate(slamParticles, Position, Quaternion.LookRotation(-Normal * 0.01f, Vector3.up));
+        }
+
         Collider[] hitEnemies = Physics.OverlapSphere(player.transform.position, slamRange, enemyLayer);
         foreach (Collider Enemy in hitEnemies)
         {
-            Enemy.GetComponent<EnemyHealth>().TakeDamage(damage);
+            if (!Enemy.TryGetComponent(out EnemyHealth health)) continue;
 
+            health.TakeDamage(slamDamage);
         }
-        yield return ad;
-        inAttack =false;
+        yield return attackDelayWait;
+        inAttack = false;
+    }
+
+    #region Animator Methods
+
+    public void HeavyCharged()
+    {
+        heavyCharged = true;
     }
 
     //movement/stepping
@@ -236,6 +239,9 @@ public class PlayerAttack : MonoBehaviour
     {
         pm.freeze = false;
     }
+
+    #endregion
+
     private void OnTriggerEnter(Collider collision)
     {
         print("detected a collision");

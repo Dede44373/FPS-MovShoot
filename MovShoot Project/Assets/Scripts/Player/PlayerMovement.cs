@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -111,6 +112,8 @@ public class PlayerMovement : MonoBehaviour
 
     [HideInInspector] public Vector2 moveDirection;
     public Vector3 calculatedMoveDirection;
+
+    public Volume dashVFX;
 
     public PhysicsMaterial slideMat;
     public PhysicsMaterial groundMat;
@@ -226,7 +229,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 RightValue = playerCam.transform.right * moveDirection.x;
         Vector3 Direction3D = ForwardValue + RightValue;
 
-        if (Physics.Raycast(transform.position + Direction3D, Vector3.down, out Test2, playerHeight * 0.5f + 10f, whatIsGround))
+        if (Physics.Raycast(transform.position + Direction3D, Vector3.down, out Test2, playerHeight * 0.5f + 20f, whatIsGround))
         {
             //print(Test2.transform.name);
             float angle = Vector3.Angle(Vector3.up, Test2.normal);
@@ -321,6 +324,8 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         desiredMoveSpeed = dashSpeed;
         keepMomentum = false;
+
+        dashVFX.weight = 1;
         cam.DoFov(sprintFOV);
         disableGravity = true;
         StartCoroutine(DashInvincibility());
@@ -356,7 +361,8 @@ public class PlayerMovement : MonoBehaviour
         isDashing = false;
         keepMomentum = true;
         cam.DoFov(normalFOV);
-        if(Controls.Player.Sprint.IsPressed() && grounded)
+        dashVFX.weight = 0;
+        if (Controls.Player.Sprint.IsPressed() && grounded)
         {
             //ChangeState(MovementState.sprinting);
             //desiredMoveSpeed = data.sprintSpeed;

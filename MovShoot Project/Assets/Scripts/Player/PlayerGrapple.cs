@@ -7,6 +7,7 @@ using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerGrapple : MonoBehaviour
 {
@@ -69,6 +70,22 @@ public class PlayerGrapple : MonoBehaviour
     public float predictionSphereCastRadius;
     public Transform predictionPoint;
 
+    public Gradient spriteGradient;
+    public Image uiSprite;
+
+    public float distanceOfGrapplePoint;
+
+    //COLOR: 0, 1
+    //DISTANCE: 0, 25
+
+    //GRADIENT VALUE: DISTANCE / 25 = 
+
+    //25 = 100%
+    //0 = 0
+
+    //100(value / 25) = x
+    //math
+
 
     private HashSet<string> KeyboardControls = new()
     {
@@ -84,6 +101,8 @@ public class PlayerGrapple : MonoBehaviour
     {
         //For Sphere casting
         CheckForSwingPoints();
+        uiSprite.color = spriteGradient.Evaluate(distanceOfGrapplePoint / maxGrappleDistance);
+
 
 
         if (swinging)
@@ -119,10 +138,14 @@ public class PlayerGrapple : MonoBehaviour
             lr.SetPosition(0, gunTip.position);
             lr.SetPosition(1, grapplePoint);
         }
+
+
     }
 
     private void FixedUpdate()
     {
+
+
         if (grappling)
         {
             lr.SetPosition(1, transform.position);
@@ -139,6 +162,8 @@ public class PlayerGrapple : MonoBehaviour
             pm.rb.AddForce(Direction * grappleSpeed, ForceMode.Force);
             //pm.rb.AddForce(-Physics.gravity/1.75f * pm.rb.mass, ForceMode.Force);
             Distance = Vector3.Distance(pm.transform.position, GrappleDestination);
+
+
         }
         else
         {
@@ -380,10 +405,11 @@ public class PlayerGrapple : MonoBehaviour
         lr.positionCount = 0;
     }
 
+
     private void CheckForSwingPoints()
     {
         if (!Active) return;
-        if (swinging)
+        if (swinging || grappling)
         {
             Debug.Log("<color=red>Grappling</color>");
             return;
@@ -393,16 +419,18 @@ public class PlayerGrapple : MonoBehaviour
 
         RaycastHit sphereCastHit;
         Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward,
-            out sphereCastHit, maxGrappleDistance, grappleable);
+            out sphereCastHit, maxGrappleDistance - predictionSphereCastRadius, grappleable);
 
         RaycastHit raycastHit;
         Physics.Raycast(cam.position, cam.forward,
-            out raycastHit, maxGrappleDistance, grappleable);
+            out raycastHit, maxGrappleDistance , grappleable);
 
         Vector3 realHitPoint;
         //Option 1 - Direct Hit
         if (raycastHit.point != Vector3.zero)
+        {
             realHitPoint = raycastHit.point;
+        }
 
         //Option 2 - Indirect (predicted) Hit
         else if (sphereCastHit.point != Vector3.zero)
@@ -411,7 +439,6 @@ public class PlayerGrapple : MonoBehaviour
             Debug.Log("Sphere casted");
 
         }
-
         //Option 3 - Miss
         else
         {
@@ -430,7 +457,8 @@ public class PlayerGrapple : MonoBehaviour
             predictionPoint.gameObject.SetActive(false);
         }
 
-        predictionHit = raycastHit.point == Vector3.zero ? sphereCastHit : raycastHit;
+        predictionHit = realHitPoint == Vector3.zero ? sphereCastHit : raycastHit;
+        distanceOfGrapplePoint = Vector2.Distance(cam.position, realHitPoint);
     }
 
     private void OnDrawGizmos()
