@@ -10,6 +10,8 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Attacking Stats")]
     private WaitForSeconds attackDelayWait;
+    private WaitForSeconds lightAttackDelayWait;
+    public float lightDelay;
     public float attackDelay = 0.5f;
     private bool targetHit;
     private bool inAttack;
@@ -55,6 +57,7 @@ public class PlayerAttack : MonoBehaviour
         mouse = Mouse.current;
         anim = GetComponent<Animator>();
         attackDelayWait = new WaitForSeconds(attackDelay);
+        lightAttackDelayWait = new WaitForSeconds(lightDelay);
     }
 
     // Update is called once per frame
@@ -152,7 +155,7 @@ public class PlayerAttack : MonoBehaviour
         anim.Play("Armature_Punch_Light_1");
         anim.SetTrigger("Attack");
         SoundManager.PlaySound(SoundType.Fist_Melee);
-        yield return attackDelayWait;
+        yield return lightAttackDelayWait;
         inAttack = false;
     }
     private IEnumerator Slam(Vector3 slamDirection)
