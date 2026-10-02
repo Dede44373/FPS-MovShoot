@@ -1,16 +1,38 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerRespawn : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public string playerTag = "Player";
+    public Transform startPos;
+    private Vector3 spawnPoint;
+    public UnityEvent respawn;
     void Start()
     {
-        
+        spawnPoint = startPos.position;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetSpawnPoint(Vector3 newSpawnPoint)
     {
-        
+        spawnPoint = newSpawnPoint;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag(playerTag))
+        {
+            //Teleport transform
+            other.gameObject.transform.root.position = spawnPoint;
+
+            respawn.Invoke();
+
+            //reset physics veloty if Rigidbody exists
+            Rigidbody rb = other.gameObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
     }
 }

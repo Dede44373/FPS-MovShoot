@@ -1,16 +1,12 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Checkpoint : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public string playerTag = "Player";
+    private bool isActivated = false;
+    [SerializeField] ParticleSystem checkpointParticles;
+    [SerializeField] PlayerRespawn playerRespawn;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
