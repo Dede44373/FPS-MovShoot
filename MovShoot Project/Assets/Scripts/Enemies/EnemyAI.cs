@@ -77,7 +77,8 @@ public class EnemyAI : MonoBehaviour
     {
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
+        if (playerInSightRange)
+            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
 
         switch (enemyState)
         {

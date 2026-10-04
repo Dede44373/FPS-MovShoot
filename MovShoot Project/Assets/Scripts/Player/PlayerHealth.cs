@@ -4,11 +4,14 @@ using UnityEngine.SceneManagement;
 using CameraShake;
 using UnityEngine.Rendering;
 using DG.Tweening;
+using JetBrains.Annotations;
+using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Stats")]
-    public int health;
+    public int currentHealth;
+    public int maxHealth;
     public float hitstopDuration;
     public float hitstopDeathDuration;
 
@@ -26,6 +29,7 @@ public class PlayerHealth : MonoBehaviour
     public ParticleSystem hurtPart;
     public ParticleSystem deathPart;
     public GameObject coll;
+    public GameObject player;
 
     [Header("Audio")]
     [SerializeField] AudioSource hitSFX;
@@ -33,6 +37,13 @@ public class PlayerHealth : MonoBehaviour
 
     [SerializeField] private HealthBarUI healthBar;
     public Volume hurtVFX;
+    public PlayerRespawn pr;
+    public RespawnManager rm;
+
+    private void Start()
+    {
+        currentHealth = maxHealth;
+    }
     public void TakeDamage(int damage)
     {
          if (isInvul) return;
@@ -41,16 +52,16 @@ public class PlayerHealth : MonoBehaviour
 
         //hurtPart.Play();
 
-        Debug.Log("Player Damaged" + health);
-        health -= damage;
-        healthBar.setHealth(health);
+        Debug.Log("Player Damaged" + currentHealth);
+        currentHealth -= damage;
+        healthBar.setHealth(currentHealth);
         CameraShaker.Presets.Explosion3D();
 
         //float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
         //hitSFX.pitch = randomPitch;
         hitSFX.Play();
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             Die();
         }
@@ -61,11 +72,19 @@ public class PlayerHealth : MonoBehaviour
     {
         if(deathPart != null)
             Instantiate(deathPart, transform.position, Quaternion.identity);
-
+        FindAnyObjectByType<Hitstop>().Stop(hitstopDeathDuration);
         //RESPAWN
+        respawn();
+        
         //SceneManager.LoadScene("Test");
         //SceneManager.GetActiveScene().ToString()
 
+    }
+    public void respawn()
+    {
+        pr.ResetToCheckpoint(player);
+        currentHealth = maxHealth;
+        healthBar.setHealth(currentHealth);
     }
     private IEnumerator Invulnerability()
     {
