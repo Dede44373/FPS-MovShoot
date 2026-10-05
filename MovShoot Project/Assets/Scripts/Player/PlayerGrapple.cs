@@ -274,9 +274,18 @@ public class PlayerGrapple : MonoBehaviour
         rb.position = grapplePoint - direction * ropeLength;
     }
 
-    private void StartSwing()
+    bool playingSound;
+    private async void StartSwing()
     {
-        if (predictionHit.point == Vector3.zero) return;
+        if (playingSound) return;
+        if (predictionHit.point == Vector3.zero)
+        {
+            SoundManager.PlaySound(SoundType.Grapple_Fail);
+            playingSound = true;
+            await Awaitable.WaitForSecondsAsync(1, destroyCancellationToken);
+            playingSound = false;
+            return;
+        }
         //pm.enabled = false;
         if (swinging) return;
         // makes sure that if you're grappling or swinging it stops it before starting a new grapple/or prevents it

@@ -7,7 +7,7 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using UnityEngine.Events;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IKnockable
 {
     [Header("Stats")]
     public int currentHealth;
@@ -82,7 +82,7 @@ public class PlayerHealth : MonoBehaviour
     }
     public void respawn()
     {
-        pr.ResetToCheckpoint(player);
+        rm.ResetToCheckpoint(player);
         currentHealth = maxHealth;
         healthBar.setHealth(currentHealth);
     }

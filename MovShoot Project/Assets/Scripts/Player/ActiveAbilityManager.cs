@@ -4,6 +4,7 @@ using UnityEngine;
 public class ActiveAbilityManager : MonoBehaviour
 {
     [Header("List")]
+    public bool AllActive;
     public bool ThrowingActive;
     public bool GrappleActive;
 
@@ -19,7 +20,13 @@ public class ActiveAbilityManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //debugging
+        if (AllActive)
+        {
+            pThrow.active = true;
+            pg.Active = true;
+        }
+
     }
 
     public void ActivateAbility(GameObject Activator)

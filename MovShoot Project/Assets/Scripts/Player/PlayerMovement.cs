@@ -329,6 +329,8 @@ public class PlayerMovement : MonoBehaviour
         cam.DoFov(sprintFOV);
         disableGravity = true;
         StartCoroutine(DashInvincibility());
+        //SoundManager.PlaySound(SoundType.Dash_1);
+        SoundManager.PlaySound(SoundType.Dash_2);
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         Vector3 forceToApply = calculatedMoveDirection * data.dashForce + orientation.up * data.dashUpwardForce;
