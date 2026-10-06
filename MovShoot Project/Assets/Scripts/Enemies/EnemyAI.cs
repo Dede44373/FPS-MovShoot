@@ -2,7 +2,7 @@ using System.Collections;
 //using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.AI;
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : Enemy
 {
     public EnemyState enemyState;
 
@@ -196,7 +196,8 @@ public class EnemyAI : MonoBehaviour
             print("Destination set 3");
 
             agent.isStopped = true;
-            anim.Play("Bite");
+            anim.SetTrigger("Attack");
+            //anim.Play("Bite");
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }

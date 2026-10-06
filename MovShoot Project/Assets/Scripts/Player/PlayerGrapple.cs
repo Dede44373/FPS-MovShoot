@@ -282,7 +282,7 @@ public class PlayerGrapple : MonoBehaviour
         {
             SoundManager.PlaySound(SoundType.Grapple_Fail);
             playingSound = true;
-            await Awaitable.WaitForSecondsAsync(1, destroyCancellationToken);
+            await Awaitable.WaitForSecondsAsync(0.5f, destroyCancellationToken);
             playingSound = false;
             return;
         }

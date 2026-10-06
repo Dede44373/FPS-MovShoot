@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class RangedEnemyAI : MonoBehaviour
+public class RangedEnemyAI : Enemy
 {
     public EnemyState enemyState;
 
