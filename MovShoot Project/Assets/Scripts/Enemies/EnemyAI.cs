@@ -142,7 +142,7 @@ public class EnemyAI : Enemy
         }
         else
         {
-            if(agent.remainingDistance <= agent.stoppingDistance)
+            if(agent.isOnNavMesh && agent.remainingDistance <= agent.stoppingDistance)
             {
                 waitTime = 2.0f;
                 enemyState = EnemyState.idle;
@@ -168,8 +168,12 @@ public class EnemyAI : Enemy
         {
             movingTowardsDestination = true;
             agent.angularSpeed = attackTurnSpeed;
-            agent.SetDestination(player.position);
-            print("Destination set 2");
+
+            if (agent.isOnNavMesh)
+            {
+                agent.SetDestination(player.position);
+                print("Destination set 2");
+            }
 
             if (!playerInSightRange)
             {

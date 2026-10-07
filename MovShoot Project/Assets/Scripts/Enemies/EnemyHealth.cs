@@ -27,7 +27,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
     float pitchVar = 0.05f;
     public void TakeDamage (int damage)
     {
-        FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
+        HitstopManager.Instance.Stop(hitstopDuration);
         StartCoroutine(Invulnerability());
         hurtPart.Play();
         CameraShaker.Presets.Explosion3D();

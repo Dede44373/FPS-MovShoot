@@ -4,12 +4,25 @@ using UnityEngine.Events;
 public class RespawnManager : MonoBehaviour
 {
     public string playerTag = "Player";
-    public Transform startPos;
+    public Transform startPoint;
+
     public Vector3 spawnPoint;
     public UnityEvent respawn;
     void Start()
     {
-        spawnPoint = startPos.position;
+        spawnPoint = startPoint.position;
+    }
+    private void Awake()
+    {
+    }
+    private void Update()
+    {
+        if (spawnPoint == null)
+        {
+            spawnPoint = GameObject.Find("SpawnPoint").transform.position;
+        }
+        
+        
     }
 
     public void SetSpawnPoint(Vector3 newSpawnPoint)

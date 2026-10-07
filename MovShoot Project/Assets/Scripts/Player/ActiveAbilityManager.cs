@@ -20,12 +20,24 @@ public class ActiveAbilityManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (pThrow == null)
+        {
+            pThrow = FindFirstObjectByType<PlayerThrow>();
+        }
+
+        if (pg == null)
+        {
+            pg = FindFirstObjectByType<PlayerGrapple>();
+        }
+
         //debugging
         if (AllActive)
         {
             pThrow.active = true;
             pg.Active = true;
         }
+
+
 
     }
 

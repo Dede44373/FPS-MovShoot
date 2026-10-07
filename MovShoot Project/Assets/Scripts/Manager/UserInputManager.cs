@@ -15,23 +15,28 @@ public class UserInputManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         Controls = new UserInputs();
-        Controls.Disable();
         Controls.Enable();
 
         QualitySettings.vSyncCount = 1;
+        print("user inputs initialized");
     }
 
     private void OnDisable()
     {
         if (Controls == null) return;
+
         Controls.Disable();
-        Controls.UI.Disable();
-        Controls.Player.Disable();
+        Controls.Dispose();
 
         Controls = null;
         Instance = null;
+        print("Instance set to null");
     }
+
+
+
 }

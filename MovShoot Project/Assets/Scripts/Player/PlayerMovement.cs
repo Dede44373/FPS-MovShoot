@@ -3,11 +3,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class PlayerMovement : MonoBehaviour
 {
 
-    public static PlayerMovement instance;
+   // public static PlayerMovement instance;
 
     public float slopeyAngle;
     public bool SlopeIncoming = false;
@@ -110,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform playerCam;
     public Transform orientation;
 
-    [HideInInspector] public Vector2 moveDirection;
+    public Vector2 moveDirection;
     public Vector3 calculatedMoveDirection;
 
     public Volume dashVFX;
@@ -139,19 +140,18 @@ public class PlayerMovement : MonoBehaviour
     public bool swinging;
     public bool wallrunning;
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+    //private void Awake()
+    //{
+    //    if (instance != null && instance != this)
+    //    {
+    //        Destroy(gameObject); // Destroy duplicate instance
+    //        return;
+    //    }
 
-    }
+    //    instance = this;
+    //    DontDestroyOnLoad(gameObject);
+
+    //}
 
     private void Start()
     {

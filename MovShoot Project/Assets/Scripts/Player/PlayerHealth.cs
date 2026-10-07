@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 using CameraShake;
 using UnityEngine.Rendering;
 using DG.Tweening;
-using JetBrains.Annotations;
-using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour, IKnockable
 {
@@ -43,11 +41,12 @@ public class PlayerHealth : MonoBehaviour, IKnockable
     private void Start()
     {
         currentHealth = maxHealth;
+        Debug.Log(SceneManager.GetActiveScene().name.ToString());
     }
     public void TakeDamage(int damage)
     {
          if (isInvul) return;
-        FindAnyObjectByType<Hitstop>().Stop(hitstopDuration);
+        FindAnyObjectByType<HitstopManager>().Stop(hitstopDuration);
         StartCoroutine(Invulnerability());
 
         //hurtPart.Play();
@@ -55,6 +54,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
         Debug.Log("Player Damaged" + currentHealth);
         currentHealth -= damage;
         healthBar.setHealth(currentHealth);
+
         CameraShaker.Presets.Explosion3D();
 
         //float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
@@ -72,13 +72,23 @@ public class PlayerHealth : MonoBehaviour, IKnockable
     {
         if(deathPart != null)
             Instantiate(deathPart, transform.position, Quaternion.identity);
-        FindAnyObjectByType<Hitstop>().Stop(hitstopDeathDuration);
         //RESPAWN
-        respawn();
-        
-        //SceneManager.LoadScene("Test");
-        //SceneManager.GetActiveScene().ToString()
 
+    
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        
+        respawn();
+        //SceneManager.
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        HitstopManager.Instance.Stop(hitstopDeathDuration);
+        yield return new WaitForSeconds(hitstopDeathDuration);
+
+        HitstopManager.Instance.KillHitstop();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        respawn();
     }
     public void respawn()
     {

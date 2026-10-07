@@ -7,7 +7,7 @@ public class EffectDeath : MonoBehaviour
     private void Awake()
     {
         Debug.Log("Death Hitstop");
-        FindFirstObjectByType<Hitstop>().Stop(hitstopDuration);
+        FindFirstObjectByType<HitstopManager>().Stop(hitstopDuration);
         Destroy(gameObject, time);
     }
 }

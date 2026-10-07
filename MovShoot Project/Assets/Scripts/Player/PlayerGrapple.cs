@@ -426,48 +426,52 @@ public class PlayerGrapple : MonoBehaviour
 
         //Debug.Log("<color=green>Check for Swing</color>");
 
-        RaycastHit sphereCastHit;
-        Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward,
-            out sphereCastHit, maxGrappleDistance - predictionSphereCastRadius, grappleable);
+        //Physics.SphereCast(cam.position, predictionSphereCastRadius, cam.forward,
+        //    out sphereCastHit, maxGrappleDistance - predictionSphereCastRadius, grappleable);
+        
 
-        RaycastHit raycastHit;
-        Physics.Raycast(cam.position, cam.forward,
-            out raycastHit, maxGrappleDistance , grappleable);
+        RaycastHit hitPoint = default;
+        bool pointFound = false;
 
-        Vector3 realHitPoint;
         //Option 1 - Direct Hit
-        if (raycastHit.point != Vector3.zero)
+        if (Physics.Raycast(cam.position,
+            cam.forward,
+            out var raycastHit,
+            maxGrappleDistance,
+            grappleable))
         {
-            realHitPoint = raycastHit.point;
+            hitPoint = raycastHit;
+            pointFound = true;
         }
 
         //Option 2 - Indirect (predicted) Hit
-        else if (sphereCastHit.point != Vector3.zero)
+        else if (Physics.SphereCast(cam.position, 
+            predictionSphereCastRadius,
+            cam.forward,
+            out var sphereCastHit,
+            maxGrappleDistance - predictionSphereCastRadius, 
+            grappleable))
         {
-            realHitPoint = sphereCastHit.point;
-            Debug.Log("Sphere casted");
-
+            hitPoint = sphereCastHit;
+            pointFound = true;
         }
-        //Option 3 - Miss
-        else
-        {
-            realHitPoint = Vector3.zero;
-        }
+        
+        // Miss, keep default values (pointFound = false)
 
-        //realHitPoint found
-        if (realHitPoint != Vector3.zero)
+        // Set visuals
+        if (pointFound)
         {
             predictionPoint.gameObject.SetActive(true);
-            predictionPoint.position = realHitPoint;
+            predictionPoint.position = hitPoint.point;
         }
-        //realHitPoint not found
         else
         {
             predictionPoint.gameObject.SetActive(false);
         }
 
-        predictionHit = realHitPoint == Vector3.zero ? sphereCastHit : raycastHit;
-        distanceOfGrapplePoint = Vector2.Distance(cam.position, realHitPoint);
+        // Update class references
+        predictionHit = hitPoint;
+        distanceOfGrapplePoint = Vector2.Distance(cam.position, hitPoint.point);
     }
 
     private void OnDrawGizmos()
