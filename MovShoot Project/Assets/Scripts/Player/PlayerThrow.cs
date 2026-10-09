@@ -4,12 +4,14 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using CameraShake;
 using System;
+using UnityEngine.ProBuilder.MeshOperations;
 public class PlayerThrow : MonoBehaviour
 {
     [SerializeField] KickShake.Params shakeParams;
     [SerializeField] Displacement displacement;
 
     [Header("Reference")]
+    public PlayerHealth health;
     public Transform camTransform;
     public PlayerCam cam;
     public Transform attackPoint;
@@ -33,10 +35,17 @@ public class PlayerThrow : MonoBehaviour
     bool readyToThrow;
     public bool active;
 
+    [Header("Parrying")]
+    public bool parryActive;
+    public float parryWindow;
+    public float parryCooldown;
+    private float parryTime;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        readyToThrow = true;    
+        readyToThrow = true;  
+        parryActive = false;
+        parryTime = parryWindow;
     }
     private void OnEnable()
     {
@@ -48,8 +57,26 @@ public class PlayerThrow : MonoBehaviour
         Controls.Player.RangedAttack.performed -= HandleAttackStart;
     }
 
-    private void HandleAttackStart(InputAction.CallbackContext ctx)
+    public void HandleAttackStart(InputAction.CallbackContext ctx)
     {
+        //if (parryActive) return;
+        //    print("Huge");
+        ////if (parryTime >= 0)
+        ////{
+        ////    parryTime -= Time.deltaTime;
+        ////    return;
+        ////}
+        //while (parryTime >= 0)
+        //{
+        //    parryActive = true;
+        //    parryTime -= Time.deltaTime;
+        //    await Awaitable.NextFrameAsync(destroyCancellationToken);
+        //}
+        //if (parryActive && parryTime <= 0)
+        //{
+        //    parryTime = parryWindow;
+        //    parryActive =false;
+        //}
         if (readyToThrow && totalThrows > 0)
         {
             Throw();

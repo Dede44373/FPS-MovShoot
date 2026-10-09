@@ -30,7 +30,10 @@ public class PlayerAttack : MonoBehaviour
 
 
     [Header("Juice")]
-    public float stepDistance;
+    public float lightStepDistance;
+    public float heavyStepDistance;
+
+    private float stepDistance;
     public float upForce;
 
     public float tiltDegree;
@@ -139,6 +142,7 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator HeavyAttack()
     {
+        stepDistance = heavyStepDistance;
         damage = heavyDamage;
         anim.Play("Armature_Punch_Heavy_Attack_1");
 
@@ -150,6 +154,7 @@ public class PlayerAttack : MonoBehaviour
      private IEnumerator LightAttack()
     {
         damage = lightDamage;
+        stepDistance = lightStepDistance;
         print("ATTACCCCCCCK");
         inAttack = true;
         anim.Play("Armature_Punch_Light_1");

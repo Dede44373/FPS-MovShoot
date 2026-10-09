@@ -3,7 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+using CameraShake;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -125,6 +125,9 @@ public class PlayerMovement : MonoBehaviour
 
     public MovementState currentState;
 
+    [Header ("Camera Shake")]
+    [SerializeField] PerlinShake.Params shakeParams;
+
     public enum MovementState
     {
         walking,
@@ -198,6 +201,8 @@ public class PlayerMovement : MonoBehaviour
 
     void SpeedParticleControl()
     {
+        //CameraShaker.Shake(new PerlinShake(shakeParams));
+        //shakeParams
         if (rb.linearVelocity.sqrMagnitude > 0 && !speedLines.isPlaying)
         {
             speedLines.Play();
@@ -213,7 +218,7 @@ public class PlayerMovement : MonoBehaviour
         if (speedLines.isPlaying)
         {
             var shape = speedLines.shape;
-            float SpeedRadius = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f,25f, 22f);
+            float SpeedRadius = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f,25f, 20f);
 
             var speed = speedLines.main.startSpeed;
             speed = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f, 10f, 20f);
@@ -235,7 +240,7 @@ public class PlayerMovement : MonoBehaviour
             float angle = Vector3.Angle(Vector3.up, Test2.normal);
             slopeyAngle = angle;
 
-            SlopeIncoming = slopeyAngle < 60f;
+            SlopeIncoming = slopeyAngle < 50f;
         }
         else
         {
@@ -245,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        Debug.DrawRay(transform.position + Direction3D, Vector3.down * playerHeight * 0.5f, Color.blue);
+        Debug.DrawRay(transform.position + Direction3D, Vector3.down * playerHeight * 25.5f, Color.blue);
 
 
     }
@@ -306,6 +311,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (sliding) return;
         speedLines.Play();
+        //dashVFX.weight = 1;
         Dash();
         
       
@@ -398,6 +404,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!sliding)
         {
+            //dashVFX.weight = 0;
             speedLines.Stop();
             desiredMoveSpeed = data.walkSpeed;
             ChangeState(MovementState.walking);
@@ -433,6 +440,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void SlidingMovement()
     {
+        CameraShaker.Shake(new PerlinShake(shakeParams));
         //normal sliding
         if (!OnSlope() || rb.linearVelocity.y > -0.1f)
         {
@@ -488,13 +496,14 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Jump()
     {
-        if (wallrunning || isDashing) return;
+        if (isDashing) return;
 
-        if (pg.swinging || pg.grappling)
+        if (pg.swinging || pg.grappling || wallrunning)
         {
             pg.StopGrapple();
         }
-        exitingSlope = true;
+        if(!OnSlope())
+            exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             if (currentJump == 0 && coyoteTimeCounter > 0  && jumpBufferCounter > 0)
@@ -535,6 +544,8 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
+        //removes one of your jumps because you jumped too late.
+        //(you should only get a double jump if you jump on ground first then jump in the air)
         if (!grounded && coyoteTimeCounter < 0 && currentJump == 0)
         {
             currentJump++;
@@ -630,7 +641,7 @@ public class PlayerMovement : MonoBehaviour
             ChangeState(MovementState.wallrunning);
             //desiredMoveSpeed = wallrunSpeed;
         }
-        else if (!wallrunning)
+        else
         {
             if (sliding)
             {
@@ -639,7 +650,7 @@ public class PlayerMovement : MonoBehaviour
                 if (OnSlope() && rb.linearVelocity.y < 0.1f)
                     desiredMoveSpeed = slideSpeed;
                 else
-                    desiredMoveSpeed = slideSpeed;
+                    desiredMoveSpeed = moveSpeed;
 
             }
             else
@@ -660,15 +671,15 @@ public class PlayerMovement : MonoBehaviour
                     ChangeState(MovementState.air);
                     desiredMoveSpeed = data.walkSpeed;
                 }
+                else if (isDashing)
+                {
+                    ChangeState(MovementState.dashing);
+                    desiredMoveSpeed = dashSpeed;
+                }
             }
 
         }
 
-        if (isDashing)
-        {
-            ChangeState(MovementState.dashing);
-            desiredMoveSpeed = dashSpeed;
-        }
 
         if (freeze)
         {
@@ -682,30 +693,43 @@ public class PlayerMovement : MonoBehaviour
             swingSpeed = moveSpeed;
         }
 
-        if (!freeze && moveSpeed == 0)
+        //if (!freeze && moveSpeed == 0)
+        //{
+        //    moveSpeed = data.walkSpeed;
+        //}
+
+        //bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
+        ////if (oldState == MovementState.dashing) keepMomentum = true;
+
+        ////Debug.Log($"desiredMoveSpeed: {desiredMoveSpeed}, lastDesiredMoveSpeed: {lastDesiredMoveSpeed}, keepMomentum: {keepMomentum}, oldState: {oldState}, changed: {desiredMoveSpeedHasChanged}");
+
+        //if (desiredMoveSpeedHasChanged)
+        //{
+        //    if (keepMomentum)
+        //    {
+        //        Debug.Log("Starting smooth lerp");
+        //        StopAllCoroutines();
+        //        StartCoroutine(SmoothlyLerpMoveSpeed());
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("Snapping speed");
+        //        StopAllCoroutines();
+        //        moveSpeed = desiredMoveSpeed;
+        //    }
+        //}
+
+        // check if desired move speed has changed drastically
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 8f && moveSpeed != 0)
         {
-            moveSpeed = data.walkSpeed;
+            StopAllCoroutines();
+            StartCoroutine(SmoothlyLerpMoveSpeed());
+
+            print("Lerp Started!");
         }
-
-        bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
-        //if (oldState == MovementState.dashing) keepMomentum = true;
-
-        //Debug.Log($"desiredMoveSpeed: {desiredMoveSpeed}, lastDesiredMoveSpeed: {lastDesiredMoveSpeed}, keepMomentum: {keepMomentum}, oldState: {oldState}, changed: {desiredMoveSpeedHasChanged}");
-
-        if (desiredMoveSpeedHasChanged)
+        else
         {
-            if (keepMomentum)
-            {
-                Debug.Log("Starting smooth lerp");
-                StopAllCoroutines();
-                StartCoroutine(SmoothlyLerpMoveSpeed());
-            }
-            else
-            {
-                Debug.Log("Snapping speed");
-                StopAllCoroutines();
-                moveSpeed = desiredMoveSpeed;
-            }
+            moveSpeed = desiredMoveSpeed;
         }
 
         lastDesiredMoveSpeed = desiredMoveSpeed;
@@ -739,7 +763,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         moveSpeed = desiredMoveSpeed;
-        speedIncreaseMultiplier = 1f;
+        //speedIncreaseMultiplier = 1f;
         keepMomentum = false;
     }
 
@@ -756,7 +780,13 @@ public class PlayerMovement : MonoBehaviour
             SlidingMovement();
 
         if (OnSlope() && !exitingSlope)
+        {
+
             rb.AddForce(GetSlopeMoveDirection(calculatedMoveDirection) * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
+
+            //if (rb.linearVelocity.y > 0)
+            //    rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+        }
         else if (grounded)
         {
             rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.groundControlModifier, ForceMode.Force);
@@ -764,13 +794,16 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (!isDashing)
             rb.AddForce(calculatedMoveDirection * desiredMoveSpeed * data.airControlModifier, ForceMode.Force);
+
+        ////turns off gravity when not on slop
+        //if (!wallrunning) rb.useGravity = !OnSlope();
     }
     private void SpeedControl() 
     {
 
         if (activeGrapple || isDashing || currentState == MovementState.swinging) return;
 
-        //Limit velotcity on slope
+        //Limit velotcity on slope  
         if (OnSlope() && !exitingSlope)
         {
             if (rb.linearVelocity.magnitude > moveSpeed)
@@ -782,9 +815,9 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             
-            if (flatVel.magnitude > desiredMoveSpeed)
+            if (flatVel.magnitude > moveSpeed)
             {
-                Vector3 limitedVel = flatVel.normalized * desiredMoveSpeed;
+                Vector3 limitedVel = flatVel.normalized * moveSpeed;
                 rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
             }
 
@@ -815,16 +848,16 @@ public class PlayerMovement : MonoBehaviour
 
     //}
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(enableMovementOnNextTouch)
-        {
-            enableMovementOnNextTouch = false;
-            //ResetRestrictions();
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    if(enableMovementOnNextTouch)
+    //    {
+    //        enableMovementOnNextTouch = false;
+    //        //ResetRestrictions();
 
-           // pg.StopGrapple();
-        }
-    }
+    //       // pg.StopGrapple();
+    //    }
+    //}
 
     public bool OnSlope()
     {
@@ -833,7 +866,7 @@ public class PlayerMovement : MonoBehaviour
             return true;
         }
 
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 10f, whatIsGround))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f, whatIsGround))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             //slopeyAngle = angle;
@@ -847,7 +880,7 @@ public class PlayerMovement : MonoBehaviour
         //{
         //    return direction;
         //}
-
+        print("The slope is sloping");
         if (SlopeIncoming)
         {
             return Vector3.ProjectOnPlane(direction, Test2.normal).normalized;

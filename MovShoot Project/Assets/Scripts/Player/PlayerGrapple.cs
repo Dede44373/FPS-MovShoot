@@ -237,8 +237,8 @@ public class PlayerGrapple : MonoBehaviour
 
     private void HandleGrappleStop(InputAction.CallbackContext ctx)
     {
-        if (swinging || grappling == true)
-            StopGrapple();
+        //if (swinging || grappling == true)
+        //    StopGrapple();
     }
 
     //maths for calculating swinging velocity
