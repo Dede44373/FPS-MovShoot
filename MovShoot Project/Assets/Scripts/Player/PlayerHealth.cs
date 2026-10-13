@@ -7,6 +7,7 @@ using DG.Tweening;
 
 public class PlayerHealth : MonoBehaviour, IKnockable
 {
+    public bool NormalRespawningPos;
     [Header("Stats")]
     public int currentHealth;
     public int maxHealth;
@@ -41,7 +42,12 @@ public class PlayerHealth : MonoBehaviour, IKnockable
     private void Start()
     {
         currentHealth = maxHealth;
-        Debug.Log(SceneManager.GetActiveScene().name.ToString());
+        if(NormalRespawningPos)
+        {
+            rb.MovePosition(RespawnManager.instance.spawnPoint);
+            print(RespawnManager.instance.spawnPoint);
+        }
+        //Debug.Log(SceneManager.GetActiveScene().name.ToString());
     }
     public void TakeDamage(int damage)
     {
@@ -74,10 +80,10 @@ public class PlayerHealth : MonoBehaviour, IKnockable
             Instantiate(deathPart, transform.position, Quaternion.identity);
         //RESPAWN
 
-    
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        
-        respawn();
+
+        //respawn();
         //SceneManager.
     }
 
@@ -92,6 +98,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
     }
     public void respawn()
     {
+        print("yvcowibvwywbeyfvbwevhwovwhuiebodfwyfbewofyhwbeoywbeouyewbcoweuyfbwovuywbevuoyweobvjwebvyowebvyubwevbewvuywbyuvobewvbwuovybewovbwebvwoueyvbweovyewobvwuybwevwev");
         rm.ResetToCheckpoint(player);
         currentHealth = maxHealth;
         healthBar.setHealth(currentHealth);

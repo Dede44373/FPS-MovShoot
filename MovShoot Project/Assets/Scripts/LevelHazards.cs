@@ -9,6 +9,16 @@ public class LevelHazards : MonoBehaviour
     {
         
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            PlayerHealth player = other.gameObject.GetComponentInParent<PlayerHealth>();
+            Debug.Log(player);
+
+            player.TakeDamage(damage);
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))

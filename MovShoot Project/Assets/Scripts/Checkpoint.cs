@@ -21,11 +21,20 @@ public class Checkpoint : MonoBehaviour
         {
             if (!isActivated)
             {
-                respawnManager.SetSpawnPoint(transform.position);
+                print("EHH EHHH EHHH EHSKIBIDII");
+                CheckpointManager.instance.CheckpointReached(this);
+                //respawnManager.SetSpawnPoint(transform.position);
                 PlayVFX();
                 isActivated = true;
             }
         }
+    }
+
+    public void DisableCheckpoint()
+    {
+        isActivated = false;
+        constantParticles.Stop();
+
     }
 
     [ContextMenu ("playerVFX")]

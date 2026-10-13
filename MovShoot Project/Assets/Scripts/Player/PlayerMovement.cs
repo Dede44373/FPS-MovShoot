@@ -221,7 +221,7 @@ public class PlayerMovement : MonoBehaviour
             float SpeedRadius = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f,25f, 20f);
 
             var speed = speedLines.main.startSpeed;
-            speed = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f, 10f, 20f);
+            speed = Mathf.Clamp(rb.linearVelocity.sqrMagnitude * 0.1f, 20f, 40f);
 
             shape.radius = SpeedRadius;
         }
@@ -234,7 +234,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 RightValue = playerCam.transform.right * moveDirection.x;
         Vector3 Direction3D = ForwardValue + RightValue;
 
-        if (Physics.Raycast(transform.position + Direction3D, Vector3.down, out Test2, playerHeight * 0.5f + 20f, whatIsGround))
+        if (Physics.Raycast(transform.position + Direction3D, Vector3.down, out Test2, playerHeight * 0.5f + 2f, whatIsGround))
         {
             //print(Test2.transform.name);
             float angle = Vector3.Angle(Vector3.up, Test2.normal);
@@ -480,6 +480,7 @@ public class PlayerMovement : MonoBehaviour
     #region Jumping
     private void PlayerJump(InputAction.CallbackContext ctx)
     { 
+        //pg.StopGrapple();
         IsJumping = true;
         Debug.Log("spacebar pressed");
         jumpBufferCounter = jumpBufferTime;
@@ -650,7 +651,7 @@ public class PlayerMovement : MonoBehaviour
                 if (OnSlope() && rb.linearVelocity.y < 0.1f)
                     desiredMoveSpeed = slideSpeed;
                 else
-                    desiredMoveSpeed = moveSpeed;
+                    desiredMoveSpeed = data.walkSpeed;
 
             }
             else
@@ -869,7 +870,7 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f, whatIsGround))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            //slopeyAngle = angle;
+            slopeyAngle = angle;
             return angle < maxSlopAngle && angle != 0;
         }
         return false;

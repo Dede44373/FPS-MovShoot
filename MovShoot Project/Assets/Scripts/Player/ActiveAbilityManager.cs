@@ -7,14 +7,20 @@ public class ActiveAbilityManager : MonoBehaviour
     public bool AllActive;
     public bool ThrowingActive;
     public bool GrappleActive;
+    public static ActiveAbilityManager instance;
 
     [Header ("References")]
     public PlayerThrow pThrow;
     public PlayerGrapple pg;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    void Awake()
     {
-        
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this);
+        }
     }
 
     // Update is called once per frame

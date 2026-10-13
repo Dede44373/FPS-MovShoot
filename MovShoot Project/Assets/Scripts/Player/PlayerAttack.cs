@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using CameraShake;
+using UnityEngine.Windows.WebCam;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -24,9 +25,9 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("Damage")]
     private int damage;
-    [SerializeField] int lightDamage;
-    [SerializeField] int heavyDamage;
-    [SerializeField] int slamDamage;
+    public int lightDamage;
+    public int heavyDamage;
+    public int slamDamage;
 
 
     [Header("Juice")]
@@ -39,6 +40,8 @@ public class PlayerAttack : MonoBehaviour
     public float tiltDegree;
     public float tiltOriginal;
     public bool tilt;
+    [SerializeField] BounceShake.Params heavyShakeParams;
+    [SerializeField] BounceShake.Params hitShake;
 
     [Header("References")]
     public UserInputs Controls;
@@ -88,7 +91,7 @@ public class PlayerAttack : MonoBehaviour
 
     private async void AttackStart(InputAction.CallbackContext ctx)
     {
-        if (inAttack) return;
+        if (inAttack || pm.isDashing) return;
 
         print("<color=blue>GROundSLAMMIN</color>");
         
@@ -144,6 +147,7 @@ public class PlayerAttack : MonoBehaviour
     {
         stepDistance = heavyStepDistance;
         damage = heavyDamage;
+        CameraShaker.Shake(new BounceShake(heavyShakeParams));
         anim.Play("Armature_Punch_Heavy_Attack_1");
 
         SoundManager.PlaySound(SoundType.Fist_Heavy);
@@ -261,7 +265,7 @@ public class PlayerAttack : MonoBehaviour
             enemy.TakeDamage(damage);
             print($"does enemy exist: {enemy != null}, if so it should've taken damage");
 
-            CameraShaker.Presets.ShortShake3D();
+            CameraShaker.Shake(new BounceShake(hitShake));
             //CameraShaker.Shake(new BounceShake(shakeParams));
 
             Ray ray = cam.ScreenPointToRay(mouse.position.value);

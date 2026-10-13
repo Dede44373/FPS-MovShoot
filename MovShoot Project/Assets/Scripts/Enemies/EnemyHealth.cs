@@ -9,6 +9,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
     public int health;
     public float hitstopDuration;
     public float hitstopDeathDuration;
+    public PlayerAttack playerAttack;
     public Rigidbody rb;
     public float knockForce;
 
@@ -25,15 +26,26 @@ public class EnemyHealth : MonoBehaviour, IKnockable
     [Header("Audio")]
     [SerializeField] AudioSource hitSFX;
     float pitchVar = 0.05f;
+
+    void Start()
+    {
+        playerAttack = FindAnyObjectByType<PlayerAttack>();
+    }
     public void TakeDamage (int damage)
     {
-        HitstopManager.Instance.Stop(hitstopDuration);
+        //HitstopManager.Instance.HeavyStop(hitstopDuration);
         StartCoroutine(Invulnerability());
         hurtPart.Play();
         CameraShaker.Presets.Explosion3D();
 
         Debug.Log("Enemy Damaged" + health);
         health -= damage;
+        if (health > 0)
+            HitstopManager.Instance.Stop(hitstopDuration);
+        else if (health <= 0 && damage == playerAttack.heavyDamage)
+            HitstopManager.Instance.HeavyStop(hitstopDeathDuration);
+        else if (health <= 0)
+            HitstopManager.Instance.Stop(hitstopDeathDuration);
 
         //float randomPitch = Random.Range(1f - pitchVar, 1f + pitchVar);
         //hitSFX.pitch =  randomPitch;   
@@ -49,7 +61,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
 
     private void Die()
     {
-            Instantiate(deathPart, transform.position, Quaternion.identity);
+        Instantiate(deathPart, transform.position, Quaternion.identity);
         if(hasLoot)
             GetComponent<LootBag>().InstantiateLoot(transform.position); 
 

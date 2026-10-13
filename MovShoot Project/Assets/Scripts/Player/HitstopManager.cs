@@ -4,6 +4,7 @@ using UnityEngine;
 public class HitstopManager : MonoBehaviour
 {
     public static HitstopManager Instance { get; private set; }
+    public float SlowMotionDuration;
 
     private void Awake()
     {
@@ -33,6 +34,14 @@ public class HitstopManager : MonoBehaviour
         StartCoroutine(Wait(duration));
 
     }
+    public void HeavyStop(float duration)
+    {
+        if (waiting)
+            return;
+        Time.timeScale = 0f;
+        StartCoroutine(WaitSlowMo(duration));
+
+    }
 
     IEnumerator Wait(float duration)
     {
@@ -42,4 +51,15 @@ public class HitstopManager : MonoBehaviour
         waiting = false;
 
     }
+    IEnumerator WaitSlowMo(float duration)
+    {
+        waiting = true;
+        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = 0.1f;
+        yield return new WaitForSecondsRealtime(SlowMotionDuration);
+        Time.timeScale = 1f;
+        waiting = false;
+
+    }
+
 }
