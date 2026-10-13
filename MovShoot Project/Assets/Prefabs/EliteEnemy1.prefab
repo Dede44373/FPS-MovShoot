@@ -5356,8 +5356,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 20
-  m_Acceleration: 40
+  m_Speed: 30
+  m_Acceleration: 80
   avoidancePriority: 50
   m_AngularSpeed: 360
   m_StoppingDistance: 0
@@ -5404,6 +5404,7 @@ MonoBehaviour:
   health: 20
   hitstopDuration: 0.05
   hitstopDeathDuration: 0.15
+  playerAttack: {fileID: 0}
   rb: {fileID: 2420442971627849638}
   knockForce: 50
   invulDuration: 0.2
@@ -5446,10 +5447,10 @@ MonoBehaviour:
   walkPointRange: 8
   normalTurnSpeed: 200
   attackTurnSpeed: 400
-  damage: 1
-  timeBetweenAttacks: 2
+  damage: 2
+  timeBetweenAttacks: 1
   dashForce: 250
-  chaseLungeTime: 3
+  chaseLungeTime: 2
   lungeWaitTime: 2
   lungeSpeed: 4
   lungeJump:

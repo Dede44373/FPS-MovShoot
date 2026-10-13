@@ -1,9 +1,11 @@
 using System.Collections;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using CameraShake;
-using UnityEngine.Rendering;
 using DG.Tweening;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour, IKnockable
 {
@@ -38,7 +40,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
     public Volume hurtVFX;
     public PlayerRespawn pr;
     public RespawnManager rm;
-
+    public UserInputs Controls;
     private void Start()
     {
         currentHealth = maxHealth;
@@ -48,6 +50,21 @@ public class PlayerHealth : MonoBehaviour, IKnockable
             print(RespawnManager.instance.spawnPoint);
         }
         //Debug.Log(SceneManager.GetActiveScene().name.ToString());
+    }
+    private void OnEnable()
+    {
+        Controls = UserInputManager.Instance.Controls;
+        Controls.Player.Suicide.performed += Suicide;
+
+    }
+    private void OnDisable()
+    {
+        Controls.Player.Suicide.performed -= Suicide;
+    }
+
+    private void Suicide(InputAction.CallbackContext ctx)
+    {
+        Die();
     }
     public void TakeDamage(int damage)
     {

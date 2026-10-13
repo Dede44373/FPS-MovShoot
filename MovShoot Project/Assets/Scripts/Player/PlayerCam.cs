@@ -21,7 +21,7 @@ public class PlayerCam : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        QualitySettings.vSyncCount = -1;
+       // QualitySettings.vSyncCount = -1;
 
         Controls = UserInputManager.Instance.Controls;
         Controls.Player.Look.performed += ChangeCameraMovement;

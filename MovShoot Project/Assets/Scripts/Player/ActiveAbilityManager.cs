@@ -21,6 +21,10 @@ public class ActiveAbilityManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(this);
         }
+        else
+        {
+            return;
+        }
     }
 
     // Update is called once per frame
