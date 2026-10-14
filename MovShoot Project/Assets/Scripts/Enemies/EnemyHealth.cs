@@ -36,7 +36,6 @@ public class EnemyHealth : MonoBehaviour, IKnockable
         //HitstopManager.Instance.HeavyStop(hitstopDuration);
         StartCoroutine(Invulnerability());
         hurtPart.Play();
-        CameraShaker.Presets.Explosion3D();
 
         Debug.Log("Enemy Damaged" + health);
         health -= damage;

@@ -23,6 +23,7 @@ public class PlayerAttack : MonoBehaviour
 
     public float slamRange;
 
+    public int juiceGain;
     [Header("Damage")]
     private int damage;
     public int lightDamage;
@@ -49,6 +50,7 @@ public class PlayerAttack : MonoBehaviour
     private Animator anim;
     public Transform player;
     public PlayerMovement pm;
+    public PlayerJuiceBlood pjb;
     public Camera cam;
     public PlayerCam pc;
     public Rigidbody rb;
@@ -263,10 +265,12 @@ public class PlayerAttack : MonoBehaviour
             print("has an enemy tag");
             EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
             enemy.TakeDamage(damage);
+
+            pjb.IncreaseCurrentJuice(juiceGain);
+
             print($"does enemy exist: {enemy != null}, if so it should've taken damage");
 
             CameraShaker.Shake(new BounceShake(hitShake));
-            //CameraShaker.Shake(new BounceShake(shakeParams));
 
             Ray ray = cam.ScreenPointToRay(mouse.position.value);
             RaycastHit hit;

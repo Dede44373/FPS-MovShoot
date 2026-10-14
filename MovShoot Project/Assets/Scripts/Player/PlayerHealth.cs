@@ -104,6 +104,15 @@ public class PlayerHealth : MonoBehaviour, IKnockable
         //SceneManager.
     }
 
+    public void Heal(int healAmount)
+    {
+        if (currentHealth < maxHealth)
+        {
+            currentHealth += healAmount;
+            healthBar.setHealth(currentHealth);
+        }
+    }
+
     private IEnumerator DeathRoutine()
     {
         HitstopManager.Instance.Stop(hitstopDeathDuration);
@@ -150,6 +159,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
 
     public void KnockbackEntity(Transform executionSource)
     {
+        if (isInvul) return;
         print("k");
         if (rb == null)
             return;

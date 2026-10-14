@@ -32,7 +32,7 @@ public class PlayerThrow : MonoBehaviour
     public float throwForce;
     public float throwUpwardForce;
 
-    bool readyToThrow;
+    public bool readyToThrow;
     public bool active;
 
     [Header("Parrying")]
@@ -47,15 +47,15 @@ public class PlayerThrow : MonoBehaviour
         parryActive = false;
         parryTime = parryWindow;
     }
-    private void OnEnable()
-    {
-        Controls = UserInputManager.Instance.Controls;
-        Controls.Player.RangedAttack.performed += HandleAttackStart;
-    }
-    private void OnDisable()
-    {
-        Controls.Player.RangedAttack.performed -= HandleAttackStart;
-    }
+    //private void OnEnable()
+    //{
+    //    Controls = UserInputManager.Instance.Controls;
+    //    Controls.Player.RangedAttack.performed += HandleAttackStart;
+    //}
+    //private void OnDisable()
+    //{
+    //    Controls.Player.RangedAttack.performed -= HandleAttackStart;
+    //}
 
     public void HandleAttackStart(InputAction.CallbackContext ctx)
     {
@@ -91,9 +91,9 @@ public class PlayerThrow : MonoBehaviour
     }
 
 
-    void Throw()
+    public void Throw()
     {
-        if (!active) return;
+        if (!active || !readyToThrow) return;
         readyToThrow = false;
 
         rb.AddForce(-camTransform.forward * recoilForce, ForceMode.Impulse);
