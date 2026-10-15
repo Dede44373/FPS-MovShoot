@@ -21,12 +21,12 @@ MonoBehaviour:
   slideDrag: 0
   addGravity: 6
   jumpForce: 27
-  jumpCooldown: 0.1
+  jumpCooldown: 0.2
   dashForce: 20
   dashExitSpeed: 0.4
   dashUpwardForce: 0
   dashTime: 0.2
   dashCd: 0.5
-  dashCdTimer: -0.0013046777
+  dashCdTimer: -0.00083758356
   baseJumpUses: 2
   defaultFov: 80

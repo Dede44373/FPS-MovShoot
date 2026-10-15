@@ -32,6 +32,7 @@ public class PlayerGrapple : MonoBehaviour
     public float grappleSpeed;
     public float grappleCount;
 
+    public float distanceToGrapplePoint;
     private Vector3 grapplePoint;
 
     public float grappleFOV;
@@ -153,8 +154,9 @@ public class PlayerGrapple : MonoBehaviour
 
             float Distance = Vector3.Distance(transform.position, GrappleDestination);
 
-            if (Distance < 10f && !grappling)
+            if (Distance < distanceToGrapplePoint)
             {
+                StopGrapple();
                 grappling = false;
             }
 

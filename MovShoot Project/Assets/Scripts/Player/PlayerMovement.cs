@@ -103,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Particles")]
     public ParticleSystem stepPart;
     public ParticleSystem speedLines;
+    public ParticleSystem dashSpeedLines;
 
     [Header("References")]
     public PlayerCam cam;
@@ -330,10 +331,12 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         desiredMoveSpeed = dashSpeed;
         keepMomentum = false;
+        disableGravity = true;
 
+        dashSpeedLines.Play();
         dashVFX.weight = 1;
         cam.DoFov(sprintFOV);
-        disableGravity = true;
+
         StartCoroutine(DashInvincibility());
         //SoundManager.PlaySound(SoundType.Dash_1);
         SoundManager.PlaySound(SoundType.Dash_2);

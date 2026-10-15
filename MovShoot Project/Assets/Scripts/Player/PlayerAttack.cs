@@ -1,8 +1,10 @@
   using System.Collections;
+using System.Threading.Tasks;
+using CameraShake;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using CameraShake;
 using UnityEngine.Windows.WebCam;
 
 public class PlayerAttack : MonoBehaviour
@@ -30,6 +32,9 @@ public class PlayerAttack : MonoBehaviour
     public int heavyDamage;
     public int slamDamage;
 
+    [Header("Dash")]
+    public float maxDashDistance;
+    public float minDashDistance;
 
     [Header("Juice")]
     public float lightStepDistance;
@@ -209,20 +214,75 @@ public class PlayerAttack : MonoBehaviour
     }
 
     //movement/stepping
+    bool dashOff;
     public void MoveForwards()
     {
-        if (pm.currentState == PlayerMovement.MovementState.air)
+        //if (pm.currentState == PlayerMovement.MovementState.air)
+        //{
+        //    return;
+        //}
+        //else
+        //{
+        //}
+            pm.freeze = true;   
+            rb.useGravity = false;
+
+
+        Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, 100f, enemyLayer);
+        float Distance = Vector3.Distance(player.transform.position, hit.point);
+        print(Distance);
+        print("Hitting");
+
+        if(Distance <= maxDashDistance && Distance >= minDashDistance)
         {
-            return;
+            print("hitting succest0");
+            rb.AddForce(transform.forward * Distance *22, ForceMode.Impulse);   
+
+            rb.useGravity = true;
+            //Invoke(nameof(Timer), 0.1f);
+            //while (Distance >= 3f && !dashOff && inAttack)
+            //{
+            //    rb.AddForce(transform.forward * stepDistance, ForceMode.Force);
+            //    await Awaitable.NextFrameAsync(destroyCancellationToken);
+            //}
+            //dashOff = false;
         }
         else
         {
-            pm.freeze = true;
+            print("Failed");
+            if (Distance >= maxDashDistance)
+            {
+                rb.AddForce(transform.forward * stepDistance, ForceMode.Impulse);
+
+            }
+            else if (Distance >=minDashDistance)
+            {
+                return;
+            }
+
+            rb.useGravity = true;
         }
-        
-        rb.AddForce(transform.forward * stepDistance, ForceMode.Impulse);
+
         // Rigidbody rb = GetComponent<Rigidbody>();
     }
+
+    void Timer()
+    {
+        print("RAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
+        dashOff = true;
+    }
+    //private IEnumerator ForceTowardsEnemy()
+    //{
+    //    Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, 100f);
+    //    float Distance = Vector3.Distance(player.transform.position, hit.point);
+    //    while (Distance >= 1f && !dashOff)
+    //    {
+    //        rb.AddForce(transform.forward * stepDistance, ForceMode.Force);
+    //        yield return null;
+    //    }
+    //    dashOff = false;
+    //}
+
     public void MoveUpwards()
     {
         rb.AddForce(transform.up * upForce, ForceMode.Impulse);
