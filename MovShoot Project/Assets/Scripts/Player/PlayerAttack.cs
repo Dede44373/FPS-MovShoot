@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 using UnityEngine.Windows.WebCam;
 
 public class PlayerAttack : MonoBehaviour
@@ -59,7 +61,11 @@ public class PlayerAttack : MonoBehaviour
     public Camera cam;
     public PlayerCam pc;
     public Rigidbody rb;
+
+    [Header("Particles")]
     public ParticleSystem slamParticles;
+    public ParticleSystem impactParticles;
+
     public Mouse mouse { get; private set; }
     public LayerMask ground, enemyLayer;
 
@@ -336,6 +342,7 @@ public class PlayerAttack : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
+                Instantiate(impactParticles, hit.point, Quaternion.LookRotation(Vector3.back));
                 print("raycast hit something");
                 IKnockable knockback = enemy.transform.GetComponent<IKnockable>();
                 //if (heavyAttack)

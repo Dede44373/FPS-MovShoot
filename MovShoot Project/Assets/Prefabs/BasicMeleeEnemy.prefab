@@ -5115,11 +5115,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7395909130703514037}
   - {fileID: 8332667299770757981}
   - {fileID: 4503294050178537233}
   - {fileID: 1803562142766473711}
   - {fileID: 1323292228052365922}
-  - {fileID: 7395909130703514037}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8469424006653623267
@@ -5408,7 +5408,8 @@ MonoBehaviour:
   hitstopDeathDuration: 0.1
   playerAttack: {fileID: 0}
   rb: {fileID: 2420442971627849638}
-  knockForce: 50
+  anim: {fileID: 3477800357757416399}
+  knockForce: 150
   invulDuration: 0.2
   numberOfFlashes: 2
   hasLoot: 1
@@ -5504,6 +5505,7 @@ MonoBehaviour:
     m_Bits: 64
   agent: {fileID: 3915087233854191238}
   player: {fileID: 0}
+  anim: {fileID: 3477800357757416399}
   coll: {fileID: 3280692671090844449}
   rb: {fileID: 2420442971627849638}
 --- !u!114 &-9203986589627586066
@@ -5735,6 +5737,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ant_Model_v0@T-Pose
       objectReference: {fileID: 0}
+    - target: {fileID: 2297850768494375698, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4831018558786363571, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5583283331389334309, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
       propertyPath: m_Controller
       value: 
@@ -5748,6 +5762,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+--- !u!95 &3477800357757416399 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+  m_PrefabInstance: {fileID: 7001185740014734942}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7395909130703514037 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}

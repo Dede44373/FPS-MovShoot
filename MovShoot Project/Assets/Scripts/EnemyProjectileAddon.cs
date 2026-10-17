@@ -7,6 +7,7 @@ public class EnemyProjectileAddon : MonoBehaviour
     GameObject raycastObj;
     public Collider col;
     public Transform tm;
+    public ParticleSystem deathParticles;
 
     [SerializeField] int damage;
     private bool targetHit;
@@ -116,6 +117,8 @@ public class EnemyProjectileAddon : MonoBehaviour
 
         //makes sure projectile moves with target
 
+        Instantiate(deathParticles, transform.position, Quaternion.identity);
+        GetComponent<MeshRenderer>().enabled = false;
         GetComponent<CapsuleCollider>().enabled = false;
         transform.SetParent(collision.transform);
     }

@@ -422,6 +422,7 @@ MonoBehaviour:
   hitstopDeathDuration: 0.1
   playerAttack: {fileID: 0}
   rb: {fileID: 1906234277749048702}
+  anim: {fileID: 3466496966387911346}
   knockForce: 200
   invulDuration: 0.2
   numberOfFlashes: 2
@@ -518,6 +519,7 @@ MonoBehaviour:
     m_Bits: 64
   agent: {fileID: 1885100561528707361}
   player: {fileID: 0}
+  anim: {fileID: 0}
   coll: {fileID: 4514023812868018751}
   rb: {fileID: 1906234277749048702}
 --- !u!114 &7501935299195974586
@@ -5532,6 +5534,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+--- !u!95 &3466496966387911346 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+  m_PrefabInstance: {fileID: 7021654110554683171}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7420617493967311048 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}

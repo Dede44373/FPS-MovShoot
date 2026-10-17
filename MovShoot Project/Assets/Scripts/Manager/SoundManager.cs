@@ -18,7 +18,8 @@ public enum SoundType
     Ground_Slam,
     Grapple_Fail,
     Dash_1,
-    Dash_2
+    Dash_2,
+    Hurt_Additional
 }
 //makes the script useable in edit mode
 [RequireComponent(typeof(AudioSource)), ExecuteInEditMode]

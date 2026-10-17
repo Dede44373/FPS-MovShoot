@@ -48,7 +48,7 @@ public class EnemyAI : Enemy
     public LayerMask whatisGround, Player;
     public NavMeshAgent agent;
     public Transform player;
-    private Animator anim;
+    public Animator anim;
     public Collider coll;
     public Rigidbody rb;
     Vector3 DestinationPoint = Vector3.zero;
@@ -67,9 +67,12 @@ public class EnemyAI : Enemy
         lungeTimer = chaseLungeTime;
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
 
         beforeLungeWait = lungeWaitTime;
+        if (anim == null)
+        { 
+        
+        }
     }
 
 

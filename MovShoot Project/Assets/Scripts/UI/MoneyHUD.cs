@@ -25,6 +25,7 @@ public class MoneyHUD : MonoBehaviour
     private void Start()
     {
         moneyText = UIManager.instance.moneyText;
+        moneyText.SetText("Money: {0}", totalMoney);
     }
 
 

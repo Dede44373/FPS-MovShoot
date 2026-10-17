@@ -11,6 +11,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
     public float hitstopDeathDuration;
     public PlayerAttack playerAttack;
     public Rigidbody rb;
+    public Animator anim;
     public float knockForce;
 
     [Header("iFrames")]
@@ -38,6 +39,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
         hurtPart.Play();
 
         Debug.Log("Enemy Damaged" + health);
+        anim.SetTrigger("Hurt");
         health -= damage;
         if (health > 0)
             HitstopManager.Instance.Stop(hitstopDuration);
@@ -50,6 +52,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
         //hitSFX.pitch =  randomPitch;   
         //hitSFX.Play();
         SoundManager.PlaySound(SoundType.Hurt);
+        SoundManager.PlaySound(SoundType.Hurt_Additional);
 
         if (health <= 0 )
         {
@@ -60,7 +63,7 @@ public class EnemyHealth : MonoBehaviour, IKnockable
 
     private void Die()
     {
-        Instantiate(deathPart, transform.position, Quaternion.identity);
+        Instantiate(deathPart, transform.position, Quaternion.LookRotation(Vector3.up));
         if(hasLoot)
             GetComponent<LootBag>().InstantiateLoot(transform.position); 
 

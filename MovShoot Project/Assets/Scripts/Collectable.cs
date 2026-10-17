@@ -6,6 +6,7 @@ public class Collectable : MonoBehaviour
     [SerializeField] private Mesh newMesh;
     [SerializeField] AudioSource pickupSFX;
     [SerializeField] private MeshCollider col;
+    [SerializeField] private ParticleSystem pickupFX;
     public GameObject ghost;
     public int moneyValue = 1;
 
@@ -13,6 +14,7 @@ public class Collectable : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            Instantiate(pickupFX, transform.position, Quaternion.identity);
             Instantiate(ghost, transform.position, Quaternion.identity);
             //originalMesh.mesh = newMesh;
             Debug.Log("picked up loot");
