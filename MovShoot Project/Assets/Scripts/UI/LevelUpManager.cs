@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelUpManager : MonoBehaviour
@@ -21,24 +22,56 @@ public class LevelUpManager : MonoBehaviour
     }
 
 
-    public void LevelUp()
+    public void LevelHealth()
     {
         if (levelUpCost <= MoneyHUD.instance.totalMoney)
         {
-            MoneyHUD.instance.totalMoney -= levelUpCost;
-            pHealth.maxHealth ++;
-            pHealth.currentHealth = pHealth.maxHealth;
+            MoneyHUD.instance.RemoveMoney(levelUpCost);
+            pHealth.IncreaseMaxHealth();
             IncreaseCosts();
         }
         else
         {
-            print("Insufficient currency");
+            NotEnoughCurrency();
         }
+    }
+    public void LevelDamage()
+    {
+        if (levelUpCost <= MoneyHUD.instance.totalMoney)
+        {
+            MoneyHUD.instance.RemoveMoney(levelUpCost);
+            pHealth.IncreaseMaxHealth();
+            IncreaseCosts();
+        }
+        else
+        {
+            NotEnoughCurrency();
+        }
+    }
+
+    public void LeveJuice()
+    {
+        if (levelUpCost <= MoneyHUD.instance.totalMoney)
+        {
+            MoneyHUD.instance.RemoveMoney(levelUpCost);
+            pHealth.IncreaseMaxHealth();
+            IncreaseCosts();
+        }
+        else
+        {
+            NotEnoughCurrency();
+        }
+    }
+
+    void NotEnoughCurrency()
+    {
+        print("Insufficient currency");
+        SoundManager.PlaySound(SoundType.Empty);
     }
 
     public void IncreaseCosts()
     {
-        Mathf.RoundToInt(levelUpCost *= 1.5f);
+        Mathf.RoundToInt(levelUpCost += 5f);
         
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created

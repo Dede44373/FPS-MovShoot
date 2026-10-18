@@ -5438,7 +5438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangedEnemyAI
   enemyState: 0
-  waitTime: 5
+  waitTime: 10
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 0
   normalTurnSpeed: 150
@@ -5465,6 +5465,9 @@ MonoBehaviour:
   Player:
     serializedVersion: 2
     m_Bits: 64
+  checkIfWallInWay:
+    serializedVersion: 2
+    m_Bits: 196608
   agent: {fileID: 3915087233854191238}
   player: {fileID: 0}
   coll: {fileID: 2495719598296250964}

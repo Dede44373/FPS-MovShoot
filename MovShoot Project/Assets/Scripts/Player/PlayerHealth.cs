@@ -112,6 +112,11 @@ public class PlayerHealth : MonoBehaviour, IKnockable
             healthBar.setHealth(currentHealth);
         }
     }
+    public void IncreaseMaxHealth()
+    {
+        maxHealth++;
+        healthBar.setHealth(currentHealth);
+    }
 
     private IEnumerator DeathRoutine()
     {

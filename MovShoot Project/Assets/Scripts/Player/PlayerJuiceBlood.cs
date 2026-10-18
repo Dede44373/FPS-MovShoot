@@ -53,7 +53,7 @@ public class PlayerJuiceBlood : MonoBehaviour
         }
         else
         {
-            return;
+            health.Heal(healAmount);
         }
     }
     public void AttemptThrowing(int usage)
@@ -68,7 +68,7 @@ public class PlayerJuiceBlood : MonoBehaviour
         }
         else
         {
-            print("Insufficient Currency");
+            InsufficientCurrency();
         }
     }
 
@@ -82,12 +82,21 @@ public class PlayerJuiceBlood : MonoBehaviour
         }
         else
         {
-            print("Insufficient Currency");
+            InsufficientCurrency();
         }
+    }
+
+    void InsufficientCurrency()
+    {
+        print("Insufficient currency");
+        SoundManager.PlaySound(SoundType.Empty);
     }
     // Update is called once per frame
     void Update()
     {
-        
+        if (currentJuice >= 0)
+        {
+            
+        }
     }
 }

@@ -41,7 +41,7 @@ public class RangedEnemyAI : Enemy
     public float viewDistance = 10f;
 
     [Header("References")]
-    public LayerMask whatisGround, Player;
+    public LayerMask whatisGround, Player, checkIfWallInWay;
     public NavMeshAgent agent;
     public Transform player;
     private Animator anim;
@@ -74,7 +74,13 @@ public class RangedEnemyAI : Enemy
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
         if(playerInSightRange || enemyState == EnemyState.chase)
-            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
+        {
+            if (CanSeePlayer())
+            {
+                playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
+                
+            }
+        }
         if(playerInSightRange)
             playerInRetreatRange = Physics.CheckSphere(transform.position, retreatRange, Player);
 
@@ -109,6 +115,26 @@ public class RangedEnemyAI : Enemy
         {
             attacking = false;
         }
+    }
+    bool CanSeePlayer()
+    {
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer <= sightRange)
+        {
+            // Cast a ray towards the player. If it hits a wall first, it returns false.
+            if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, distanceToPlayer, checkIfWallInWay))
+            {
+                // The ray hit a wall before reaching the player
+                return false;
+            }
+
+            // No obstacle was hit
+            return true;
+        }
+
+        return false;
     }
 
     void Idle()

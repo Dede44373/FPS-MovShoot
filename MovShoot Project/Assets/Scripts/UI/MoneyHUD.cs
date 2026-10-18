@@ -29,7 +29,7 @@ public class MoneyHUD : MonoBehaviour
     }
 
 
-    public void AddMoney(int value)
+    public void AddMoney(float value)
     {
         if (moneyText == null)
         {
@@ -39,6 +39,17 @@ public class MoneyHUD : MonoBehaviour
         totalMoney += value;
         moneyText.SetText("Money: {0}", totalMoney);
 
+    }
+
+    public void RemoveMoney(float value)
+    {
+        if (moneyText == null)
+        {
+            moneyText = UIManager.instance.moneyText;
+        }
+
+        totalMoney -= value;
+        moneyText.SetText("Money: {0}", totalMoney);
     }
 
 }

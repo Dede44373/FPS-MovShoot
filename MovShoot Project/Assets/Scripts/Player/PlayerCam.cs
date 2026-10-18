@@ -22,12 +22,15 @@ public class PlayerCam : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
        // QualitySettings.vSyncCount = -1;
+    }
+    private void OnEnable()
+    {
 
         Controls = UserInputManager.Instance.Controls;
         Controls.Player.Look.performed += ChangeCameraMovement;
         Controls.Player.Look.canceled += StopCameraMovement;
+        
     }
-
     private void OnDisable()
     {
         Controls.Player.Look.performed -= ChangeCameraMovement;
@@ -62,6 +65,7 @@ public class PlayerCam : MonoBehaviour
     */  
     private void Update()
     {
+        print("Camera working");
         // Get mouse input
         float mouseX = LookValue.x * Time.deltaTime * senX;
         float mouseY = LookValue.y * Time.deltaTime * senY;
