@@ -110,6 +110,7 @@ public class EnemyAI : Enemy
 
     void Idle()
     {
+        anim.SetTrigger("Idle");
         if (!playerInSightRange)
         {
             if (waitTime >= 0)
@@ -128,6 +129,7 @@ public class EnemyAI : Enemy
 
     void Patrol()
     {
+        anim.SetTrigger("Walk");
         if (playerInSightRange && !playerInAttackRange)
         {
             enemyState = EnemyState.chase;
@@ -155,6 +157,7 @@ public class EnemyAI : Enemy
 
     void Chase()
     {
+        anim.SetTrigger("Walk");
         lungeTimer -= Time.deltaTime;
         if(lungeTimer <= 0)
         {
@@ -284,6 +287,7 @@ public class EnemyAI : Enemy
         beforeLungeWait = lungeWaitTime;
         enemyState = EnemyState.chase;
     }
+    
 
     public void EnableAttackCollider()
     {

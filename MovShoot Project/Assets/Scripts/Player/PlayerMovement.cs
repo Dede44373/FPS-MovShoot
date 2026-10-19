@@ -188,6 +188,14 @@ public class PlayerMovement : MonoBehaviour
        if(data.dashCdTimer >= 0)
             data.dashCdTimer -= Time.deltaTime;
 
+       if (grounded)
+        {
+            stepPart.Play();
+        }
+       else if (!grounded)
+        {
+            stepPart.Stop();
+        }
         //if (moveSpeed == 0)
         //{
         //    desiredMoveSpeed = data.walkSpeed;
@@ -506,7 +514,7 @@ public class PlayerMovement : MonoBehaviour
         {
             pg.StopGrapple();
         }
-        if(!OnSlope())
+        if(OnSlope())
             exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -522,7 +530,6 @@ public class PlayerMovement : MonoBehaviour
                 currentJump++;
             }
 
-        
     }
     private void ResetJump()
     {

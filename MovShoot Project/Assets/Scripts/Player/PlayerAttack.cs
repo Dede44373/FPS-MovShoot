@@ -26,6 +26,7 @@ public class PlayerAttack : MonoBehaviour
     public bool heavyCharged;
 
     public float slamRange;
+    public float sphereCastRange;
 
     public int juiceGain;
     [Header("Damage")]
@@ -234,7 +235,7 @@ public class PlayerAttack : MonoBehaviour
             rb.useGravity = false;
 
 
-        Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, 100f, enemyLayer);
+        Physics.SphereCast(cam.transform.position,sphereCastRange, cam.transform.forward, out RaycastHit hit, 100f, enemyLayer);
         float Distance = Vector3.Distance(player.transform.position, hit.point);
         print(Distance);
         print("Hitting");

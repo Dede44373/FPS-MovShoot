@@ -78,6 +78,8 @@ public class RangedEnemyAI : Enemy
             if (CanSeePlayer())
             {
                 playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, Player);
+                if (playerInAttackRange) 
+                    print("Ranged can SEe player");
                 
             }
         }
@@ -188,6 +190,7 @@ public class RangedEnemyAI : Enemy
 
     void Retreat()
     {
+        anim.Play("Zombie Running");
         print("Running away");
         float squaredDist = (transform.position - player.transform.position).sqrMagnitude;
         float EnemyDistanceRunSqrt = EnemyDistance * EnemyDistance;
@@ -221,7 +224,7 @@ public class RangedEnemyAI : Enemy
     void Chase()
     {
 
-        if (playerInAttackRange)
+        if (playerInAttackRange && playerInSightRange)
         {
             enemyState = EnemyState.attack;
         }
@@ -231,12 +234,12 @@ public class RangedEnemyAI : Enemy
             agent.angularSpeed = attackTurnSpeed;
             agent.SetDestination(player.position);
             print("Destination set 2");
-
             if (!playerInSightRange)
             {
                 waitTime = 1.0f;
                 enemyState = EnemyState.idle;
             }
+
         }
     }
 

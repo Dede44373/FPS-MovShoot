@@ -15,6 +15,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
     public int maxHealth;
     public float hitstopDuration;
     public float hitstopDeathDuration;
+    public float healFXDuration;
 
     [Header("iFrames")]
     public LayerMask invulLayer;
@@ -38,6 +39,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
 
     [SerializeField] private HealthBarUI healthBar;
     public Volume hurtVFX;
+    public Volume healVFX;
     public PlayerRespawn pr;
     public RespawnManager rm;
     public UserInputs Controls;
@@ -104,12 +106,15 @@ public class PlayerHealth : MonoBehaviour, IKnockable
         //SceneManager.
     }
 
-    public void Heal(int healAmount)
+    public async void Heal(int healAmount)
     {
         if (currentHealth < maxHealth)
         {
+            DOTween.To(() => healVFX.weight, x => healVFX.weight = x, 1f, 1f);
             currentHealth += healAmount;
             healthBar.setHealth(currentHealth);
+            await Awaitable.WaitForSecondsAsync(healFXDuration);
+            DOTween.To(() => healVFX.weight, x => healVFX.weight = x, 0f, 1f);
         }
     }
     public void IncreaseMaxHealth()

@@ -46,9 +46,12 @@ public class ActiveAbilityManager : MonoBehaviour
             pThrow.active = true;
             pg.Active = true;
         }
+        if (ThrowingActive && GrappleActive)
+        {
+            AllActive = true;
+        }
 
-
-
+        
     }
 
     public void ActivateAbility(GameObject Activator)

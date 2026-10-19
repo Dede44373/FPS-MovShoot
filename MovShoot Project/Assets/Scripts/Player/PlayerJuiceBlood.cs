@@ -7,6 +7,8 @@ public class PlayerJuiceBlood : MonoBehaviour
     public int maxJuice = 5;
     public int currentJuice;
     public bool isThrowing;
+    public float baseJuiceRechargeTimer;
+    public float juiceRechargeTime = 3f;
 
     public int healingcost;
     public int healAmount;
@@ -21,6 +23,7 @@ public class PlayerJuiceBlood : MonoBehaviour
     void Start()
     {
         currentJuice = maxJuice;
+        baseJuiceRechargeTimer = juiceRechargeTime;
     }
 
     private void OnEnable()
@@ -74,7 +77,7 @@ public class PlayerJuiceBlood : MonoBehaviour
 
     public void AttemptHealing(int usage)
     {
-        if (usage <= currentJuice)
+        if (usage <= currentJuice && health.currentHealth != health.maxHealth)
         {
             currentJuice -= usage;
             health.Heal(healAmount);
@@ -94,9 +97,14 @@ public class PlayerJuiceBlood : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentJuice >= 0)
+        if (currentJuice <= 0)
         {
-            
+            baseJuiceRechargeTimer -= Time.deltaTime;
+            if (baseJuiceRechargeTimer <= 0)
+            {
+                IncreaseCurrentJuice(1);
+                baseJuiceRechargeTimer = juiceRechargeTime;
+            }
         }
     }
 }
