@@ -169,14 +169,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        print($"Current Jump: {currentJump}");
+        print($"Are you OnSlope = {OnSlope()}");
         SpeedControl();
         GroundDetection();
         stateHandler();
         PredictSlope();
         SpeedParticleControl();
         CoyoteJumpBuffering();
-       if (grounded && !activeGrapple && !isDashing && !swinging)
+        if (grounded && !activeGrapple && !isDashing && !swinging)
         {
             //print("reset to ground drag");
             rb.linearDamping = data.groundDrag;
@@ -206,6 +206,13 @@ public class PlayerMovement : MonoBehaviour
     {
         MovePlayer();
         gravityControl();
+
+        print($"Are you {calculatedMoveDirection}");
+        if (OnSlope() && calculatedMoveDirection == Vector3.zero)
+        {
+            col.sharedMaterial = groundMat;
+
+        }
     }
 
     void SpeedParticleControl()
@@ -249,7 +256,7 @@ public class PlayerMovement : MonoBehaviour
             float angle = Vector3.Angle(Vector3.up, Test2.normal);
             slopeyAngle = angle;
 
-            SlopeIncoming = slopeyAngle < 50f;
+            SlopeIncoming = slopeyAngle > 50f;
         }
         else
         {
@@ -451,7 +458,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void SlidingMovement()
     {
-        CameraShaker.Shake(new PerlinShake(shakeParams));
+        if (grounded)
+        {
+            CameraShaker.Shake(new PerlinShake(shakeParams));
+        }
         //normal sliding
         if (!OnSlope() || rb.linearVelocity.y > -0.1f)
         {
@@ -464,6 +474,7 @@ public class PlayerMovement : MonoBehaviour
         //sliding down a slope
         else
         {
+                cam.DoFov(normalFOV+5);
             rb.AddForce(GetSlopeMoveDirection(GetMoveDirection()) * slideForce, ForceMode.Force);
         }
 
@@ -473,6 +484,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void StopSlide()
     {
+        cam.DoFov(normalFOV);
         sliding = false;
         ChangeState(MovementState.walking);
         playerObj.transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
@@ -514,7 +526,8 @@ public class PlayerMovement : MonoBehaviour
         {
             pg.StopGrapple();
         }
-        if(OnSlope())
+        print(OnSlope());
+        if (OnSlope())
             exitingSlope = true;
         // reset y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
@@ -609,8 +622,12 @@ public class PlayerMovement : MonoBehaviour
             print("GROUNDED LAD");
             if (!isDashing && !activeGrapple)
             {
-                col.sharedMaterial = groundMat;
+                if (!OnSlope())
+                {
+                    col.sharedMaterial = groundMat;
+                }
                 rb.linearDamping = data.groundDrag;
+                slideTimer = maxSlideTime;
             }
             ChangeState(MovementState.walking);
         }

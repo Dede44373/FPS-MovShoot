@@ -5449,7 +5449,7 @@ MonoBehaviour:
   normalTurnSpeed: 200
   attackTurnSpeed: 400
   damage: 1
-  timeBetweenAttacks: 2
+  timeBetweenAttacks: 3
   dashForce: 100
   chaseLungeTime: 3
   lungeWaitTime: 2

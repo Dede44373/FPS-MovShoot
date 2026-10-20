@@ -157,6 +157,7 @@ public class EnemyAI : Enemy
 
     void Chase()
     {
+        if (playerInSightRange && attacking) return;
         anim.SetTrigger("Walk");
         lungeTimer -= Time.deltaTime;
         if(lungeTimer <= 0)
@@ -217,7 +218,6 @@ public class EnemyAI : Enemy
     {
         if (lunging)
             return;
-
         Vector3 pos = player.transform.position;
         pos.y = transform.position.y;
 
@@ -228,13 +228,14 @@ public class EnemyAI : Enemy
         if(beforeLungeWait >= 0)
         {
             rb.linearVelocity = Vector3.zero;
+            anim.SetBool("LungeCharge", true);
         }
         else
         {
             Debug.Log("Lunging");
             lunging = true;
+            anim.SetTrigger("Lunge");
 
-         
             transform.LookAt(pos);
 
             agent.enabled = false;
@@ -285,6 +286,7 @@ public class EnemyAI : Enemy
         agent.enabled = true;
         lunging = false;
         beforeLungeWait = lungeWaitTime;
+        anim.SetBool("LungeCharge", false);
         enemyState = EnemyState.chase;
     }
     

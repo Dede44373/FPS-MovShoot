@@ -34,8 +34,10 @@ public class PlayerWallRun : MonoBehaviour
     public float minJumpHeight;
     private RaycastHit leftWallhit;
     private RaycastHit rightWallhit;
+    private RaycastHit frontWallhit;
     private bool wallLeft;
     private bool wallRight;
+    private bool wallFront;
 
     private void OnEnable()
     {
@@ -67,6 +69,14 @@ public class PlayerWallRun : MonoBehaviour
     {
         if (pm.wallrunning)
             WallRunningMovement();
+        if (pm.grounded && wallLeft || wallRight || wallFront)
+        {
+            pm.col.sharedMaterial = pm.slideMat;
+        }
+        else if(pm.grounded && !pm.OnSlope())
+        {
+            pm.col.sharedMaterial = pm.groundMat;
+        }
 
         if (pm.moveDirection != Vector2.zero)
         {
@@ -96,6 +106,7 @@ public class PlayerWallRun : MonoBehaviour
     }
     public void CheckForWall()
     {
+        wallFront = Physics.Raycast(transform.position, orientation.forward, out frontWallhit, wallCheckDistance, whatIsWall);
         wallRight = Physics.Raycast(transform.position, orientation.right, out rightWallhit, wallCheckDistance, whatIsWall);
         wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallhit, wallCheckDistance, whatIsWall);
     } 
