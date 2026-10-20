@@ -223,12 +223,13 @@ public class EnemyAI : Enemy
 
         beforeLungeWait -= Time.deltaTime;
         transform.LookAt(pos);
-        Debug.Log("waiting for lunge"); 
+        Debug.Log("waiting for lunge");
 
-        if(beforeLungeWait >= 0)
+        if (beforeLungeWait >= 0)
         {
-            rb.linearVelocity = Vector3.zero;
+            agent.SetDestination(transform.position);
             anim.SetBool("LungeCharge", true);
+            rb.linearVelocity = Vector3.zero;
         }
         else
         {
@@ -237,6 +238,7 @@ public class EnemyAI : Enemy
             anim.SetTrigger("Lunge");
 
             transform.LookAt(pos);
+            rb.linearVelocity = Vector3.zero;
 
             agent.enabled = false;
 
