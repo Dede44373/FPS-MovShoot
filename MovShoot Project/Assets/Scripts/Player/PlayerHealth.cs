@@ -43,6 +43,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
     public PlayerRespawn pr;
     public RespawnManager rm;
     public UserInputs Controls;
+    public FadeManager fadeManager;
     private void Start()
     {
         currentHealth = maxHealth;
@@ -50,7 +51,7 @@ public class PlayerHealth : MonoBehaviour, IKnockable
         {
             rb.MovePosition(RespawnManager.instance.spawnPoint);
             print(RespawnManager.instance.spawnPoint);
-        }
+        }   
         //Debug.Log(SceneManager.GetActiveScene().name.ToString());
     }
     private void OnEnable()
@@ -138,6 +139,8 @@ public class PlayerHealth : MonoBehaviour, IKnockable
         rm.ResetToCheckpoint(player);
         currentHealth = maxHealth;
         healthBar.setHealth(currentHealth);
+        //fadeManager.FadeOut();
+        
     }
     private IEnumerator Invulnerability()
     {

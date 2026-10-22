@@ -39,7 +39,8 @@ public class EnemyHealth : MonoBehaviour, IKnockable
         hurtPart.Play();
 
         Debug.Log("Enemy Damaged" + health);
-        anim.SetTrigger("Hurt");
+        if(anim != null)
+            anim.SetTrigger("Hurt");
         health -= damage;
         if (health > 0)
             HitstopManager.Instance.Stop(hitstopDuration);
