@@ -41,7 +41,7 @@ public class ActiveAbilityManager : MonoBehaviour
         }
 
         //debugging
-        if (AllActive)
+        if (AllActive && pThrow != null && pg != null)
         {
             pThrow.active = true;
             pg.Active = true;

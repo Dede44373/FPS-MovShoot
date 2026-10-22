@@ -44,7 +44,7 @@ public class RangedEnemyAI : Enemy
     public LayerMask whatisGround, Player, checkIfWallInWay;
     public NavMeshAgent agent;
     public Transform player;
-    private Animator anim;
+    public Animator anim;
     public Collider coll;
     public Rigidbody rb;
     public GameObject projectile;
@@ -141,6 +141,7 @@ public class RangedEnemyAI : Enemy
 
     void Idle()
     {
+        anim.SetTrigger("Idle");
         if (!playerInSightRange)
         {
             if (waitTime >= 0)
@@ -163,6 +164,7 @@ public class RangedEnemyAI : Enemy
 
     void Patrol()
     {
+        anim.SetTrigger("Walk");
         if (playerInSightRange && !playerInAttackRange)
         {
             enemyState = EnemyState.chase;
@@ -190,7 +192,7 @@ public class RangedEnemyAI : Enemy
 
     void Retreat()
     {
-        anim.Play("Zombie Running");
+        anim.SetTrigger("Walk");
         print("Running away");
         float squaredDist = (transform.position - player.transform.position).sqrMagnitude;
         float EnemyDistanceRunSqrt = EnemyDistance * EnemyDistance;
@@ -223,7 +225,7 @@ public class RangedEnemyAI : Enemy
     }
     void Chase()
     {
-
+        anim.SetTrigger("Walk");
         if (playerInAttackRange && playerInSightRange)
         {
             enemyState = EnemyState.attack;
@@ -253,14 +255,14 @@ public class RangedEnemyAI : Enemy
         //pos.y = transform.position.y;
         transform.LookAt(pos);
         Quaternion.LookRotation(pos);
+        anim.SetTrigger("Shoot");
 
         if (!alreadyAttacked)
         {
             // Attack code here \/\/\/
             agent.SetDestination(player.position);
 
-
-            Rigidbody rb = Instantiate (projectile, attackPoint.position, attackPoint.localRotation).GetComponent<Rigidbody>();
+            Rigidbody rb = Instantiate(projectile, attackPoint.position, attackPoint.localRotation).GetComponent<Rigidbody>();
             rb.transform.LookAt(pos);
             rb.transform.rotation *= Quaternion.Euler(90, 0, 0);
             //rb.transform.localEulerAngles = new Vector3(90, 0, 0);

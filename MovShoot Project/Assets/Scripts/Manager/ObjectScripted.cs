@@ -1,10 +1,14 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ObjectScripted : MonoBehaviour
 {
+    public float hitstopDuration;
     public Animator anim;
     public GameObject objectScripted;
     public Transform pos;
+    public ParticleSystem deathPart;
+
 
     //private void Awake()
     //{
@@ -27,8 +31,11 @@ public class ObjectScripted : MonoBehaviour
     public void TakeDamage()
     {
         SoundManager.PlaySound(SoundType.Rock_Break);
-        objectScripted.SetActive(true);
+        if(objectScripted != null)
+            objectScripted.SetActive(true);
         //Instantiate(objectScripted, pos);
+        HitstopManager.Instance.Stop(hitstopDuration);
+        Instantiate(deathPart, transform.position, Quaternion.LookRotation(Vector3.up));
         Destroy(gameObject);
 
 

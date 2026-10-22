@@ -4,6 +4,7 @@ using UnityEngine;
 public class LevelUpManager : MonoBehaviour
 {
     public static LevelUpManager instance;
+    public CostManager costManager;
     public PlayerAttack pAttack;
     public PlayerHealth pHealth;
     public float levelUpCost;
@@ -29,6 +30,7 @@ public class LevelUpManager : MonoBehaviour
             MoneyHUD.instance.RemoveMoney(levelUpCost);
             pHealth.IncreaseMaxHealth();
             IncreaseCosts();
+            costManager.SetText();
         }
         else
         {
@@ -40,8 +42,9 @@ public class LevelUpManager : MonoBehaviour
         if (levelUpCost <= MoneyHUD.instance.totalMoney)
         {
             MoneyHUD.instance.RemoveMoney(levelUpCost);
-            pHealth.IncreaseMaxHealth();
+            pAttack.IncreaseDamage();
             IncreaseCosts();
+            costManager.SetText();
         }
         else
         {
@@ -56,6 +59,7 @@ public class LevelUpManager : MonoBehaviour
             MoneyHUD.instance.RemoveMoney(levelUpCost);
             pHealth.IncreaseMaxHealth();
             IncreaseCosts();
+            costManager.SetText();
         }
         else
         {

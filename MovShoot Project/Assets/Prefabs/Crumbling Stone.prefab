@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 2463345623863616898}
   - component: {fileID: 4149669733691781924}
   - component: {fileID: 6155563367013142558}
-  - component: {fileID: 5050615822657869281}
+  - component: {fileID: -1958877312452598513}
+  - component: {fileID: -6513632765234556933}
   m_Layer: 0
   m_Name: Crumbling Stone
   m_TagString: Enemy
@@ -114,7 +115,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5050615822657869281
+--- !u!114 &-1958877312452598513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529677136806992189}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75c71302dfbb4f04b9e546b2477a2aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectScripted
+  hitstopDuration: 0.15
+  anim: {fileID: 0}
+  objectScripted: {fileID: 0}
+  pos: {fileID: 0}
+  deathPart: {fileID: 6354316287496609083, guid: 9aa2d98dbb855af41b58d22fbba1eb2f, type: 3}
+--- !u!114 &-6513632765234556933
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,9 +143,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1d7225201d7d9c48885ac77fd769c3f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BasicEnemy
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   health: 1
-  hitstopDuration: 0.2
+  hitstopDuration: 0.05
   hitstopDeathDuration: 0
   playerAttack: {fileID: 0}
   rb: {fileID: 0}
@@ -136,8 +154,8 @@ MonoBehaviour:
   invulDuration: 0
   numberOfFlashes: 0
   hasLoot: 0
-  hurtPart: {fileID: 6354316287496609083, guid: d605456c54a1b954585395967dc3ca9e, type: 3}
-  deathPart: {fileID: 6354316287496609083, guid: d605456c54a1b954585395967dc3ca9e, type: 3}
+  hurtPart: {fileID: 6354316287496609083, guid: 9aa2d98dbb855af41b58d22fbba1eb2f, type: 3}
+  deathPart: {fileID: 6354316287496609083, guid: 9aa2d98dbb855af41b58d22fbba1eb2f, type: 3}
   hitSFX: {fileID: 0}
 --- !u!1 &2160565605922538310
 GameObject:

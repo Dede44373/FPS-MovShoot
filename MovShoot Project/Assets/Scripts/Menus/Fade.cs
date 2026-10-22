@@ -9,6 +9,6 @@ public class Fade : MonoBehaviour
     }
     public void LoadEndScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("Tutorial");
     }
 }

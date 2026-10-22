@@ -104,7 +104,14 @@ public class PlayerGrapple : MonoBehaviour
         CheckForSwingPoints();
         uiSprite.color = spriteGradient.Evaluate(distanceOfGrapplePoint / maxGrappleDistance);
 
-
+        if (!Active)
+        {
+            uiSprite.gameObject.SetActive(false);
+        }
+        else
+        {
+            uiSprite.gameObject.SetActive(true);
+        }
 
         if (swinging)
         {

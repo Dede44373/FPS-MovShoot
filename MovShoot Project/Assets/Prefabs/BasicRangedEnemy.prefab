@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 5642902143753196009}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.331, z: 0.58}
+  m_LocalPosition: {x: 0, y: -0.185, z: 0.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4942,7 +4942,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1803562142766473711
 Transform:
   m_ObjectHideFlags: 0
@@ -5470,6 +5470,7 @@ MonoBehaviour:
     m_Bits: 196608
   agent: {fileID: 3915087233854191238}
   player: {fileID: 0}
+  anim: {fileID: 2666353594785255039}
   coll: {fileID: 2495719598296250964}
   rb: {fileID: 2420442971627849638}
   projectile: {fileID: 3198005363904983114, guid: ecf9c95c65e45f548b4cbf3fc994d79c, type: 3}
@@ -5556,7 +5557,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3378369188817351785}
   m_SourcePrefab: {fileID: 100100000, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
 --- !u!95 &2666353594785255039 stripped
 Animator:
@@ -5568,3 +5572,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
   m_PrefabInstance: {fileID: 8388622664444572654}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8695102946591854271 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b9c99234bbaca7e44b7d97a72aaf16ad, type: 3}
+  m_PrefabInstance: {fileID: 8388622664444572654}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3378369188817351785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8695102946591854271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba5f6afdde6da3a458a9294de7dca99a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RangedEnemyAnimation
+  projectileSpeed: 20
+  projectileUpForce: 0
+  projectile: {fileID: 3198005363904983114, guid: ecf9c95c65e45f548b4cbf3fc994d79c, type: 3}
+  attackPoint: {fileID: 9044062895517958494}
+  player: {fileID: 0}

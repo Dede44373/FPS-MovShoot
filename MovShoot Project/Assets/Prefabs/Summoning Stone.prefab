@@ -126,9 +126,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75c71302dfbb4f04b9e546b2477a2aa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectScripted
+  hitstopDuration: 0.15
   anim: {fileID: 0}
   objectScripted: {fileID: 0}
   pos: {fileID: 0}
+  deathPart: {fileID: 6354316287496609083, guid: 9aa2d98dbb855af41b58d22fbba1eb2f, type: 3}
 --- !u!1 &5355529763502982873
 GameObject:
   m_ObjectHideFlags: 0

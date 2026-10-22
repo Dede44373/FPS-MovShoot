@@ -15,6 +15,8 @@ public class EndGameBox : MonoBehaviour
             mov.enabled = false;
             grap.enabled = false;
             wall.enabled = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             fade.gameObject.SetActive(true);
 
         }

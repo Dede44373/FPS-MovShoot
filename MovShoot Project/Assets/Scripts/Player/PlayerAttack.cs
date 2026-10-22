@@ -34,6 +34,7 @@ public class PlayerAttack : MonoBehaviour
     public int lightDamage;
     public int heavyDamage;
     public int slamDamage;
+    public int levelDamageBoost;
 
     [Header("Dash")]
     public float maxDashDistance;
@@ -74,6 +75,7 @@ public class PlayerAttack : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        levelDamageBoost = 0;
         mouse = Mouse.current;
         anim = GetComponent<Animator>();
         attackDelayWait = new WaitForSeconds(attackDelay);
@@ -207,7 +209,7 @@ public class PlayerAttack : MonoBehaviour
         {
             if (!Enemy.TryGetComponent(out EnemyHealth health)) continue;
 
-            health.TakeDamage(slamDamage);
+            health.TakeDamage(slamDamage + levelDamageBoost);
         }
         yield return attackDelayWait;
         inAttack = false;
@@ -323,6 +325,11 @@ public class PlayerAttack : MonoBehaviour
 
     #endregion
 
+    public void IncreaseDamage()
+    {
+        levelDamageBoost++;
+    }
+
     private void OnTriggerEnter(Collider collision)
     {
         print("detected a collision");
@@ -331,7 +338,7 @@ public class PlayerAttack : MonoBehaviour
         {
             print("has an enemy tag");
             EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage(damage + levelDamageBoost);
 
             pjb.IncreaseCurrentJuice(juiceGain);
 
