@@ -120,7 +120,8 @@ public class PlayerAttack : MonoBehaviour
             Physics.Raycast(cam.transform.position, cam.transform.forward, out var hit, 100f, ground);
             print(hit.transform.name);
             print($"Raycast hit{hit.point}");
-            
+
+            anim.SetTrigger("Air");
             StartCoroutine(Slam(cam.transform.forward));
             //if (pm.grounded == true)
             //{
@@ -193,6 +194,7 @@ public class PlayerAttack : MonoBehaviour
             yield return null;
         }
 
+        anim.SetTrigger("Slam");
         SoundManager.PlaySound(SoundType.Ground_Slam);
         CameraShaker.Presets.Explosion3D();
 

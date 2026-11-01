@@ -5407,7 +5407,7 @@ MonoBehaviour:
   playerAttack: {fileID: 0}
   rb: {fileID: 2420442971627849638}
   anim: {fileID: 3477800357757416399}
-  knockForce: 150
+  knockForce: 300
   invulDuration: 0.2
   numberOfFlashes: 2
   hasLoot: 1

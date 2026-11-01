@@ -159,11 +159,17 @@ public class PlayerGrapple : MonoBehaviour
             lr.SetPosition(1, transform.position);
             pm.rb.useGravity = false;
 
+            Vector3 forward = (grapplePoint - transform.position).normalized;
+            Vector3 targetPosition =  grapplePoint + forward;
+            Vector3 grappleDirection = (targetPosition - transform.position).normalized;
+
+
             float Distance = Vector3.Distance(transform.position, GrappleDestination);
 
-            if (Distance < distanceToGrapplePoint)
+            if (Distance < distanceToGrapplePoint || Vector3.Dot(transform.forward, grappleDirection) <= 0)
             {
-                StopGrapple();
+                StopGrapple();  
+                //swinging = false;
                 grappling = false;
             }
 
@@ -286,6 +292,7 @@ public class PlayerGrapple : MonoBehaviour
     bool playingSound;
     private async void StartSwing()
     {
+        print($"Grapple Point: {grapplePoint}");
         if (playingSound) return;
         if (predictionHit.point == Vector3.zero)
         {
@@ -295,7 +302,7 @@ public class PlayerGrapple : MonoBehaviour
             playingSound = false;
             return;
         }
-        //pm.enabled = false;
+        //pm.enabled = false;   
         if (swinging) return;
         // makes sure that if you're grappling or swinging it stops it before starting a new grapple/or prevents it
         if (grapplingCdTimer > 0) return;
@@ -388,7 +395,7 @@ public class PlayerGrapple : MonoBehaviour
     private bool InGrapple = false;
     private void ExecuteGrapple()
     {
-        fovCam.DoFov(grappleFOV);
+        fovCam.DoFov(pm.normalFOV *1.3f);
         pm.col.sharedMaterial = pm.slideMat;
         pm.freeze = false;
         freezePlayer = false;
@@ -396,7 +403,7 @@ public class PlayerGrapple : MonoBehaviour
         //.activeGrapple = true;
         CancelInvoke(nameof(pm.ResetDash)); // cancel the delayed reset too
         MoveToDestination(grapplePoint);
-        Invoke(nameof(StopGrapple), 1f);
+        Invoke(nameof(StopGrapple), 2f);
     }
 
     private void MoveToDestination(Vector3 Destination)

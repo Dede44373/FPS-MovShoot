@@ -783,7 +783,7 @@ RectTransform:
   - {fileID: 686264919}
   - {fileID: 1376400628}
   - {fileID: 1497347019}
-  - {fileID: 1628287737}
+  - {fileID: 1625921981}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -993,7 +993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 099d33cca8bcd11449c7f6d6fd644669, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  FadeOut: {fileID: 1628287736}
+  FadeOut: {fileID: 1625921980}
 --- !u!1 &727342884
 GameObject:
   m_ObjectHideFlags: 0
@@ -2537,7 +2537,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1554628276}
   m_CullTransparentMesh: 1
---- !u!1 &1628287736
+--- !u!1 &1625921980
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2545,25 +2545,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1628287737}
-  - component: {fileID: 1628287741}
-  - component: {fileID: 1628287740}
-  - component: {fileID: 1628287739}
-  - component: {fileID: 1628287738}
+  - component: {fileID: 1625921981}
+  - component: {fileID: 1625921985}
+  - component: {fileID: 1625921984}
+  - component: {fileID: 1625921983}
+  - component: {fileID: 1625921982}
   m_Layer: 5
-  m_Name: Long Fade Out
+  m_Name: BAck to Game
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!224 &1628287737
+--- !u!224 &1625921981
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1628287736}
+  m_GameObject: {fileID: 1625921980}
   m_LocalRotation: {x: -0, y: -0, z: -3.1832315e-11, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.3999999, y: 2.3999999, z: 2.3999999}
@@ -2576,29 +2576,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -1038.4878, y: -580.604}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1628287738
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1628287736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7c00a8c8d8792d48aab111dd0fe2e1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Fade
---- !u!95 &1628287739
+--- !u!95 &1625921982
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1628287736}
+  m_GameObject: {fileID: 1625921980}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 229f37a4b261d164ba5d92ed03b6cb6d, type: 2}
+  m_Controller: {fileID: 9100000, guid: f7d5f6b3f36b2c84489abf0c9c4f7ccf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2610,13 +2598,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1628287740
+--- !u!114 &1625921983
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1628287736}
+  m_GameObject: {fileID: 1625921980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7c00a8c8d8792d48aab111dd0fe2e1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Fade
+--- !u!114 &1625921984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625921980}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -2640,13 +2640,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!222 &1628287741
+--- !u!222 &1625921985
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1628287736}
+  m_GameObject: {fileID: 1625921980}
   m_CullTransparentMesh: 1
 --- !u!1 &1720040138
 GameObject:

@@ -11,6 +11,7 @@ public class PlayerCam : MonoBehaviour
     public Transform orientation;
     public Transform camHolder;
     private UserInputs Controls;
+    public float fovChangeTime;
 
     float xRotation;
     float yRotation;
@@ -85,7 +86,13 @@ public class PlayerCam : MonoBehaviour
         Debug.Log("FOV");
         cam.DOFieldOfView(endValue, 0.25f);
     }
-     
+
+    public void DoFovVariable(float endValue)
+    {
+        Debug.Log("FOV");
+        cam.DOFieldOfView(endValue, fovChangeTime);
+    }
+
     public void DoTilt (float zTilt)
     {
         transform.DOLocalRotate(new Vector3(0, 0, zTilt), 0.25f);

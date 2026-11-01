@@ -163,6 +163,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
+        sprintFOV = normalFOV * 1.3f;
         desiredMoveSpeed = data.walkSpeed;
         startYScale = transform.localScale.y;
     }
@@ -386,17 +387,12 @@ public class PlayerMovement : MonoBehaviour
         ph.isInvul = false;
         isDashing = false;
         keepMomentum = true;
-        cam.DoFov(normalFOV);
         dashVFX.weight = 0;
-        if (Controls.Player.Sprint.IsPressed() && grounded)
+        if (!Controls.Player.Sprint.IsPressed() && grounded)
         {
             //ChangeState(MovementState.sprinting);
             //desiredMoveSpeed = data.sprintSpeed;
-            cam.DoFov(sprintFOV);
-        }
-        else
-        {
-            desiredMoveSpeed = data.walkSpeed;
+            cam.DoFov(normalFOV);
         }
         if (disableGravity)
             rb.useGravity = true;
@@ -474,7 +470,7 @@ public class PlayerMovement : MonoBehaviour
         //sliding down a slope
         else
         {
-                cam.DoFov(normalFOV+5);
+                cam.DoFov(normalFOV* 1.4f);
             rb.AddForce(GetSlopeMoveDirection(GetMoveDirection()) * slideForce, ForceMode.Force);
         }
 
@@ -533,7 +529,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             if (currentJump == 0 && coyoteTimeCounter > 0  && jumpBufferCounter > 0)
             {
-                // Makes your first  jump a bit higher so it feels better 
+            // Makes your first  jump a bit higher so it feels better 
                 rb.AddForce(transform.up * data.jumpForce * firstJump, ForceMode.Impulse);
                 currentJump++;
             }
@@ -549,7 +545,6 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("reset jump");
 
         exitingSlope = false;
-
         readyToJump = true;
     }
      private void CoyoteJumpBuffering()
@@ -835,7 +830,10 @@ public class PlayerMovement : MonoBehaviour
         if (OnSlope() && !exitingSlope)
         {
             if (rb.linearVelocity.magnitude > moveSpeed)
+            {
                 rb.linearVelocity = rb.linearVelocity.normalized * moveSpeed;
+               
+            }
         }
 
         //limit velocity when needed
@@ -845,6 +843,7 @@ public class PlayerMovement : MonoBehaviour
             
             if (flatVel.magnitude > moveSpeed)
             {
+                //rb.linearDamping = 0f;
                 Vector3 limitedVel = flatVel.normalized * moveSpeed;
                 rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
             }
