@@ -20068,8 +20068,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "RMB to shoot.\ncosts 1 juice to shoot. \none charge always recharges if
-    you have no charges. "
+  m_text: 'RMB to shoot
+
+    Costs 1 juice to shoot
+
+    One charge always recharges
+    if you have no charges'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -61582,8 +61586,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Top right: Red bar is Health\nBlue Bar is Juice. \nPress R to heal. it
-    costs 2 juice."
+  m_text: 'Top left: Red bar is Health,
+
+    Blue Bar is Juice
+
+    Press R to heal.
+    It costs 2 juice'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -105596,7 +105604,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: RMB to shoot.
+  m_text: RMB to shoot
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -116041,7 +116049,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: Press Space while your sides are near a wall to wall jump. You have up
-    to 3 wall jumps.
+    to 3 wall jumps
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -131644,7 +131652,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Use Space to jump. Double tap space to double jump.
+  m_text: "Use Space to jump \nDouble tap space to double jump"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
