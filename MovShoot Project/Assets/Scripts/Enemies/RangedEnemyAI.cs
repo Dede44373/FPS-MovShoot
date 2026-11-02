@@ -72,8 +72,9 @@ public class RangedEnemyAI : Enemy
     private void Update()
     {
         //Check for sight and attack range
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, Player);
-        if(playerInSightRange || enemyState == EnemyState.chase)
+        playerInSightRange = CanSeePlayer() && Physics.CheckSphere(transform.position, sightRange, Player);
+
+        if (playerInSightRange || enemyState == EnemyState.chase)
         {
             if (CanSeePlayer())
             {
