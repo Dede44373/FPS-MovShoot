@@ -64,7 +64,6 @@ public class RangedEnemyAI : Enemy
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
 
     }
 
@@ -256,27 +255,32 @@ public class RangedEnemyAI : Enemy
         //pos.y = transform.position.y;
         transform.LookAt(pos);
         Quaternion.LookRotation(pos);
-        anim.SetTrigger("Shoot");
 
         if (!alreadyAttacked)
         {
-            // Attack code here \/\/\/
-            agent.SetDestination(player.position);
-
-            Rigidbody rb = Instantiate(projectile, attackPoint.position, attackPoint.localRotation).GetComponent<Rigidbody>();
-            rb.transform.LookAt(pos);
-            rb.transform.rotation *= Quaternion.Euler(90, 0, 0);
-            //rb.transform.localEulerAngles = new Vector3(90, 0, 0);
-
-            // 
-            rb.AddForce(attackPoint.forward * projectileSpeed, ForceMode.Impulse);
-            //This one for dropoff
-            rb.AddForce(attackPoint.up * projectileUpForce, ForceMode.Impulse);
-
-            agent.isStopped = true;
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            agent.speed = 0;
+            anim.SetTrigger("Shoot");
+                alreadyAttacked = true;
+                Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
+
+        //if (!alreadyAttacked)
+        //{
+        //    // Attack code here \/\/\/
+        //    agent.SetDestination(player.position);
+
+        //    Rigidbody rb = Instantiate(projectile, attackPoint.position, attackPoint.localRotation).GetComponent<Rigidbody>();
+        //    rb.transform.LookAt(pos);
+        //    rb.transform.rotation *= Quaternion.Euler(90, 0, 0);
+        //    //rb.transform.localEulerAngles = new Vector3(90, 0, 0);
+
+        //    // 
+        //    rb.AddForce(attackPoint.forward * projectileSpeed, ForceMode.Impulse);
+        //    //This one for dropoff
+        //    rb.AddForce(attackPoint.up * projectileUpForce, ForceMode.Impulse);
+
+        //    agent.isStopped = true;
+        //}
     }
 
     private Vector3 GetSearchWalkPoint()

@@ -64,12 +64,12 @@ public class PlayerCam : MonoBehaviour
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
     }
     */  
-    private void Update()
+    private void LateUpdate()
     {
         print("Camera working");
         // Get mouse input
-        float mouseX = LookValue.x * Time.deltaTime * senX;
-        float mouseY = LookValue.y * Time.deltaTime * senY;
+        float mouseX = LookValue.x * senX;
+        float mouseY = LookValue.y * senY;
 
         yRotation += mouseX;
 

@@ -4,9 +4,14 @@ using UnityEngine.ProBuilder;
 public class RangedEnemyAnimation : MonoBehaviour
 {
     public float projectileSpeed, projectileUpForce;
+    [SerializeField] private RangedEnemyAI rangedenemy;
     public GameObject projectile;
     public Transform attackPoint;
     public Transform player;
+    private void Awake()
+    {
+        player = GameObject.Find("Player").transform;
+    }
     public void Shoot()
     {
         Vector3 pos = player.transform.position;
@@ -19,5 +24,10 @@ public class RangedEnemyAnimation : MonoBehaviour
         rb.AddForce(attackPoint.forward * projectileSpeed, ForceMode.Impulse);
         //This one for dropoff
         rb.AddForce(attackPoint.up * projectileUpForce, ForceMode.Impulse);
+    }
+
+    public void ShootFinish()
+    {
+        rangedenemy.agent.speed = 8;
     }
 }

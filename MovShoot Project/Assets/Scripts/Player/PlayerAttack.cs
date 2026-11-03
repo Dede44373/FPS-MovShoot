@@ -100,10 +100,8 @@ public class PlayerAttack : MonoBehaviour
         Controls = UserInputManager.Instance.Controls;
         Controls.Player.Attack.performed += AttackStart;
     }
-    private void OnDisable()
-    {
-        Controls.Player.Attack.performed -= AttackStart;
-    }
+    private void OnDisable() => Controls.Player.Attack.performed -= AttackStart;
+
 
     private async void AttackStart(InputAction.CallbackContext ctx)
     {
@@ -121,7 +119,7 @@ public class PlayerAttack : MonoBehaviour
             print(hit.transform.name);
             print($"Raycast hit{hit.point}");
 
-            anim.SetTrigger("Air");
+            //anim.SetTrigger("Air");
             StartCoroutine(Slam(cam.transform.forward));
             //if (pm.grounded == true)
             //{
@@ -184,13 +182,14 @@ public class PlayerAttack : MonoBehaviour
         yield return lightAttackDelayWait;
         inAttack = false;
     }
+
     private IEnumerator Slam(Vector3 slamDirection)
     {
         inAttack = true;
 
         while (!pm.grounded)
         {
-            rb.AddForce(slamDirection * slamSpeed, ForceMode.Force);
+            rb.AddForce(slamDirection * slamSpeed * Time.deltaTime, ForceMode.VelocityChange);
             yield return null;
         }
 
@@ -239,14 +238,21 @@ public class PlayerAttack : MonoBehaviour
             rb.useGravity = false;
 
 
-        Physics.SphereCast(cam.transform.position,sphereCastRange, cam.transform.forward, out RaycastHit hit, 100f, enemyLayer);
-        float Distance = Vector3.Distance(player.transform.position, hit.point);
-        print(Distance);
-        print("Hitting");
 
-        if(Distance <= maxDashDistance && Distance >= minDashDistance)
+        Physics.SphereCast(cam.transform.position, sphereCastRange, cam.transform.forward, out RaycastHit hit, 100f, enemyLayer);
+        float Distance = 0f;
+
+        if (hit.point != Vector3.zero)
         {
-            print("hitting succest0");
+            Distance = Vector3.Distance(player.transform.position, hit.point);
+        }
+        else
+        {
+            Distance = minDashDistance;
+        }
+    
+        if (Distance <= maxDashDistance && Distance >= minDashDistance)
+        {
             rb.AddForce(transform.forward * Distance *22, ForceMode.Impulse);   
 
             rb.useGravity = true;
@@ -260,10 +266,11 @@ public class PlayerAttack : MonoBehaviour
         }
         else
         {
+
             print("Failed");
             if (Distance >= maxDashDistance)
             {
-                rb.AddForce(transform.forward * stepDistance, ForceMode.Impulse);
+                rb.AddForce(transform.forward * stepDistance, ForceMode.VelocityChange);
 
             }
             else if (Distance >=minDashDistance)
@@ -296,7 +303,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void MoveUpwards()
     {
-        rb.AddForce(transform.up * upForce, ForceMode.Impulse);
+        rb.AddForce(transform.up * upForce, ForceMode.VelocityChange);
     }
 
     // Juice
