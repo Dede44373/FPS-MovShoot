@@ -1,3 +1,4 @@
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.ProBuilder;
 
@@ -8,13 +9,15 @@ public class RangedEnemyAnimation : MonoBehaviour
     public GameObject projectile;
     public Transform attackPoint;
     public Transform player;
+    public ParticleSystem firingFlash;
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
     }
     public void Shoot()
     {
-        Vector3 pos = player.transform.position;
+        attackPoint.LookAt(rangedenemy.player.position);
+        Vector3 pos = rangedenemy.player.transform.position;
         Rigidbody rb = Instantiate(projectile, attackPoint.position, attackPoint.localRotation).GetComponent<Rigidbody>();
         rb.transform.LookAt(pos);
         rb.transform.rotation *= Quaternion.Euler(90, 0, 0);
@@ -29,5 +32,10 @@ public class RangedEnemyAnimation : MonoBehaviour
     public void ShootFinish()
     {
         rangedenemy.agent.speed = 8;
+    }
+
+    public void Flash()
+    {
+        firingFlash.Play();
     }
 }

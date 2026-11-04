@@ -260,8 +260,9 @@ public class RangedEnemyAI : Enemy
         {
             agent.speed = 0;
             anim.SetTrigger("Shoot");
-                alreadyAttacked = true;
-                Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            alreadyAttacked = true;
+            agent.isStopped = true;
+            Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
 
         //if (!alreadyAttacked)
