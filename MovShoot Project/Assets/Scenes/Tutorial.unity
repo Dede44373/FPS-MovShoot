@@ -48034,6 +48034,14 @@ PrefabInstance:
       value: 481.5
       objectReference: {fileID: 0}
     - target: {fileID: 4305355014445540128, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: tiltAmount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4305355014445540128, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
+      propertyPath: wallJumpFOV
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4305355014445540128, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: wallJumpUpForce
       value: 60
       objectReference: {fileID: 0}
@@ -48423,7 +48431,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8583740979733053346, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: NormalRespawningPos
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8630520558977154810, guid: c115678af0f419143a3b9ecaa7b17e4a, type: 3}
       propertyPath: m_SizeDelta.x
@@ -48857,7 +48865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af439f073180a14ea8280b2e982bd20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  AllActive: 1
+  AllActive: 0
   ThrowingActive: 0
   GrappleActive: 0
   pThrow: {fileID: 916223733}
