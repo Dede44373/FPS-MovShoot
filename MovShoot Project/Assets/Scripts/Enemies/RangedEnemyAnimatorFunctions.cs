@@ -16,7 +16,7 @@ public class RangedEnemyAnimation : MonoBehaviour
     }
     public void Shoot()
     {
-        attackPoint.LookAt(rangedenemy.player.position);
+        //attackPoint.LookAt(rangedenemy.player.position);
         Vector3 pos = rangedenemy.player.transform.position;
         Rigidbody rb = Instantiate(projectile, attackPoint.position, attackPoint.localRotation).GetComponent<Rigidbody>();
         rb.transform.LookAt(pos);
@@ -37,5 +37,6 @@ public class RangedEnemyAnimation : MonoBehaviour
     public void Flash()
     {
         firingFlash.Play();
+        attackPoint.LookAt(rangedenemy.player.position);
     }
 }
