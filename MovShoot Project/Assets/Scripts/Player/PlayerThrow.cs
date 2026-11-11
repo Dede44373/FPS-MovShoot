@@ -38,8 +38,10 @@ public class PlayerThrow : MonoBehaviour
     [Header("Parrying")]
     public bool parryActive;
     public float parryWindow;
-    public float parryCooldown;
+    public float parryCooldown = 1f;
+    private float parryCooldownTimer;
     private float parryTime;
+    public float TapThreshold = 0.2f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -47,50 +49,86 @@ public class PlayerThrow : MonoBehaviour
         parryActive = false;
         parryTime = parryWindow;
     }
-    //private void OnEnable()
-    //{
-    //    Controls = UserInputManager.Instance.Controls;
-    //    Controls.Player.RangedAttack.performed += HandleAttackStart;
-    //}
-    //private void OnDisable()
-    //{
-    //    Controls.Player.RangedAttack.performed -= HandleAttackStart;
-    //}
-
-    public void HandleAttackStart(InputAction.CallbackContext ctx)
+    private void OnEnable()
     {
-        //if (parryActive) return;
-        //    print("Huge");
-        ////if (parryTime >= 0)
-        ////{
-        ////    parryTime -= Time.deltaTime;
-        ////    return;
-        ////}
-        //while (parryTime >= 0)
-        //{
-        //    parryActive = true;
-        //    parryTime -= Time.deltaTime;
-        //    await Awaitable.NextFrameAsync(destroyCancellationToken);
-        //}
-        //if (parryActive && parryTime <= 0)
-        //{
-        //    parryTime = parryWindow;
-        //    parryActive =false;
-        //}
-        if (readyToThrow && totalThrows > 0)
+        Controls = UserInputManager.Instance.Controls;
+        Controls.Player.RangedAttack.performed += HandleAttackStart;
+    }
+    private void OnDisable()
+    {
+        Controls.Player.RangedAttack.performed -= HandleAttackStart;
+    }
+
+    public async void HandleAttackStart(InputAction.CallbackContext ctx)
+    {
+        print("Throwing");
+        float Elapsed = 0f;
+        var Control = ctx.control;
+        
+        //held down (shooting)
+        while (Control.IsPressed())
         {
-            Throw();
+            await Awaitable.NextFrameAsync(destroyCancellationToken);
+            Elapsed += Time.deltaTime;
+
+            if (Elapsed > TapThreshold)
+            {
+                if (readyToThrow && totalThrows > 0)
+                {
+                    Throw();
+                }
+            }
         }
 
+        //Tapped button (parry)
+        if (Elapsed <= TapThreshold)
+        {
+            Parry();
+            print("Huge");
+        }
     }
- 
 
-    // Update is called once per frame
-    void Update()
+    public async void Parry()
     {
+        if (parryActive) return;
+        //if (parryTime >= 0)
+        //{
+        //    parryTime -= Time.deltaTime;
+        //    return;
+        //}
+        parryActive = true;
+        while (parryTime >= 0)
+        {
+            print("Huge Parrying");
+            await Awaitable.NextFrameAsync(destroyCancellationToken);
+            parryTime -= Time.deltaTime;
+
+            if (parryActive && parryTime <= 0)
+            {
+                ParryReset();
+            }
+        }
     }
+    public async void ParryReset()
+    {
+        parryTime = parryWindow;
+        parryActive = false;
 
+        //cooldown Timer;
+        float Elapsed = 0f;
 
+        while (Elapsed < parryCooldownTimer && !parryActive)
+        {
+            await Awaitable.NextFrameAsync(destroyCancellationToken);
+            Elapsed += Time.deltaTime;
+
+            if (Elapsed > parryCooldownTimer)
+            {
+                print("Huge Parry Reset");
+                parryCooldownTimer = parryCooldown;
+            }
+        }
+    }
     public void Throw()
     {
         if (!active || !readyToThrow) return;

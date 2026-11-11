@@ -59,6 +59,8 @@ public class PlayerJuiceBlood : MonoBehaviour
             health.Heal(healAmount);
         }
     }
+
+    //problem here
     public void AttemptThrowing(int usage)
     {
         if (usage <= currentJuice && pthrow.readyToThrow)

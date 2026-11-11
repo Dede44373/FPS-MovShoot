@@ -240,7 +240,7 @@ public class PlayerGrapple : MonoBehaviour
             }
         }
     
-        print(Elapsed);
+        //print(Elapsed);
 
         if (Elapsed <= TapThreshold)
         {
