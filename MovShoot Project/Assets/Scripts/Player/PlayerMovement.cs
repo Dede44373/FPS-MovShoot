@@ -80,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Sliding")]
     public float maxSlideTime;
     public float slideForce;
+    public float slideDash;
     private float slideTimer;
 
     public float slideYScale;
@@ -181,7 +182,8 @@ public class PlayerMovement : MonoBehaviour
         {
             //print("reset to ground drag");
             rb.linearDamping = data.groundDrag;
-
+            currentStamina = maxStamina;
+            staminaBar.setHealth( currentStamina );
         }
         else if (activeGrapple == true || isDashing == true || swinging == true)
             rb.linearDamping = 0;
@@ -337,13 +339,22 @@ public class PlayerMovement : MonoBehaviour
     #region Dash 
     private void Dash()
     {
-        if (data.dashCdTimer >= 0 || !canDash) return;
+        if (data.dashCdTimer >= 0 /*|| !canDash*/) return;
         if (pg.swinging || pg.grappling)
             pg.StopGrapple();
-        
-        data.dashCdTimer = data.dashCd;
 
-        canDash = false;
+        if (dashStamina <= currentStamina)
+        {
+            useStamina(dashStamina);
+        }
+        else
+        {
+            return;
+        }
+
+            data.dashCdTimer = data.dashCd;
+
+       // canDash = false;
         isDashing = true;
         desiredMoveSpeed = dashSpeed;
         keepMomentum = false;
@@ -441,14 +452,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartSlide()
     {
+        //if (!sliding)
+        //    slideDashing();
         sliding = true;
 
         calculatedMoveDirection = (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
         playerObj.transform.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
         rb.AddForce(Vector3.down * 20f, ForceMode.Impulse);
+
         rb.linearDamping = data.slideDrag;
 
         slideTimer = maxSlideTime;
+
+    }
+
+    private void slideDashing()
+    {
+        rb.AddForce(calculatedMoveDirection * slideDash, ForceMode.Impulse);
 
     }
 
@@ -932,6 +952,34 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 GetMoveDirection()
     {
         return (orientation.forward * moveDirection.y + orientation.right * moveDirection.x).normalized;
+    }
+
+
+    //Stamina down here
+    [Header("Stamina Values")]
+    public float dashStamina;
+    public float jumpStamina;
+
+    public float currentStamina;
+    public float maxStamina;
+    public HealthBarUI staminaBar;
+    
+    public void useStamina(float cost)
+    {
+        if (cost <= currentStamina)
+        {
+            currentStamina -= cost;
+            staminaBar.setHealth(currentStamina);
+        }
+        else
+        {
+            insufficientStamina();
+        }
+    }
+
+    public void insufficientStamina()
+    {
+
     }
 }
     

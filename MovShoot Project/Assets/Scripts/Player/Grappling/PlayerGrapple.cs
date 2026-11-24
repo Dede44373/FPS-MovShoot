@@ -263,7 +263,7 @@ public class PlayerGrapple : MonoBehaviour
         Vector3 direction = (grapplePoint - rb.position).normalized;
         float theta = Vector3.Angle(direction, Vector3.up) * Mathf.Deg2Rad;
 
-        float centripetalAcceleration = rb.linearVelocity.sqrMagnitude / ropeLength;
+        float centripetalAcceleration = (rb.linearVelocity.sqrMagnitude / ropeLength)* 2;
         Vector3 tension = rb.mass * (centripetalAcceleration + Physics.gravity.magnitude * Mathf.Cos(theta)) * direction;
 
         if (isRopeInTension)

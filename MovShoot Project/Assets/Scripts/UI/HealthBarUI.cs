@@ -21,7 +21,7 @@ public class HealthBarUI : MonoBehaviour
     //    healthBar.sizeDelta = new Vector2(newWidth, height);
     //}
 
-    public float Health;
+    public float currentHealth;
     public float MaxHealth;
     public float duration;
     private Slider HealthBar;
@@ -33,6 +33,7 @@ public class HealthBarUI : MonoBehaviour
 
     public void setHealth(float health)
     {
+        if(currentHealth == MaxHealth) return;
         float OldHealth = HealthBar.value;
         HealthBar.DOValue(health / MaxHealth, duration);
 
